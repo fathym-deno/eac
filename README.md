@@ -6,7 +6,7 @@ aspects of DevOps as config with the ability to customize.
 
 ## Licensing
 
-This project is licensed under the [MIT (Non-Commercial) License](./LICENSE.md)
+This project is licensed under our [MIT (Non-Commercial) License](./LICENSE.md)
 for individual and educational use. For commercial use, please refer to
 [COMMERCIAL_LICENSE.md](./COMMERCIAL_LICENSE.md) and contact us to obtain a
 commercial license.
