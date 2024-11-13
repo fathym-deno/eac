@@ -1,0 +1,34 @@
+{
+  "name": "@fathym/eac",
+  "version": "0.0.0",
+  "exports": {
+    ".": "./src/eac/.exports.ts",
+    "./fluent": "./src/fluent/.exports.ts",
+    "./types": "./src/types/.exports.ts"
+  },
+  "tasks": {
+    "build": "deno task build:fmt && deno task build:lint && deno task publish:check && deno task test",
+    "build:fmt": "deno fmt",
+    "build:lint": "deno lint",
+    "check": "deno fmt --check && deno lint && deno check **/*.ts && deno check **/*.tsx",
+    "deploy": "deno task build && deno task test && ftm git",
+    "publish:check": "deno publish --dry-run --allow-dirty",
+    "test": "deno test -A tests/tests.ts --coverage=cov",
+    "version": "deno run -A jsr:@fathym/common@0/build/version"
+  },
+  "imports": {},
+  "lint": {
+    "rules": {
+      "tags": ["recommended"],
+      "exclude": [
+        "no-unused-vars",
+        "ban-unused-ignore",
+        "prefer-const",
+        "ban-types",
+        "require-await"
+      ]
+    }
+  },
+  "unstable": ["kv"],
+  "lock": false
+}
