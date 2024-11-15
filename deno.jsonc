@@ -1,6 +1,6 @@
 {
   "name": "@fathym/eac",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "exports": {
     ".": "./src/eac/.exports.ts",
     "./esbuild": "./src/esbuild/.exports.ts",
