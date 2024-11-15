@@ -3,7 +3,11 @@
   "version": "0.0.0",
   "exports": {
     ".": "./src/eac/.exports.ts",
+    "./esbuild": "./src/esbuild/.exports.ts",
     "./fluent": "./src/fluent/.exports.ts",
+    "./runtime": "./src/runtime/_/.exports.ts",
+    "./runtime/pipelines": "./src/runtime/pipelines/.exports.ts",
+    "./runtime/server": "./src/runtime/server/.exports.ts",
     "./types": "./src/types/.exports.ts"
   },
   "tasks": {
@@ -28,6 +32,9 @@
         "require-await"
       ]
     }
+  },
+  "compilerOptions": {
+    "lib": ["deno.ns", "deno.unstable", "dom", "esnext"]
   },
   "unstable": ["kv"],
   "lock": false
