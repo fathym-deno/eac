@@ -30,7 +30,7 @@ export type EaCRuntimeContext<
 
     Logs: LoggingProvider;
 
-    Revision: number;
+    Revision: string;
 
     URLMatch: URLMatch;
   };
