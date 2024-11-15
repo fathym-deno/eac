@@ -6,7 +6,10 @@
     "./esbuild": "./src/esbuild/.exports.ts",
     "./fluent": "./src/fluent/.exports.ts",
     "./runtime": "./src/runtime/_/.exports.ts",
+    "./runtime/config": "./src/runtime/config/.exports.ts",
+    "./runtime/logging": "./src/runtime/logging/.exports.ts",
     "./runtime/pipelines": "./src/runtime/pipelines/.exports.ts",
+    "./runtime/plugins": "./src/runtime/plugins/.exports.ts",
     "./runtime/server": "./src/runtime/server/.exports.ts",
     "./types": "./src/types/.exports.ts"
   },
