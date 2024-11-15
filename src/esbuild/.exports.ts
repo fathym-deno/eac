@@ -22,6 +22,8 @@ export type ESBuild = {
   version: typeof esbuild.version;
 };
 
-export type ESBuildContext = esbuild.BuildContext;
-
 export type ESBuildOptions = esbuild.BuildOptions;
+
+export type ESBuildContext<
+  ProvidedOptions extends ESBuildOptions = ESBuildOptions,
+> = esbuild.BuildContext<ProvidedOptions>;
