@@ -22,24 +22,15 @@ export type ESBuild = {
   version: typeof esbuild.version;
 };
 
-export type ESBuildOptions = esbuild.BuildOptions;
-
-export type ESBuildOnLoadResult = esbuild.OnLoadResult;
-
-export type ESBuildOnLoadArgs = esbuild.OnLoadArgs;
-
-export type ESBuildOnResolveResult = esbuild.OnResolveResult;
-
-export type ESBuildOnResolveArgs = esbuild.OnResolveArgs;
-
-export type ESBuildPlugin = esbuild.Plugin;
-
-export type ESBuildPluginBuild = esbuild.PluginBuild;
-
-export type ESBuildContext<
-  ProvidedOptions extends ESBuildOptions = ESBuildOptions,
-> = esbuild.BuildContext<ProvidedOptions>;
-
-export type ESBuildResult<
-  ProvidedOptions extends ESBuildOptions = ESBuildOptions,
-> = esbuild.BuildResult<ProvidedOptions>;
+export type {
+  BuildContext as ESBuildContext,
+  BuildOptions as ESBuildOptions,
+  BuildResult as ESBuildResult,
+  Loader as ESBuildLoader,
+  OnLoadArgs as ESBuildOnLoadArgs,
+  OnLoadResult as ESBuildOnLoadResult,
+  OnResolveArgs as ESBuildOnResolveArgs,
+  OnResolveResult as ESBuildOnResolveResult,
+  Plugin as ESBuildPlugin,
+  PluginBuild as ESBuildPluginBuild,
+} from "npm:esbuild@0.23.1";
