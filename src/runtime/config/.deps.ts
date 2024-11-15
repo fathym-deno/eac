@@ -2,7 +2,7 @@ export * as colors from "jsr:@std/fmt@1.0.3/colors";
 
 export { IoCContainer } from "jsr:@fathym/ioc@0.0.12";
 
-export { merge } from "jsr:@fathym/common@0.2.167/merge";
+export { merge, mergeWithArrays } from "jsr:@fathym/common@0.2.167/merge";
 export {
   getPackageLoggerSync,
   LoggingProvider,
