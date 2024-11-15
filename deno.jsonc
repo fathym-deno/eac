@@ -7,6 +7,7 @@
     "./fluent": "./src/fluent/.exports.ts",
     "./runtime": "./src/runtime/_/.exports.ts",
     "./runtime/config": "./src/runtime/config/.exports.ts",
+    "./runtime/config/client": "./src/runtime/config/.client.exports.ts",
     "./runtime/logging": "./src/runtime/logging/.exports.ts",
     "./runtime/pipelines": "./src/runtime/pipelines/.exports.ts",
     "./runtime/plugins": "./src/runtime/plugins/.exports.ts",

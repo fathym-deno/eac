@@ -1,4 +1,3 @@
-export * from "./constants.client.ts";
 export * from "./constants.ts";
 export * from "./defineEaCConfig.ts";
 export * from "./EaCRuntimeConfig.ts";
