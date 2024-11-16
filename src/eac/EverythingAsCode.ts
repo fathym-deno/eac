@@ -1,25 +1,26 @@
 import { z } from "./.deps.ts";
-import { EaCModuleHandlers } from "./EaCModuleHandlers.ts";
+import { EaCModuleActuators } from "./EaCModuleActuators.ts";
 import { EaCEnterpriseDetails } from "./EaCEnterpriseDetails.ts";
 import { EaCEnterpriseDetailsSchema } from "./EaCEnterpriseDetails.ts";
-import { EaCModuleHandlersSchema } from "./EaCModuleHandlers.ts";
+import { EaCModuleActuatorsSchema } from "./EaCModuleActuators.ts";
+import { EaCMetadataBase } from "./EaCMetadataBase.ts";
 
 /**
- * Everything as Code (EaC) graph.
+ * Everything as Code (EaC).
  */
 export type EverythingAsCode = {
+  /** The module actuators for the EaC. */
+  Actuators?: EaCModuleActuators;
+
   /** The Details for the EaC node. */
   Details?: EaCEnterpriseDetails;
 
   /** The enterprise lookup for the EaC. */
   EnterpriseLookup?: string;
 
-  /** The module handlers for the EaC. */
-  Handlers?: EaCModuleHandlers;
-
   /** The parent enterprise lookup for the EaC. */
   ParentEnterpriseLookup?: string;
-};
+} & EaCMetadataBase;
 
 /**
  * `EverythingAsCodeSchema` defines the foundational structure for an EaC (Everything as Code) node,
@@ -30,7 +31,7 @@ export const EverythingAsCodeSchema: z.ZodObject<
   {
     Details: z.ZodOptional<typeof EaCEnterpriseDetailsSchema>;
     EnterpriseLookup: z.ZodOptional<z.ZodString>;
-    Handlers: z.ZodOptional<typeof EaCModuleHandlersSchema>;
+    Handlers: z.ZodOptional<typeof EaCModuleActuatorsSchema>;
     ParentEnterpriseLookup: z.ZodOptional<z.ZodString>;
   },
   "strip",
@@ -48,7 +49,7 @@ export const EverythingAsCodeSchema: z.ZodObject<
         "A unique identifier for the enterprise, enabling efficient referencing and management within an EaC ecosystem.",
       ),
 
-    Handlers: EaCModuleHandlersSchema.optional(),
+    Handlers: EaCModuleActuatorsSchema.optional(),
 
     ParentEnterpriseLookup: z
       .string()

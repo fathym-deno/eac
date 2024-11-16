@@ -7,9 +7,10 @@ import { resolvePath } from "./.deps.ts";
 export * from "./AllAnyTypes.ts";
 export * from "./EaCDetails.ts";
 export * from "./EaCEnterpriseDetails.ts";
-export * from "./EaCModuleHandler.ts";
-export * from "./EaCModuleHandlers.ts";
 export * from "./EaCMetadataBase.ts";
+export * from "./EaCModuleActuator.ts";
+export * from "./EaCModuleActuators.ts";
+export * from "./EaCUserRecord.ts";
 export * from "./EaCVertexDetails.ts";
 export * from "./EverythingAsCode.ts";
 

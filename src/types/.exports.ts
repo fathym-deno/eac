@@ -4,6 +4,7 @@
  */
 export * from "./EaCAsCodeDetails.ts";
 export * from "./HasDetailsProperty.ts";
+export * from "./Indexable.ts";
 export * from "./IsRequiredProperty.ts";
 export * from "./OptionalProperties.ts";
 export * from "./RequiredProperties.ts";

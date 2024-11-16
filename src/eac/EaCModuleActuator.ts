@@ -1,9 +1,9 @@
 import { z } from "./.deps.ts";
 
 /**
- * EaC module handler for use in EaC processing.
+ * EaC module actuator for use in EaC processing.
  */
-export type EaCModuleHandler = {
+export type EaCModuleActuator = {
   /** API path for this module. */
   APIPath: string;
 
@@ -12,19 +12,19 @@ export type EaCModuleHandler = {
 };
 
 /**
- * `EaCModuleHandlerSchema` represents a configuration for handling a specific EaC module,
+ * `EaCModuleActuatorSchema` represents a configuration for handling a specific EaC module,
  * including its API path and processing order. This schema ensures a consistent structure for
  * module handlers, supporting reliable sequencing and modular API configuration within the EaC environment.
  */
-export const EaCModuleHandlerSchema: z.ZodObject<
+export const EaCModuleActuatorSchema: z.ZodObject<
   {
     APIPath: z.ZodString;
     Order: z.ZodNumber;
   },
   "strip",
   z.ZodTypeAny,
-  EaCModuleHandler,
-  EaCModuleHandler
+  EaCModuleActuator,
+  EaCModuleActuator
 > = z
   .object({
     APIPath: z
@@ -39,7 +39,7 @@ export const EaCModuleHandlerSchema: z.ZodObject<
       ),
   })
   .describe(
-    "Schema for an EaC module handler, defining the API path and processing order. This schema supports structured, sequential, or parallel handling of modules in EaC processing environments.",
+    "Schema for an EaC module actuator, defining the API path and processing order. This schema supports structured, sequential, or parallel handling of modules in EaC processing environments.",
   );
 
-export type EaCModuleHandlerSchema = z.infer<typeof EaCModuleHandlerSchema>;
+export type EaCModuleActuatorSchema = z.infer<typeof EaCModuleActuatorSchema>;

@@ -1,6 +1,6 @@
 export type {
   EaCDetails,
-  EaCModuleHandlers,
+  EaCModuleActuators,
   EaCVertexDetails,
   EverythingAsCode,
 } from "../eac/.exports.ts";
