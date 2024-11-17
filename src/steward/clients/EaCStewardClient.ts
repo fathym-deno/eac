@@ -2,6 +2,7 @@ import {
   EaCCommitResponse,
   EaCStatus,
   EaCStatusProcessingTypes,
+  EaCUserRecord,
   EverythingAsCode,
   Logger,
   NullableArrayOrObject,
@@ -108,6 +109,24 @@ export class EaCStewardClient extends EaCBaseClient {
       );
 
       return await this.json(response);
+    },
+
+    ListForUser: async (
+      username: string,
+      parentEntLookup?: string,
+    ): Promise<EaCUserRecord[]> => {
+      const parentEntLookupQuery = parentEntLookup
+        ? `parentEntLookup=${parentEntLookup}`
+        : "";
+
+      const response = await fetch(
+        this.loadClientUrl(`list?username=${username}&${parentEntLookupQuery}`),
+        {
+          headers: this.loadHeaders(),
+        },
+      );
+
+      return await this.json<EaCUserRecord[]>(response, []);
     },
   };
 
