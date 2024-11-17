@@ -20,7 +20,7 @@ export type EverythingAsCode = {
 
   /** The parent enterprise lookup for the EaC. */
   ParentEnterpriseLookup?: string;
-} & EaCMetadataBase;
+}; // & EaCMetadataBase;
 
 /**
  * `EverythingAsCodeSchema` defines the foundational structure for an EaC (Everything as Code) node,

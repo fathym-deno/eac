@@ -14,7 +14,7 @@ import {
  * @param req The handler check request.
  * @returns The response from the handler check.
  */
-export async function callEaCHandlerCheck(
+export async function callEaCActuatorCheck(
   loadEaC: (entLookup: string) => Promise<EverythingAsCode>,
   actuators: EaCModuleActuators,
   jwt: string,

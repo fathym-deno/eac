@@ -1,4 +1,5 @@
-import { EaCRuntime, IS_BUILDING, LoggingProvider } from "./.deps.ts";
+import { IoCContainer } from "jsr:@fathym/ioc@0.0.13";
+import { EaCRuntime, IS_BUILDING, Logger, LoggingProvider } from "./.deps.ts";
 import { handleEaCCommitCheckRequest } from "./commit-check.handler.ts";
 import { handleEaCCommitRequest } from "./commit.handler.ts";
 import { handleEaCDeleteRequest } from "./delete.handler.ts";
@@ -7,47 +8,25 @@ import { isEaCCommitRequest } from "./reqres/EaCCommitRequest.ts";
 import { isEaCDeleteRequest } from "./reqres/EaCDeleteRequest.ts";
 
 export class EaCSteward {
-  constructor(protected runtime: EaCRuntime) {}
+  constructor() {}
 
-  public async Start(): Promise<void> {
+  public async Start(
+    ioc: IoCContainer,
+    eacKvLookup: string,
+    commitKvLookup: string,
+  ): Promise<void> {
     if (!IS_BUILDING) {
-      const commitKv = await this.runtime.IoC.Resolve<Deno.Kv>(
-        Deno.Kv,
-        "commit",
-      );
+      const logger = await ioc.Resolve(LoggingProvider);
 
-      const eacKv = await this.runtime.IoC.Resolve<Deno.Kv>(Deno.Kv, "eac");
+      const eacKv = await ioc.Resolve<Deno.Kv>(Deno.Kv, eacKvLookup);
 
-      const logger = await this.runtime.IoC.Resolve(LoggingProvider);
+      const commitKv = await ioc.Resolve<Deno.Kv>(Deno.Kv, commitKvLookup);
 
       /**
        * This listener set is responsible for the core EaC actions.
        */
       commitKv.listenQueue(async (msg: unknown) => {
-        const trackingKey = ["Handlers", "Commits", "Processing"];
-
-        if (isEaCCommitCheckRequest(msg)) {
-          logger.Package.debug(
-            `Queue message picked up for processing commit checks ${msg.CommitID}`,
-          );
-
-          trackingKey.push("Checks");
-          trackingKey.push(msg.CommitID);
-        } else if (isEaCDeleteRequest(msg)) {
-          logger.Package.debug(
-            `Queue message picked up for processing commit delete ${msg.CommitID}`,
-          );
-
-          trackingKey.push("Delete");
-          trackingKey.push(msg.CommitID);
-        } else if (isEaCCommitRequest(msg)) {
-          logger.Package.debug(
-            `Queue message picked up for processing commit ${msg.CommitID}`,
-          );
-
-          trackingKey.push("Commit");
-          trackingKey.push(msg.CommitID);
-        }
+        const trackingKey = this.loadTrackingKey(logger.Package, msg);
 
         try {
           const isCommitting = await commitKv.get<boolean>(trackingKey);
@@ -95,5 +74,34 @@ export class EaCSteward {
         }
       });
     }
+  }
+
+  protected loadTrackingKey(logger: Logger, msg: unknown): Deno.KvKey {
+    const trackingKey = ["Handlers", "Commits", "Processing"];
+
+    if (isEaCCommitCheckRequest(msg)) {
+      logger.debug(
+        `Queue message picked up for processing commit checks ${msg.CommitID}`,
+      );
+
+      trackingKey.push("Checks");
+      trackingKey.push(msg.CommitID);
+    } else if (isEaCDeleteRequest(msg)) {
+      logger.debug(
+        `Queue message picked up for processing commit delete ${msg.CommitID}`,
+      );
+
+      trackingKey.push("Delete");
+      trackingKey.push(msg.CommitID);
+    } else if (isEaCCommitRequest(msg)) {
+      logger.debug(
+        `Queue message picked up for processing commit ${msg.CommitID}`,
+      );
+
+      trackingKey.push("Commit");
+      trackingKey.push(msg.CommitID);
+    }
+
+    return trackingKey;
   }
 }

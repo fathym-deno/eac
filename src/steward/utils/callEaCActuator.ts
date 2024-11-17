@@ -23,7 +23,7 @@ import {
  * @param diff The differences to be applied to the current EaC state.
  * @returns An object containing checks, errors, and the updated result.
  */
-export async function callEaCHandler<T extends EaCMetadataBase>(
+export async function callEaCActuator<T extends EaCMetadataBase>(
   loadEac: (entLookup: string) => Promise<EverythingAsCode>,
   handler: EaCModuleActuator,
   commitReq: EaCCommitRequest,
@@ -35,7 +35,7 @@ export async function callEaCHandler<T extends EaCMetadataBase>(
   Errors: EaCActuatorErrorResponse[];
   Result: T;
 }> {
-  const current = (currentEaC[key] || {}) as T;
+  const current = (currentEaC[key as keyof typeof currentEaC] || {}) as T;
 
   const parentEaC = currentEaC?.ParentEnterpriseLookup
     ? await loadEac(currentEaC.ParentEnterpriseLookup)

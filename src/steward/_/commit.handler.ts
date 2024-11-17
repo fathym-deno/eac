@@ -1,6 +1,6 @@
 import {
   AtomicOperationHandler,
-  callEaCHandler,
+  callEaCActuator,
   EaCActuatorCheckRequest,
   EaCActuatorErrorResponse,
   EaCMetadataBase,
@@ -309,7 +309,7 @@ function processEaCHandler(
       diff !== null &&
       diff !== undefined
     ) {
-      const handled = await callEaCHandler(
+      const handled = await callEaCActuator(
         async (entLookup) => {
           const eac = await denoKv.get<EverythingAsCode>([
             "EaC",

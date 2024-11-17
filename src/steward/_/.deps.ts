@@ -31,8 +31,8 @@ export {
 } from "../status/.exports.ts";
 
 export {
-  callEaCHandler,
-  callEaCHandlerCheck,
+  callEaCActuator,
+  callEaCActuatorCheck,
   markEaCProcessed,
   waitOnEaCProcessing,
 } from "../utils/.exports.ts";

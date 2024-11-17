@@ -14,7 +14,7 @@ import {
  * @param req The handler connections request.
  * @returns The response from the handler connections request.
  */
-export async function callEaCHandlerConnections(
+export async function callEaCActuatorConnections(
   loadEaC: (entLookup: string) => Promise<EverythingAsCode>,
   handler: EaCModuleActuator,
   jwt: string,

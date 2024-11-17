@@ -1,5 +1,6 @@
+// deno-lint-ignore-file no-explicit-any
 import {
-  callEaCHandlerCheck,
+  callEaCActuatorCheck,
   EaCActuatorCheckRequest,
   EaCActuatorErrorResponse,
   EaCStatus,
@@ -43,7 +44,7 @@ export async function handleEaCCommitCheckRequest(
 
   let checkResponses = await Promise.all(
     commitCheckReq.Checks.map(async (check) => {
-      const checkResp = await callEaCHandlerCheck(
+      const checkResp = await callEaCActuatorCheck(
         async (entLookup) => {
           const eac = await eacKv.get<EverythingAsCode>([
             "EaC",
@@ -137,15 +138,15 @@ export async function handleEaCCommitCheckRequest(
       } else {
         let saveEaC = { ...commitCheckReq.EaC } as EverythingAsCode;
 
-        const toProcessEaC: Record<string, unknown> = {
+        const toProcessEaC: EverythingAsCode = {
           EnterpriseLookup,
         };
 
         if (commitCheckReq.ToProcessKeys.length > 0) {
           commitCheckReq.ToProcessKeys.forEach((tpk) => {
-            toProcessEaC[tpk] = saveEaC[tpk];
+            (toProcessEaC as any)[tpk] = saveEaC[tpk as keyof typeof saveEaC];
 
-            delete saveEaC[tpk];
+            delete saveEaC[tpk as keyof typeof saveEaC];
           });
 
           saveEaC = merge(commitCheckReq.OriginalEaC, saveEaC);

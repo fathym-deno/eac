@@ -64,7 +64,9 @@ export async function handleEaCDeleteRequest(
       deleteReq.EaC;
 
     for (const deleteKey in deleteEaCDiff) {
-      const deleteEaCDef = deleteEaCDiff[deleteKey] as Record<string, unknown>;
+      const deleteEaCDef = deleteEaCDiff[
+        deleteKey as keyof typeof deleteEaCDiff
+      ] as Record<string, unknown>;
 
       const deleteFromEaC = (
         deleteRef: Record<string, any>,
@@ -85,8 +87,11 @@ export async function handleEaCDeleteRequest(
         }
       };
 
-      if (eac.value?.[deleteKey]) {
-        deleteFromEaC(deleteEaCDef, eac.value![deleteKey]);
+      if (eac.value?.[deleteKey as keyof typeof eac.value]) {
+        deleteFromEaC(
+          deleteEaCDef,
+          eac.value![deleteKey as keyof typeof eac.value],
+        );
       }
     }
 
