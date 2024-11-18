@@ -66,7 +66,7 @@ export abstract class GenericEaCRuntime<
   public async Configure(options?: {
     configure?: (rt: EaCRuntime<TEaC>) => Promise<void>;
   }): Promise<void> {
-    this.Revision = await generateDirectoryHash(import.meta.resolve("../../"));
+    this.Revision = await generateDirectoryHash(Deno.cwd()); //import.meta.resolve("../../"));
 
     this.pluginConfigs = new Map();
 
