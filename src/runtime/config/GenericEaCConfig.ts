@@ -4,11 +4,13 @@ import { EaCRuntimeConfig } from "./EaCRuntimeConfig.ts";
 
 const loggingProvider = new EaCLoggingProvider();
 
-export const GenericEaCConfig = (runtime: EaCRuntime) => ({
+export const GenericEaCConfig = (
+  runtime: (cgg: EaCRuntimeConfig) => EaCRuntime,
+) => ({
   LoggingProvider: loggingProvider,
   Middleware: [],
   Plugins: [], //[new FathymCorePlugin()],
-  Runtime: (cfg: EaCRuntimeConfig) => runtime,
+  Runtime: (cfg: EaCRuntimeConfig) => runtime(cfg),
   EaC: { EnterpriseLookup: "default-eac" },
   Server: {
     onListen: (params) => {
