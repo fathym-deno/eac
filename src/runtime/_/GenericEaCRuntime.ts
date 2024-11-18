@@ -173,38 +173,38 @@ export abstract class GenericEaCRuntime<
           }
 
           pluginDef = new Module.default(...args) as EaCRuntimePlugin<TEaC>;
-
-          this.pluginDefs.set(pluginKey, pluginDef);
-
-          const pluginConfig = this.pluginConfigs.has(pluginKey)
-            ? this.pluginConfigs.get(pluginKey)
-            : await pluginDef.Setup(this.config);
-
-          this.pluginConfigs.set(pluginKey, pluginConfig);
-
-          if (pluginConfig) {
-            if (pluginConfig.EaC) {
-              this.EaC = merge(this.EaC || {}, pluginConfig.EaC);
-            }
-
-            if (pluginConfig.IoC) {
-              pluginConfig.IoC.CopyTo(this.IoC!);
-            }
-
-            if (pluginConfig.Middleware) {
-              this.Middleware = [
-                ...(this.Middleware || []),
-                ...pluginConfig.Middleware,
-              ];
-            }
-
-            await this.configurePlugins(pluginConfig.Plugins);
-          }
         } catch (error) {
           console.error(`Failed to load plugin "${plugin}":`, error);
 
           throw error;
         }
+      }
+
+      this.pluginDefs.set(pluginKey, pluginDef);
+
+      const pluginConfig = this.pluginConfigs.has(pluginKey)
+        ? this.pluginConfigs.get(pluginKey)
+        : await pluginDef.Setup(this.config);
+
+      this.pluginConfigs.set(pluginKey, pluginConfig);
+
+      if (pluginConfig) {
+        if (pluginConfig.EaC) {
+          this.EaC = merge(this.EaC || {}, pluginConfig.EaC);
+        }
+
+        if (pluginConfig.IoC) {
+          pluginConfig.IoC.CopyTo(this.IoC!);
+        }
+
+        if (pluginConfig.Middleware) {
+          this.Middleware = [
+            ...(this.Middleware || []),
+            ...pluginConfig.Middleware,
+          ];
+        }
+
+        await this.configurePlugins(pluginConfig.Plugins);
       }
     }
   }
