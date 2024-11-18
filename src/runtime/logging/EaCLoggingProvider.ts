@@ -14,8 +14,6 @@ export class EaCLoggingProvider extends LoggingProvider {
       "@fathym/common/deno-kv",
       "@fathym/common/path",
       "@fathym/eac",
-      "@fathym/eac/runtime",
-      "@fathym/atomic-icons",
       "@fathym/msal",
     ];
 

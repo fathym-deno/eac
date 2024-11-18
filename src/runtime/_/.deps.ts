@@ -2,10 +2,7 @@ import "jsr:@std/dotenv@0.225.2/load";
 export { Logger } from "jsr:@std/log@0.224.9";
 
 export { type URLMatch } from "jsr:@fathym/common@0.2.168/http";
-export {
-  getPackageLogger,
-  LoggingProvider,
-} from "jsr:@fathym/common@0.2.168/log";
+export { LoggingProvider } from "jsr:@fathym/common@0.2.168/log";
 export { merge } from "jsr:@fathym/common@0.2.168/merge";
 export { generateDirectoryHash } from "jsr:@fathym/common@0.2.168/path";
 
