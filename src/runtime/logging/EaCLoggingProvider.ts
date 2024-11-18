@@ -6,21 +6,24 @@ import {
   LoggingProvider,
 } from "./.deps.ts";
 
-export class DefaultLoggingProvider extends LoggingProvider {
-  constructor() {
-    const loggingPackages = [
+export class EaCLoggingProvider extends LoggingProvider {
+  constructor(loggingPackages?: string[], override?: boolean) {
+    const defaults = [
       "@fathym/default",
       "@fathym/common/build",
       "@fathym/common/deno-kv",
       "@fathym/common/path",
       "@fathym/eac",
-      "@fathym/eac-api",
-      "@fathym/eac-api/client",
-      "@fathym/eac-api/status",
-      "@fathym/eac-runtime",
+      "@fathym/eac/runtime",
       "@fathym/atomic-icons",
       "@fathym/msal",
     ];
+
+    if (override) {
+      loggingPackages ??= defaults;
+    } else {
+      loggingPackages = [...defaults, ...(loggingPackages ?? [])];
+    }
 
     const setupConfig = {
       handlers: {

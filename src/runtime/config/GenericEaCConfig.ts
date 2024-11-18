@@ -1,6 +1,6 @@
 import {
   colors,
-  DefaultLoggingProvider,
+  EaCLoggingProvider,
   EaCRuntime,
   getPackageLoggerSync,
 } from "./.deps.ts";
@@ -8,7 +8,7 @@ import { fathymGreen } from "./constants.ts";
 import { EaCRuntimeConfig } from "./EaCRuntimeConfig.ts";
 
 export const GenericEaCConfig = (runtime: EaCRuntime) => ({
-  LoggingProvider: new DefaultLoggingProvider(),
+  LoggingProvider: new EaCLoggingProvider(),
   Middleware: [],
   Plugins: [], //[new FathymCorePlugin()],
   Runtime: (cfg: EaCRuntimeConfig) => runtime,

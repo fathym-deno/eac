@@ -12,7 +12,7 @@ export type { EverythingAsCode } from "../../eac/.exports.ts";
 
 export { type EaCRuntime, GenericEaCRuntime } from "../_/.exports.ts";
 
-export { DefaultLoggingProvider } from "../logging/.exports.ts";
+export { EaCLoggingProvider } from "../logging/.exports.ts";
 
 export type {
   EaCRuntimeHandler,

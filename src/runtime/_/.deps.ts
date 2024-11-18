@@ -14,7 +14,7 @@ export type { EverythingAsCode } from "../../eac/.exports.ts";
 
 export { type EaCRuntimeConfig, IS_BUILDING } from "../config/.exports.ts";
 
-export { DefaultLoggingProvider } from "../logging/.exports.ts";
+export { EaCLoggingProvider } from "../logging/.exports.ts";
 
 export type { EaCRuntimePluginDef } from "../plugins/.exports.ts";
 

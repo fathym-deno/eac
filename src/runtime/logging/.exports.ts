@@ -1,1 +1,1 @@
-export * from "./DefaultLoggingProvider.ts";
+export * from "./EaCLoggingProvider.ts";

@@ -1,5 +1,5 @@
 import {
-  DefaultLoggingProvider,
+  EaCLoggingProvider,
   EaCRuntimeConfig,
   EaCRuntimeHandler,
   EaCRuntimeHandlerPipeline,
@@ -23,7 +23,7 @@ export abstract class GenericEaCRuntime<
   TEaC extends EverythingAsCode = EverythingAsCode,
 > implements EaCRuntime<TEaC> {
   protected get logger(): Logger {
-    return (this.config.LoggingProvider ?? new DefaultLoggingProvider())
+    return (this.config.LoggingProvider ?? new EaCLoggingProvider())
       .Package;
   }
 
