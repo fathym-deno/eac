@@ -12,7 +12,6 @@
     "./runtime/pipelines": "./src/runtime/pipelines/.exports.ts",
     "./runtime/plugins": "./src/runtime/plugins/.exports.ts",
     "./runtime/server": "./src/runtime/server/.exports.ts",
-    "./runtime/steward": "./src/runtime/steward/.exports.ts",
     "./steward": "./src/steward/_/.exports.ts",
     "./steward/actuators": "./src/steward/actuators/.exports.ts",
     "./steward/clients": "./src/steward/clients/.exports.ts",

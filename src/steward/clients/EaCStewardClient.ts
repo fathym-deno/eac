@@ -178,4 +178,27 @@ export class EaCStewardClient extends EaCBaseClient {
       return await this.json<EaCStatus[]>(response, []);
     },
   };
+
+  public Users = {
+    Invite: async (
+      entLookup: string,
+      userEaC: EaCUserRecord,
+    ): Promise<EaCCommitResponse> => {
+      const response = await fetch(this.loadClientUrl(`${entLookup}/users`), {
+        method: "POST",
+        headers: this.loadHeaders(),
+        body: JSON.stringify(userEaC),
+      });
+
+      return await this.json(response);
+    },
+
+    List: async (entLookup: string): Promise<EaCUserRecord[]> => {
+      const response = await fetch(this.loadClientUrl(`${entLookup}/users`), {
+        headers: this.loadHeaders(),
+      });
+
+      return await this.json<EaCUserRecord[]>(response, []);
+    },
+  };
 }
