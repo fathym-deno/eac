@@ -4,7 +4,7 @@ export type {
   IsUndefined,
   RemoveIndexSignatures,
   ValueType,
-} from "jsr:@fathym/common@0.2.167/types";
+} from "jsr:@fathym/common@0.2.168/types";
 // } from '../../../reference-architecture/src/common/types/.exports.ts';
 
 export type { EaCDetails } from "../eac/.exports.ts";
