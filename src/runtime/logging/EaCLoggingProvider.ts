@@ -17,10 +17,10 @@ export class EaCLoggingProvider extends LoggingProvider {
       "@fathym/msal",
     ];
 
-    if (override) {
-      loggingPackages ??= defaults;
-    } else {
-      loggingPackages = [...defaults, ...(loggingPackages ?? [])];
+    loggingPackages ??= [];
+
+    if (!override) {
+      loggingPackages = [...defaults, ...loggingPackages];
     }
 
     const setupConfig = {
