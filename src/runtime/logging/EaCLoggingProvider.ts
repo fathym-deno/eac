@@ -35,8 +35,8 @@ export class EaCLoggingProvider extends LoggingProvider {
         },
 
         ...loggingPackages.reduce((acc, name) => {
-          const logLevelName = Deno.env.get("LOGGING_PACKAGE_LEVEL") ??
-            Deno.env.get("LOGGING_DEFAULT_LEVEL") ??
+          const logLevelName = Deno.env.get("LOGGING_PACKAGE_LEVEL") ||
+            Deno.env.get("LOGGING_DEFAULT_LEVEL") ||
             "DEBUG";
 
           acc[name] = {
