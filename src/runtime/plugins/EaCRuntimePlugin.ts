@@ -3,7 +3,11 @@ import { EaCRuntimePluginConfig } from "./EaCRuntimePluginConfig.ts";
 
 export type EaCRuntimePlugin<TEaC extends EverythingAsCode = EverythingAsCode> =
   {
-    AfterEaCResolved?: (eac: TEaC, ioc: IoCContainer) => Promise<void>;
+    AfterEaCResolved?: (
+      eac: TEaC,
+      ioc: IoCContainer,
+      config: EaCRuntimeConfig<TEaC>,
+    ) => Promise<void>;
 
     Build?: (
       eac: TEaC,

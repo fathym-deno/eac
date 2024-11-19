@@ -23,8 +23,7 @@ export abstract class GenericEaCRuntime<
   TEaC extends EverythingAsCode = EverythingAsCode,
 > implements EaCRuntime<TEaC> {
   protected get logger(): Logger {
-    return (this.config.LoggingProvider ?? new EaCLoggingProvider())
-      .Package;
+    return (this.config.LoggingProvider ?? new EaCLoggingProvider()).Package;
   }
 
   protected pipeline: EaCRuntimeHandlerPipeline;
@@ -221,7 +220,7 @@ export abstract class GenericEaCRuntime<
     await Promise.all(buildCalls);
 
     for (const pluginDef of this.pluginDefs.values() || []) {
-      await pluginDef.AfterEaCResolved?.(this.EaC!, this.IoC);
+      await pluginDef.AfterEaCResolved?.(this.EaC!, this.IoC, this.config);
     }
   }
 }
