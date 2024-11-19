@@ -29,7 +29,7 @@ export class EaCLoggingProvider extends LoggingProvider {
       },
       loggers: {
         default: {
-          level: (Deno.env.get("LOGGING_DEFAULT_LEVEL") as LevelName) ??
+          level: (Deno.env.get("LOGGING_DEFAULT_LEVEL") as LevelName) ||
             "DEBUG",
           handlers: ["console"],
         },
