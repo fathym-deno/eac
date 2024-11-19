@@ -101,7 +101,9 @@ export class EaCStewardClient extends EaCBaseClient {
     }> => {
       const response = await fetch(
         this.loadClientUrl(
-          `${entLookup}/jwt?username=${username}&expTime=${expTime || ""}`,
+          `jwt?entLookup=${entLookup}&username=${username}&expTime=${
+            expTime || ""
+          }`,
         ),
         {
           headers: this.loadHeaders(),
