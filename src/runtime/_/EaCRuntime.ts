@@ -1,5 +1,5 @@
 import {
-  EaCRuntimeHandlerSet,
+  EaCRuntimeHandlerRoute,
   EverythingAsCode,
   IoCContainer,
 } from "./.deps.ts";
@@ -9,7 +9,7 @@ export type EaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode> = {
 
   EaC?: TEaC;
 
-  Middleware?: EaCRuntimeHandlerSet;
+  Middlewares?: EaCRuntimeHandlerRoute[];
 
   Revision: string;
 

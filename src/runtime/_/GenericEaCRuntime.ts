@@ -1,8 +1,11 @@
+import { STATUS_CODE } from 'jsr:@std/http@1.0.9/status';
 import {
   EaCLoggingProvider,
   EaCRuntimeConfig,
   EaCRuntimeHandler,
   EaCRuntimeHandlerPipeline,
+  EaCRuntimeHandlerRoute,
+  EaCRuntimeHandlerRouteGroup,
   EaCRuntimeHandlers,
   EaCRuntimeHandlerSet,
   EaCRuntimePlugin,
@@ -15,13 +18,14 @@ import {
   Logger,
   LoggingProvider,
   merge,
-} from "./.deps.ts";
-import { EaCRuntime } from "./EaCRuntime.ts";
-import { EaCRuntimeContext } from "./EaCRuntimeContext.ts";
+} from './.deps.ts';
+import { EaCRuntime } from './EaCRuntime.ts';
+import { EaCRuntimeContext } from './EaCRuntimeContext.ts';
 
 export abstract class GenericEaCRuntime<
-  TEaC extends EverythingAsCode = EverythingAsCode,
-> implements EaCRuntime<TEaC> {
+  TEaC extends EverythingAsCode = EverythingAsCode
+> implements EaCRuntime<TEaC>
+{
   protected get logger(): Logger {
     return (this.config.LoggingProvider ?? new EaCLoggingProvider()).Package;
   }
@@ -55,10 +59,10 @@ export abstract class GenericEaCRuntime<
 
     this.IoC = new IoCContainer();
 
-    this.Revision = "";
+    this.Revision = '';
 
     if (IS_BUILDING) {
-      Deno.env.set("SUPPORTS_WORKERS", "false");
+      Deno.env.set('SUPPORTS_WORKERS', 'false');
     }
   }
 
@@ -87,7 +91,7 @@ export abstract class GenericEaCRuntime<
 
     if (!this.EaC) {
       throw new Error(
-        "An EaC must be provided in the config or via a connection to an EaC Service with the EAC_API_KEY environment variable.",
+        'An EaC must be provided in the config or via a connection to an EaC Service with the EAC_API_KEY environment variable.'
       );
     }
 
@@ -97,22 +101,20 @@ export abstract class GenericEaCRuntime<
       options.configure(this);
     }
 
-    const handlers = await this.buildRuntimeHandlers();
+    const routeMatrix = await this.configureRuntimeRouteMatrix();
 
-    this.pipeline.Append(this.Middleware);
-
-    this.pipeline.Append(handlers);
+    this.configurePipeline(routeMatrix);
 
     await this.configurationFinalization();
   }
 
   public async Handle(
     request: Request,
-    info: Deno.ServeHandlerInfo,
+    info: Deno.ServeHandlerInfo
   ): Promise<Response> {
     if (this.pipeline.Pipeline?.length <= 0) {
       throw new Error(
-        `There is on pipeline properly configured for '${request.url}'.`,
+        `There is on pipeline properly configured for '${request.url}'.`
       );
     }
 
@@ -124,7 +126,7 @@ export abstract class GenericEaCRuntime<
   }
 
   protected async buildContext(
-    info: Deno.ServeHandlerInfo,
+    info: Deno.ServeHandlerInfo
   ): Promise<EaCRuntimeContext> {
     return {
       Data: {},
@@ -140,14 +142,26 @@ export abstract class GenericEaCRuntime<
     } as unknown as EaCRuntimeContext;
   }
 
-  protected abstract buildRuntimeHandlers(): Promise<EaCRuntimeHandlerSet>;
-
   protected abstract configurationFinalization(): Promise<void>;
 
   protected abstract configurationSetup(): Promise<void>;
 
+  protected configurePipeline(
+    routeMatrix: Awaited<ReturnType<typeof this.configureRuntimeRouteMatrix>>
+  ) {
+    this.pipeline.Append(this.Middleware);
+
+    const orderedRouteGroups = Object.entries(routeMatrix)
+      .sort(([_A, pA], [_B, pB]) => (pB.Priority || 0) - (pA.Priority || 0))
+      .map(([_, routeGroup]) => {
+        return this.buildRouteGroupHandlers(routeGroup);
+      });
+
+    orderedRouteGroups.forEach((handlers) => this.pipeline.Append(handlers));
+  }
+
   protected async configurePlugins(
-    plugins?: EaCRuntimePluginDef<TEaC>[],
+    plugins?: EaCRuntimePluginDef<TEaC>[]
   ): Promise<void> {
     for (let pluginDef of plugins || []) {
       const pluginKey = pluginDef as EaCRuntimePluginDef<TEaC>;
@@ -157,7 +171,7 @@ export abstract class GenericEaCRuntime<
 
         try {
           // Ensure `plugin` is a string
-          if (typeof plugin !== "string") {
+          if (typeof plugin !== 'string') {
             throw new Error(`Invalid plugin path: ${plugin}`);
           }
 
@@ -167,7 +181,7 @@ export abstract class GenericEaCRuntime<
           // Check if the module has a default export
           if (!Module?.default) {
             throw new Error(
-              `Plugin module "${plugin}" does not have a default export.`,
+              `Plugin module "${plugin}" does not have a default export.`
             );
           }
 
@@ -208,13 +222,17 @@ export abstract class GenericEaCRuntime<
     }
   }
 
+  protected abstract configureRuntimeRouteMatrix(): Promise<
+    EaCRuntimeHandlerRouteGroup[]
+  >;
+
   protected async finalizePlugins(): Promise<void> {
     const buildCalls = Array.from(this.pluginDefs.values()).map(
       async (pluginDef) => {
         const pluginCfg = this.pluginConfigs.get(pluginDef);
 
         await pluginDef.Build?.(this.EaC!, this.IoC, pluginCfg);
-      },
+      }
     );
 
     await Promise.all(buildCalls);
@@ -222,5 +240,87 @@ export abstract class GenericEaCRuntime<
     for (const pluginDef of this.pluginDefs.values() || []) {
       await pluginDef.AfterEaCResolved?.(this.EaC!, this.IoC, this.config);
     }
+  }
+
+  protected buildRouteGroupHandlers(
+    routeGroup: EaCRuntimeHandlerRouteGroup
+  ): EaCRuntimeHandler[] {
+    let configuredRoutes: EaCRuntimeHandler[] = [];
+
+    // TODO: Order by path priority logic
+    const orderedRoutes = routeGroup.Routes;
+
+    configuredRoutes.push((req, ctx) => {
+      const filteredRoutes = this.filterRoutes(req, ctx, orderedRoutes);
+
+      if (filteredRoutes.length) {
+        const rPipe = new EaCRuntimeHandlerPipeline();
+
+        for (const route of filteredRoutes) {
+          rPipe.Append(this.buildRouteGroupRouteHandler(routeGroup, route));
+
+          rPipe.Append(route.Handler);
+        }
+
+        return rPipe.Execute(req, ctx);
+      }
+
+      return ctx.Next();
+    });
+
+    if (routeGroup.Reverse) {
+      configuredRoutes = configuredRoutes.reverse();
+    }
+
+    return configuredRoutes;
+  }
+
+  protected shouldContinueToNextRoute(
+    route: EaCRuntimeHandlerRoute,
+    resp: Response
+  ): boolean {
+    const contStati = route?.ContinueStati ?? [STATUS_CODE.NotFound];
+
+    return !resp.ok && contStati.includes(resp.status);
+  }
+
+  protected buildRouteGroupRouteHandler(
+    _routeGroup: EaCRuntimeHandlerRouteGroup,
+    route: EaCRuntimeHandlerRoute
+  ): EaCRuntimeHandlerSet {
+    return async (_req, ctx) => {
+      this.logger.info(`Running route ${route.Name} for ${route.Route}...`);
+
+      let resp: ReturnType<typeof ctx.Next> = await ctx.Next();
+
+      if (this.shouldContinueToNextRoute(route, resp)) {
+        resp = ctx.Next();
+      }
+
+      return resp;
+    };
+  }
+
+  protected filterRoutes(
+    req: Request,
+    ctx: EaCRuntimeContext,
+    routes: EaCRuntimeHandlerRoute[]
+  ) {
+    const apiTestUrl = new URL(
+      `.${ctx.Runtime.URLMatch.Path}`,
+      new URL('https://notused.com')
+    );
+
+    return routes
+      .filter((route) => {
+        const isMatch = new URLPattern({ pathname: route.Route }).test(
+          apiTestUrl
+        );
+
+        return isMatch;
+      })
+      .filter((route) => {
+        return route.Activator && !route.Activator(req, ctx);
+      });
   }
 }

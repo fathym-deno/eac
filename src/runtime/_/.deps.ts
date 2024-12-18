@@ -21,6 +21,8 @@ export {
   EaCRuntimeHandlerPipeline,
   type EaCRuntimeHandlers,
   type EaCRuntimeHandlerSet,
+  type EaCRuntimeHandlerRoute,
+  type EaCRuntimeHandlerRouteGroup,
 } from "../pipelines/.exports.ts";
 
 export type {
