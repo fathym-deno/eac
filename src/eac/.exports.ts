@@ -4,6 +4,7 @@ import { resolvePath } from "./.deps.ts";
  * The core Everything as Code (EaC) types.
  * @module
  */
+export * from "./api/.exports.ts";
 export * from "./AllAnyTypes.ts";
 export * from "./EaCDetails.ts";
 export * from "./EaCEnterpriseDetails.ts";

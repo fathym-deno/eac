@@ -19,10 +19,10 @@ export type { EaCRuntimePluginDef } from "../plugins/.exports.ts";
 export {
   type EaCRuntimeHandler,
   EaCRuntimeHandlerPipeline,
-  type EaCRuntimeHandlers,
-  type EaCRuntimeHandlerSet,
   type EaCRuntimeHandlerRoute,
   type EaCRuntimeHandlerRouteGroup,
+  type EaCRuntimeHandlers,
+  type EaCRuntimeHandlerSet,
 } from "../pipelines/.exports.ts";
 
 export type {

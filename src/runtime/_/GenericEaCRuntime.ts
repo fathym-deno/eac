@@ -1,4 +1,4 @@
-import { STATUS_CODE } from 'jsr:@std/http@1.0.9/status';
+import { STATUS_CODE } from "jsr:@std/http@1.0.9/status";
 import {
   EaCLoggingProvider,
   EaCRuntimeConfig,
@@ -18,14 +18,13 @@ import {
   Logger,
   LoggingProvider,
   merge,
-} from './.deps.ts';
-import { EaCRuntime } from './EaCRuntime.ts';
-import { EaCRuntimeContext } from './EaCRuntimeContext.ts';
+} from "./.deps.ts";
+import { EaCRuntime } from "./EaCRuntime.ts";
+import { EaCRuntimeContext } from "./EaCRuntimeContext.ts";
 
 export abstract class GenericEaCRuntime<
-  TEaC extends EverythingAsCode = EverythingAsCode
-> implements EaCRuntime<TEaC>
-{
+  TEaC extends EverythingAsCode = EverythingAsCode,
+> implements EaCRuntime<TEaC> {
   protected get logger(): Logger {
     return (this.config.LoggingProvider ?? new EaCLoggingProvider()).Package;
   }
@@ -59,10 +58,10 @@ export abstract class GenericEaCRuntime<
 
     this.IoC = new IoCContainer();
 
-    this.Revision = '';
+    this.Revision = "";
 
     if (IS_BUILDING) {
-      Deno.env.set('SUPPORTS_WORKERS', 'false');
+      Deno.env.set("SUPPORTS_WORKERS", "false");
     }
   }
 
@@ -91,7 +90,7 @@ export abstract class GenericEaCRuntime<
 
     if (!this.EaC) {
       throw new Error(
-        'An EaC must be provided in the config or via a connection to an EaC Service with the EAC_API_KEY environment variable.'
+        "An EaC must be provided in the config or via a connection to an EaC Service with the EAC_API_KEY environment variable.",
       );
     }
 
@@ -110,11 +109,11 @@ export abstract class GenericEaCRuntime<
 
   public async Handle(
     request: Request,
-    info: Deno.ServeHandlerInfo
+    info: Deno.ServeHandlerInfo,
   ): Promise<Response> {
     if (this.pipeline.Pipeline?.length <= 0) {
       throw new Error(
-        `There is on pipeline properly configured for '${request.url}'.`
+        `There is on pipeline properly configured for '${request.url}'.`,
       );
     }
 
@@ -126,7 +125,7 @@ export abstract class GenericEaCRuntime<
   }
 
   protected async buildContext(
-    info: Deno.ServeHandlerInfo
+    info: Deno.ServeHandlerInfo,
   ): Promise<EaCRuntimeContext> {
     return {
       Data: {},
@@ -147,7 +146,7 @@ export abstract class GenericEaCRuntime<
   protected abstract configurationSetup(): Promise<void>;
 
   protected configurePipeline(
-    routeMatrix: Awaited<ReturnType<typeof this.configureRuntimeRouteMatrix>>
+    routeMatrix: Awaited<ReturnType<typeof this.configureRuntimeRouteMatrix>>,
   ) {
     this.pipeline.Append(this.Middleware);
 
@@ -161,7 +160,7 @@ export abstract class GenericEaCRuntime<
   }
 
   protected async configurePlugins(
-    plugins?: EaCRuntimePluginDef<TEaC>[]
+    plugins?: EaCRuntimePluginDef<TEaC>[],
   ): Promise<void> {
     for (let pluginDef of plugins || []) {
       const pluginKey = pluginDef as EaCRuntimePluginDef<TEaC>;
@@ -171,7 +170,7 @@ export abstract class GenericEaCRuntime<
 
         try {
           // Ensure `plugin` is a string
-          if (typeof plugin !== 'string') {
+          if (typeof plugin !== "string") {
             throw new Error(`Invalid plugin path: ${plugin}`);
           }
 
@@ -181,7 +180,7 @@ export abstract class GenericEaCRuntime<
           // Check if the module has a default export
           if (!Module?.default) {
             throw new Error(
-              `Plugin module "${plugin}" does not have a default export.`
+              `Plugin module "${plugin}" does not have a default export.`,
             );
           }
 
@@ -232,7 +231,7 @@ export abstract class GenericEaCRuntime<
         const pluginCfg = this.pluginConfigs.get(pluginDef);
 
         await pluginDef.Build?.(this.EaC!, this.IoC, pluginCfg);
-      }
+      },
     );
 
     await Promise.all(buildCalls);
@@ -243,7 +242,7 @@ export abstract class GenericEaCRuntime<
   }
 
   protected buildRouteGroupHandlers(
-    routeGroup: EaCRuntimeHandlerRouteGroup
+    routeGroup: EaCRuntimeHandlerRouteGroup,
   ): EaCRuntimeHandler[] {
     let configuredRoutes: EaCRuntimeHandler[] = [];
 
@@ -277,7 +276,7 @@ export abstract class GenericEaCRuntime<
 
   protected shouldContinueToNextRoute(
     route: EaCRuntimeHandlerRoute,
-    resp: Response
+    resp: Response,
   ): boolean {
     const contStati = route?.ContinueStati ?? [STATUS_CODE.NotFound];
 
@@ -286,7 +285,7 @@ export abstract class GenericEaCRuntime<
 
   protected buildRouteGroupRouteHandler(
     _routeGroup: EaCRuntimeHandlerRouteGroup,
-    route: EaCRuntimeHandlerRoute
+    route: EaCRuntimeHandlerRoute,
   ): EaCRuntimeHandlerSet {
     return async (_req, ctx) => {
       this.logger.info(`Running route ${route.Name} for ${route.Route}...`);
@@ -304,17 +303,17 @@ export abstract class GenericEaCRuntime<
   protected filterRoutes(
     req: Request,
     ctx: EaCRuntimeContext,
-    routes: EaCRuntimeHandlerRoute[]
-  ) {
+    routes: EaCRuntimeHandlerRoute[],
+  ): EaCRuntimeHandlerRoute[] {
     const apiTestUrl = new URL(
       `.${ctx.Runtime.URLMatch.Path}`,
-      new URL('https://notused.com')
+      new URL("https://notused.com"),
     );
 
     return routes
       .filter((route) => {
         const isMatch = new URLPattern({ pathname: route.Route }).test(
-          apiTestUrl
+          apiTestUrl,
         );
 
         return isMatch;
