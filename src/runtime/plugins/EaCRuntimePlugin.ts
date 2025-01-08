@@ -1,5 +1,6 @@
 import { EaCRuntimeConfig, EverythingAsCode, IoCContainer } from "./.deps.ts";
-import { EaCRuntimePluginConfig } from "./EaCRuntimePluginConfig.ts";
+import { EaCRuntimePluginConfig } from "../config/EaCRuntimePluginConfig.ts";
+import { EaCRuntimeHandlerRouteGroup } from "../pipelines/.exports.ts";
 
 export type EaCRuntimePlugin<TEaC extends EverythingAsCode = EverythingAsCode> =
   {
@@ -7,7 +8,7 @@ export type EaCRuntimePlugin<TEaC extends EverythingAsCode = EverythingAsCode> =
       eac: TEaC,
       ioc: IoCContainer,
       config: EaCRuntimeConfig<TEaC>,
-    ) => Promise<void>;
+    ) => Promise<EaCRuntimeHandlerRouteGroup[]>;
 
     Build?: (
       eac: TEaC,

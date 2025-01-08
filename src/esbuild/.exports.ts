@@ -1,4 +1,4 @@
-import * as esbuild from "npm:esbuild@0.23.1";
+import * as esbuild from "npm:esbuild@0.24.2";
 export { esbuild };
 
 export {
@@ -33,4 +33,4 @@ export type {
   OnResolveResult as ESBuildOnResolveResult,
   Plugin as ESBuildPlugin,
   PluginBuild as ESBuildPluginBuild,
-} from "npm:esbuild@0.23.1";
+} from "npm:esbuild@0.24.2";

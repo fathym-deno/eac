@@ -19,6 +19,8 @@ import {
   LoggingProvider,
   merge,
 } from "./.deps.ts";
+import { IS_DENO_DEPLOY } from "../config/.exports.ts";
+import { ESBuild } from "../../esbuild/.exports.ts";
 import { EaCRuntime } from "./EaCRuntime.ts";
 import { EaCRuntimeContext } from "./EaCRuntimeContext.ts";
 
@@ -66,23 +68,11 @@ export abstract class GenericEaCRuntime<
   }
 
   public async Configure(options?: {
-    configure?: (rt: EaCRuntime<TEaC>) => Promise<void>;
+    configure?: (
+      rt: EaCRuntime<TEaC>,
+    ) => Promise<EaCRuntimeHandlerRouteGroup[] | undefined>;
   }): Promise<void> {
-    this.Revision = await generateDirectoryHash(Deno.cwd()); //import.meta.resolve("../../"));
-
-    this.pluginConfigs = new Map();
-
-    this.pluginDefs = new Map();
-
-    this.EaC = this.config.EaC;
-
-    this.IoC = this.config.IoC || new IoCContainer();
-
-    if (this.config.LoggingProvider) {
-      this.IoC!.Register(LoggingProvider, () => this.config.LoggingProvider);
-    }
-
-    this.Middleware = this.config.Middleware || [];
+    await this.resetRuntime();
 
     await this.configurationSetup();
 
@@ -94,13 +84,11 @@ export abstract class GenericEaCRuntime<
       );
     }
 
-    await this.finalizePlugins();
+    const routeMatrix = await this.finalizePlugins();
 
     if (options?.configure) {
-      options.configure(this);
+      routeMatrix.push(...((await options.configure(this)) ?? []));
     }
-
-    const routeMatrix = await this.configureRuntimeRouteMatrix();
 
     this.configurePipeline(routeMatrix);
 
@@ -141,13 +129,103 @@ export abstract class GenericEaCRuntime<
     } as unknown as EaCRuntimeContext;
   }
 
-  protected abstract configurationFinalization(): Promise<void>;
+  protected buildRouteGroupHandlers(
+    routeGroup: EaCRuntimeHandlerRouteGroup,
+  ): EaCRuntimeHandler[] {
+    let configuredRoutes: EaCRuntimeHandler[] = [];
 
-  protected abstract configurationSetup(): Promise<void>;
+    // TODO: Order by path priority logic
+    const orderedRoutes = routeGroup.Routes;
 
-  protected configurePipeline(
-    routeMatrix: Awaited<ReturnType<typeof this.configureRuntimeRouteMatrix>>,
-  ) {
+    configuredRoutes.push((req, ctx) => {
+      const filteredRoutes = this.filterRoutes(req, ctx, orderedRoutes);
+
+      if (filteredRoutes.length) {
+        const rPipe = new EaCRuntimeHandlerPipeline();
+
+        for (const route of filteredRoutes) {
+          rPipe.Append(this.buildRouteGroupRouteHandler(routeGroup, route));
+
+          rPipe.Append(route.Handler.Execute);
+        }
+
+        return rPipe.Execute(req, ctx);
+      }
+
+      return ctx.Next();
+    });
+
+    if (routeGroup.Reverse) {
+      configuredRoutes = configuredRoutes.reverse();
+    }
+
+    return configuredRoutes;
+  }
+
+  protected buildRouteGroupRouteHandler(
+    _routeGroup: EaCRuntimeHandlerRouteGroup,
+    route: EaCRuntimeHandlerRoute,
+  ): EaCRuntimeHandlerSet {
+    return async (_req, ctx) => {
+      this.logger.info(`Running route ${route.Name} for ${route.Route}...`);
+
+      let resp: ReturnType<typeof ctx.Next> = await ctx.Next();
+
+      if (this.shouldContinueToNextRoute(route, resp)) {
+        resp = ctx.Next();
+      }
+
+      return resp;
+    };
+  }
+
+  protected async configurationFinalization(): Promise<void> {
+    const esbuild = await this.IoC.Resolve<ESBuild>(
+      this.IoC!.Symbol("ESBuild"),
+    );
+
+    esbuild!.stop();
+  }
+
+  protected async configurationSetup(): Promise<void> {
+    let esbuild: ESBuild | undefined;
+
+    try {
+      esbuild = await this.IoC.Resolve<ESBuild>(this.IoC!.Symbol("ESBuild"));
+    } catch {
+      esbuild = undefined;
+    }
+
+    if (!esbuild) {
+      if (IS_DENO_DEPLOY()) {
+        esbuild = await import("npm:esbuild-wasm@0.24.2");
+
+        this.logger.debug("Initialized esbuild with portable WASM.");
+      } else {
+        esbuild = await import("npm:esbuild@0.24.2");
+
+        this.logger.debug("Initialized esbuild with standard build.");
+      }
+
+      try {
+        const worker = IS_DENO_DEPLOY() ? false : undefined;
+
+        await esbuild!.initialize({
+          worker,
+        });
+      } catch (err) {
+        this.logger.error("There was an issue initializing esbuild", err);
+
+        // throw err;
+      }
+
+      this.IoC.Register<ESBuild>(() => esbuild!, {
+        Type: this.IoC!.Symbol("ESBuild"),
+      });
+    }
+  }
+
+  protected configurePipeline(routeMatrix: EaCRuntimeHandlerRouteGroup[]) {
     this.pipeline.Append(this.Middleware);
 
     const orderedRouteGroups = Object.entries(routeMatrix)
@@ -221,11 +299,7 @@ export abstract class GenericEaCRuntime<
     }
   }
 
-  protected abstract configureRuntimeRouteMatrix(): Promise<
-    EaCRuntimeHandlerRouteGroup[]
-  >;
-
-  protected async finalizePlugins(): Promise<void> {
+  protected async finalizePlugins(): Promise<EaCRuntimeHandlerRouteGroup[]> {
     const buildCalls = Array.from(this.pluginDefs.values()).map(
       async (pluginDef) => {
         const pluginCfg = this.pluginConfigs.get(pluginDef);
@@ -236,68 +310,24 @@ export abstract class GenericEaCRuntime<
 
     await Promise.all(buildCalls);
 
-    for (const pluginDef of this.pluginDefs.values() || []) {
-      await pluginDef.AfterEaCResolved?.(this.EaC!, this.IoC, this.config);
-    }
-  }
+    const resolveCalls = Array.from(this.pluginDefs.values()).map(
+      async (pluginDef) => {
+        const pluginCfg = this.pluginConfigs.get(pluginDef);
 
-  protected buildRouteGroupHandlers(
-    routeGroup: EaCRuntimeHandlerRouteGroup,
-  ): EaCRuntimeHandler[] {
-    let configuredRoutes: EaCRuntimeHandler[] = [];
+        return await pluginDef.AfterEaCResolved?.(
+          this.EaC!,
+          this.IoC,
+          this.config,
+        );
+      },
+    );
 
-    // TODO: Order by path priority logic
-    const orderedRoutes = routeGroup.Routes;
+    const resolved = await Promise.all(resolveCalls);
 
-    configuredRoutes.push((req, ctx) => {
-      const filteredRoutes = this.filterRoutes(req, ctx, orderedRoutes);
-
-      if (filteredRoutes.length) {
-        const rPipe = new EaCRuntimeHandlerPipeline();
-
-        for (const route of filteredRoutes) {
-          rPipe.Append(this.buildRouteGroupRouteHandler(routeGroup, route));
-
-          rPipe.Append(route.Handler);
-        }
-
-        return rPipe.Execute(req, ctx);
-      }
-
-      return ctx.Next();
-    });
-
-    if (routeGroup.Reverse) {
-      configuredRoutes = configuredRoutes.reverse();
-    }
-
-    return configuredRoutes;
-  }
-
-  protected shouldContinueToNextRoute(
-    route: EaCRuntimeHandlerRoute,
-    resp: Response,
-  ): boolean {
-    const contStati = route?.ContinueStati ?? [STATUS_CODE.NotFound];
-
-    return !resp.ok && contStati.includes(resp.status);
-  }
-
-  protected buildRouteGroupRouteHandler(
-    _routeGroup: EaCRuntimeHandlerRouteGroup,
-    route: EaCRuntimeHandlerRoute,
-  ): EaCRuntimeHandlerSet {
-    return async (_req, ctx) => {
-      this.logger.info(`Running route ${route.Name} for ${route.Route}...`);
-
-      let resp: ReturnType<typeof ctx.Next> = await ctx.Next();
-
-      if (this.shouldContinueToNextRoute(route, resp)) {
-        resp = ctx.Next();
-      }
-
-      return resp;
-    };
+    return resolved
+      .flatMap((r) => r)
+      .filter((r) => r)
+      .map((r) => r!);
   }
 
   protected filterRoutes(
@@ -321,5 +351,32 @@ export abstract class GenericEaCRuntime<
       .filter((route) => {
         return route.Activator && !route.Activator(req, ctx);
       });
+  }
+
+  protected async resetRuntime(): Promise<void> {
+    this.Revision = await generateDirectoryHash(Deno.cwd()); //import.meta.resolve("../../"));
+
+    this.pluginConfigs = new Map();
+
+    this.pluginDefs = new Map();
+
+    this.EaC = this.config.EaC;
+
+    this.IoC = this.config.IoC || new IoCContainer();
+
+    if (this.config.LoggingProvider) {
+      this.IoC!.Register(LoggingProvider, () => this.config.LoggingProvider);
+    }
+
+    this.Middleware = this.config.Middleware || [];
+  }
+
+  protected shouldContinueToNextRoute(
+    route: EaCRuntimeHandlerRoute,
+    resp: Response,
+  ): boolean {
+    const contStati = route?.ContinueStati ?? [STATUS_CODE.NotFound];
+
+    return !resp.ok && contStati.includes(resp.status);
   }
 }

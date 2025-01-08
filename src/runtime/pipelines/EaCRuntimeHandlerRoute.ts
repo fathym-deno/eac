@@ -1,5 +1,6 @@
-import { EaCRuntimeHandlerSet } from "./EaCRuntimeHandlerSet.ts";
 import { EaCRuntimeContext, EverythingAsCode } from "./.deps.ts";
+import { EaCRuntimeHandlerPipeline } from "./EaCRuntimeHandlerPipeline.ts";
+import { RouteResolverConfiguration } from "./RouteResolverConfiguration.ts";
 
 export type EaCRuntimeHandlerRoute<
   TState = Record<string, unknown>,
@@ -13,9 +14,11 @@ export type EaCRuntimeHandlerRoute<
 
   ContinueStati?: number[];
 
-  Handler: EaCRuntimeHandlerSet<TState, TData>;
+  Handler: EaCRuntimeHandlerPipeline;
 
   Name: string;
+
+  ResolverConfig: RouteResolverConfiguration;
 
   Route: string;
 };

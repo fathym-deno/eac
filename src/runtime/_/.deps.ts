@@ -10,7 +10,11 @@ export { IoCContainer } from "jsr:@fathym/ioc@0.0.13";
 
 export type { EverythingAsCode } from "../../eac/.exports.ts";
 
-export { type EaCRuntimeConfig, IS_BUILDING } from "../config/.exports.ts";
+export {
+  type EaCRuntimeConfig,
+  type EaCRuntimePluginConfig,
+  IS_BUILDING,
+} from "../config/.exports.ts";
 
 export { EaCLoggingProvider } from "../logging/.exports.ts";
 
@@ -25,7 +29,4 @@ export {
   type EaCRuntimeHandlerSet,
 } from "../pipelines/.exports.ts";
 
-export type {
-  EaCRuntimePlugin,
-  EaCRuntimePluginConfig,
-} from "../plugins/.exports.ts";
+export type { EaCRuntimePlugin } from "../plugins/.exports.ts";
