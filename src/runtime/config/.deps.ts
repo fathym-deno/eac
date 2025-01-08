@@ -2,11 +2,11 @@ export * as colors from "jsr:@std/fmt@1.0.3/colors";
 
 export { IoCContainer } from "jsr:@fathym/ioc@0.0.12";
 
-export { merge, mergeWithArrays } from "jsr:@fathym/common@0.2.168/merge";
+export { merge, mergeWithArrays } from "jsr:@fathym/common@0.2.173/merge";
 export {
   getPackageLoggerSync,
   LoggingProvider,
-} from "jsr:@fathym/common@0.2.168/log";
+} from "jsr:@fathym/common@0.2.173/log";
 
 export type { EverythingAsCode } from "../../eac/.exports.ts";
 

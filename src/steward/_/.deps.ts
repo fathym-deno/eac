@@ -5,10 +5,10 @@ export {
   type DenoKVNonce,
   enqueueAtomicOperation,
   listenQueueAtomic,
-} from "jsr:@fathym/common@0.2.168/deno-kv";
-export { LoggingProvider } from "jsr:@fathym/common@0.2.168/log";
-export { merge } from "jsr:@fathym/common@0.2.168/merge";
-export type { NullableArrayOrObject } from "jsr:@fathym/common@0.2.168/types";
+} from "jsr:@fathym/common@0.2.173/deno-kv";
+export { LoggingProvider } from "jsr:@fathym/common@0.2.173/log";
+export { merge } from "jsr:@fathym/common@0.2.173/merge";
+export type { NullableArrayOrObject } from "jsr:@fathym/common@0.2.173/types";
 
 export type {
   EaCMetadataBase,
