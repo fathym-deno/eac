@@ -13,9 +13,8 @@ export type EaCVertexDetails = {
 } & EaCMetadataBase;
 
 /**
- * `EaCVertexDetailsSchema` validates the essential details of a vertex in the EaC graph.
- * This schema includes optional fields for `Description` and `Name`, which provide context
- * and identification for vertices within the Everything as Code framework.
+ * Schema for `EaCVertexDetails`.
+ * This schema validates the essential details of a vertex in the EaC graph.
  */
 export const EaCVertexDetailsSchema: z.ZodObject<
   {
@@ -45,5 +44,26 @@ export const EaCVertexDetailsSchema: z.ZodObject<
     "Schema representing the core details of an EaC vertex, including optional fields for description and name. This structure supports clear vertex representation within the Everything as Code graph.",
   );
 
-// Define the inferred type from the schema
-export type EaCVertexDetailsSchema = z.infer<typeof EaCVertexDetailsSchema>;
+/**
+ * Type guard for `EaCVertexDetails`.
+ * Validates if the given object conforms to the `EaCVertexDetails` structure.
+ *
+ * @param details - The object to validate.
+ * @returns True if the object is a valid `EaCVertexDetails`, false otherwise.
+ */
+export function isEaCVertexDetails(
+  details: unknown,
+): details is EaCVertexDetails {
+  return EaCVertexDetailsSchema.safeParse(details).success;
+}
+
+/**
+ * Validates and parses an object as `EaCVertexDetails`.
+ *
+ * @param details - The object to validate and parse.
+ * @throws If the object does not conform to the `EaCVertexDetails` schema.
+ * @returns The parsed `EaCVertexDetails` object.
+ */
+export function parseEaCVertexDetails(details: unknown): EaCVertexDetails {
+  return EaCVertexDetailsSchema.parse(details);
+}

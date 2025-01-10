@@ -20,10 +20,9 @@ export type EaCDetails<TDetails extends EaCVertexDetails> = {
 } & EaCMetadataBase;
 
 /**
- * `EaCDetailsSchema` validates the `EaCDetails` structure, focusing on the `Details` field
- * which captures key information for each EaC node.
- *
- * - `Details`: Contains vertex-specific properties defined in `EaCVertexDetails`.
+ * Schema for `EaCDetails`.
+ * Validates the structure for Everything as Code (EaC) details, focusing on the `Details` field which
+ * captures vertex-specific properties and supports metadata extensibility.
  */
 export const EaCDetailsSchema: z.ZodObject<
   {
@@ -39,8 +38,33 @@ export const EaCDetailsSchema: z.ZodObject<
       "Contains properties specific to the EaC node, supporting consistent identification and categorization within the graph.",
     ),
   })
+  .catchall(z.unknown())
   .describe(
     "Schema for Everything as Code (EaC) details, encapsulating node-specific information in the `Details` field for structured data handling within the EaC graph.",
   );
 
-export type EaCDetailsSchema = z.infer<typeof EaCDetailsSchema>;
+/**
+ * Type guard for `EaCDetails`.
+ * Validates if the given object conforms to the `EaCDetails` structure.
+ *
+ * @param details - The object to validate.
+ * @returns True if the object is a valid `EaCDetails<EaCVertexDetails>`, false otherwise.
+ */
+export function isEaCDetails(
+  details: unknown,
+): details is EaCDetails<EaCVertexDetails> {
+  return EaCDetailsSchema.safeParse(details).success;
+}
+
+/**
+ * Validates and parses an object as `EaCDetails`.
+ *
+ * @param details - The object to validate and parse.
+ * @throws If the object does not conform to the `EaCDetailsSchema`.
+ * @returns The parsed `EaCDetails<EaCVertexDetails>` object.
+ */
+export function parseEaCDetails(
+  details: unknown,
+): EaCDetails<EaCVertexDetails> {
+  return EaCDetailsSchema.parse(details);
+}

@@ -5,7 +5,7 @@ import {
 } from "./EaCModuleActuator.ts";
 
 /**
- * The collection of EaC module actuators for use in EaC processing.
+ * Represents a collection of EaC module actuators for use in EaC processing.
  */
 export type EaCModuleActuators = {
   /**
@@ -15,9 +15,8 @@ export type EaCModuleActuators = {
 } & Record<string, EaCModuleActuator>;
 
 /**
- * `EaCModuleActuatorsSchema` is a Zod schema for validating the structure of EaC module actuators.
- * This schema includes a `$Force` flag for determining update behavior and allows for dynamic keys,
- * each mapping to a `EaCModuleActuator` configuration.
+ * Schema for `EaCModuleActuators`.
+ * Validates a collection of EaC module actuators with a `$Force` flag and dynamic keys mapping to individual `EaCModuleActuator` configurations.
  */
 export const EaCModuleActuatorsSchema: z.ZodObject<
   {
@@ -41,4 +40,28 @@ export const EaCModuleActuatorsSchema: z.ZodObject<
     "Schema for a collection of EaC module actuators, with a `$Force` flag to control update behavior and dynamic keys mapping to specific module handler configurations. This structure facilitates modular and flexible processing of EaC operations.",
   );
 
-export type EaCModuleActuatorsSchema = z.infer<typeof EaCModuleActuatorsSchema>;
+/**
+ * Type guard for `EaCModuleActuators`.
+ * Validates if the given object conforms to the `EaCModuleActuators` structure.
+ *
+ * @param actuators - The object to validate.
+ * @returns True if the object is a valid `EaCModuleActuators`, false otherwise.
+ */
+export function isEaCModuleActuators(
+  actuators: unknown,
+): actuators is EaCModuleActuators {
+  return EaCModuleActuatorsSchema.safeParse(actuators).success;
+}
+
+/**
+ * Validates and parses an object as `EaCModuleActuators`.
+ *
+ * @param actuators - The object to validate and parse.
+ * @throws If the object does not conform to the `EaCModuleActuators` schema.
+ * @returns The parsed `EaCModuleActuators` object.
+ */
+export function parseEaCModuleActuators(
+  actuators: unknown,
+): EaCModuleActuators {
+  return EaCModuleActuatorsSchema.parse(actuators);
+}

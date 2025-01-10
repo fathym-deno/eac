@@ -1,12 +1,19 @@
 import { z } from "./.deps.ts";
-import { EaCModuleActuators } from "./EaCModuleActuators.ts";
-import { EaCEnterpriseDetails } from "./EaCEnterpriseDetails.ts";
-import { EaCEnterpriseDetailsSchema } from "./EaCEnterpriseDetails.ts";
-import { EaCModuleActuatorsSchema } from "./EaCModuleActuators.ts";
+import {
+  EaCModuleActuators,
+  EaCModuleActuatorsSchema,
+} from "./EaCModuleActuators.ts";
+import {
+  EaCEnterpriseDetails,
+  EaCEnterpriseDetailsSchema,
+} from "./EaCEnterpriseDetails.ts";
 import { EaCMetadataBase } from "./EaCMetadataBase.ts";
 
 /**
  * Everything as Code (EaC).
+ *
+ * Represents the foundational structure for an EaC node, including core identification,
+ * modular configurations, and hierarchical relationships.
  */
 export type EverythingAsCode = {
   /** The module actuators for the EaC. */
@@ -20,18 +27,18 @@ export type EverythingAsCode = {
 
   /** The parent enterprise lookup for the EaC. */
   ParentEnterpriseLookup?: string;
-}; // & EaCMetadataBase;
+} & EaCMetadataBase;
 
 /**
- * `EverythingAsCodeSchema` defines the foundational structure for an EaC (Everything as Code) node,
- * which includes core identification, linkage, and modular configuration properties. This schema
- * ensures consistency and clarity when managing code-driven infrastructure or configurations.
+ * Schema for `EverythingAsCode`.
+ * Validates the structure of an EaC node, ensuring consistency in identification, configuration,
+ * and hierarchical linking properties.
  */
 export const EverythingAsCodeSchema: z.ZodObject<
   {
+    Actuators: z.ZodOptional<typeof EaCModuleActuatorsSchema>;
     Details: z.ZodOptional<typeof EaCEnterpriseDetailsSchema>;
     EnterpriseLookup: z.ZodOptional<z.ZodString>;
-    Handlers: z.ZodOptional<typeof EaCModuleActuatorsSchema>;
     ParentEnterpriseLookup: z.ZodOptional<z.ZodString>;
   },
   "strip",
@@ -40,17 +47,18 @@ export const EverythingAsCodeSchema: z.ZodObject<
   EverythingAsCode
 > = z
   .object({
-    Details: EaCEnterpriseDetailsSchema.optional(),
-
+    Actuators: EaCModuleActuatorsSchema.optional().describe(
+      "A collection of module actuators, defining modular configurations for EaC processing.",
+    ),
+    Details: EaCEnterpriseDetailsSchema.optional().describe(
+      "Core details for the EaC node, including properties specific to the node's role and purpose.",
+    ),
     EnterpriseLookup: z
       .string()
       .optional()
       .describe(
         "A unique identifier for the enterprise, enabling efficient referencing and management within an EaC ecosystem.",
       ),
-
-    Handlers: EaCModuleActuatorsSchema.optional(),
-
     ParentEnterpriseLookup: z
       .string()
       .optional()
@@ -59,19 +67,27 @@ export const EverythingAsCodeSchema: z.ZodObject<
       ),
   })
   .describe(
-    "Schema for `EverythingAsCode`, defining the essential structure for managing EaC nodes. This schema includes details, enterprise identifiers, module handlers, and hierarchical linking properties to facilitate dynamic and scalable code management.",
+    "Schema for `EverythingAsCode`, defining the essential structure for managing EaC nodes. This schema includes actuators, details, enterprise identifiers, and hierarchical properties to enable dynamic and scalable code management.",
   );
 
-export type EverythingAsCodeSchema = z.infer<typeof EverythingAsCodeSchema>;
+/**
+ * Type guard for `EverythingAsCode`.
+ * Validates if the given object conforms to the `EverythingAsCode` structure.
+ *
+ * @param value - The object to validate.
+ * @returns True if the object is a valid `EverythingAsCode`, false otherwise.
+ */
+export function isEverythingAsCode(value: unknown): value is EverythingAsCode {
+  return EverythingAsCodeSchema.safeParse(value).success;
+}
 
 /**
- * EaC Diff represents the difference between two versions of the Everything as Code graph, omitting the enterprise lookup, parent enterprise lookup and details.
+ * Validates and parses an object as `EverythingAsCode`.
+ *
+ * @param value - The object to validate and parse.
+ * @throws If the object does not conform to the `EverythingAsCodeSchema`.
+ * @returns The parsed `EverythingAsCode` object.
  */
-export type EaCDiff = Omit<
-  EverythingAsCode,
-  "EnterpriseLookup" | "ParentEnterpriseLookup" | "Details"
->;
-
-//   AccessRights?: { [key: string]: EaCAccessRightAsCode };
-//   Hosts?: { [key: string]: EaCHostAsCode };
-//   PrimaryHost?: string;
+export function parseEverythingAsCode(value: unknown): EverythingAsCode {
+  return EverythingAsCodeSchema.parse(value);
+}
