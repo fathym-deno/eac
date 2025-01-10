@@ -7,14 +7,14 @@ export type EaCModuleActuator = {
   /** API path for this module. */
   APIPath: string;
 
-  /** Order for this module in processing. Modules are process in parallel when sharing an order. */
+  /** Order for this module in processing. Modules are processed in parallel when sharing an order. */
   Order: number;
 };
 
 /**
- * `EaCModuleActuatorSchema` represents a configuration for handling a specific EaC module,
- * including its API path and processing order. This schema ensures a consistent structure for
- * module handlers, supporting reliable sequencing and modular API configuration within the EaC environment.
+ * Schema for `EaCModuleActuator`.
+ * This schema validates a configuration for handling a specific EaC module,
+ * ensuring consistency for API paths and processing order.
  */
 export const EaCModuleActuatorSchema: z.ZodObject<
   {
@@ -42,4 +42,28 @@ export const EaCModuleActuatorSchema: z.ZodObject<
     "Schema for an EaC module actuator, defining the API path and processing order. This schema supports structured, sequential, or parallel handling of modules in EaC processing environments.",
   );
 
-export type EaCModuleActuatorSchema = z.infer<typeof EaCModuleActuatorSchema>;
+/**
+ * Type guard for `EaCModuleActuator`.
+ * Validates if the given object conforms to the `EaCModuleActuator` structure.
+ *
+ * @param actuator - The object to validate.
+ * @returns True if the object is a valid `EaCModuleActuator`, false otherwise.
+ */
+export function isEaCModuleActuator(
+  actuator: unknown,
+): actuator is EaCModuleActuator {
+  return EaCModuleActuatorSchema.safeParse(actuator).success;
+}
+
+/**
+ * Validates and parses an object as `EaCModuleActuator`.
+ *
+ * @param actuator - The object to validate and parse.
+ * @throws If the object does not conform to the `EaCModuleActuator` schema.
+ * @returns The parsed `EaCModuleActuator` object.
+ */
+export function parseEaCModuleActuator(
+  actuator: unknown,
+): EaCModuleActuator {
+  return EaCModuleActuatorSchema.parse(actuator);
+}
