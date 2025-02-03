@@ -1,5 +1,5 @@
 import { z } from "./.deps.ts";
-import { EaCMetadataBase } from "./EaCMetadataBase.ts";
+import { EaCMetadataBase, EaCMetadataBaseSchema } from "./EaCMetadataBase.ts";
 
 /**
  * Details about a vertex in the Everything as Code (EaC) graph.
@@ -25,8 +25,8 @@ export const EaCVertexDetailsSchema: z.ZodObject<
   z.ZodTypeAny,
   EaCVertexDetails,
   EaCVertexDetails
-> = z
-  .object({
+> = EaCMetadataBaseSchema.merge(
+  z.object({
     Description: z
       .string()
       .optional()
@@ -39,10 +39,10 @@ export const EaCVertexDetailsSchema: z.ZodObject<
       .describe(
         "An optional name for identifying the vertex, supporting easier referencing within the EaC graph.",
       ),
-  })
-  .describe(
-    "Schema representing the core details of an EaC vertex, including optional fields for description and name. This structure supports clear vertex representation within the Everything as Code graph.",
-  );
+  }),
+).describe(
+  "Schema representing the core details of an EaC vertex, including optional fields for description and name. This structure supports clear vertex representation within the Everything as Code graph.",
+);
 
 /**
  * Type guard for `EaCVertexDetails`.

@@ -8,20 +8,19 @@ Deno.test("EaCMetadataBase Tests", async (t) => {
   await t.step("Valid values should pass", () => {
     assertEquals(isEaCMetadataBase({ key: "value" }), true);
     assertEquals(isEaCMetadataBase({ 42: "numberKey" }), true);
-    assertEquals(isEaCMetadataBase(undefined), true);
   });
 
   await t.step("Invalid values should fail", () => {
     assertEquals(isEaCMetadataBase(42), false);
     assertEquals(isEaCMetadataBase(null), false);
     assertEquals(isEaCMetadataBase("string"), false);
+    assertEquals(isEaCMetadataBase(undefined), false);
   });
 
   await t.step(
     "parseEaCMetadataBase should return correct values for valid inputs",
     () => {
-      assertEquals(parseEaCMetadataBase({ key: "value" }), { key: "value" });
-      assertEquals(parseEaCMetadataBase(undefined), undefined);
+      assertEquals(parseEaCMetadataBase({ key: "value" }).key, "value");
     },
   );
 
@@ -29,5 +28,6 @@ Deno.test("EaCMetadataBase Tests", async (t) => {
     assertThrows(() => parseEaCMetadataBase(42));
     assertThrows(() => parseEaCMetadataBase(null));
     assertThrows(() => parseEaCMetadataBase("string"));
+    assertThrows(() => parseEaCMetadataBase(undefined));
   });
 });

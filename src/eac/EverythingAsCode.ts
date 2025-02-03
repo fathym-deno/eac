@@ -7,7 +7,7 @@ import {
   EaCEnterpriseDetails,
   EaCEnterpriseDetailsSchema,
 } from "./EaCEnterpriseDetails.ts";
-import { EaCMetadataBase } from "./EaCMetadataBase.ts";
+import { EaCMetadataBase, EaCMetadataBaseSchema } from "./EaCMetadataBase.ts";
 
 /**
  * Everything as Code (EaC).
@@ -45,8 +45,8 @@ export const EverythingAsCodeSchema: z.ZodObject<
   z.ZodTypeAny,
   EverythingAsCode,
   EverythingAsCode
-> = z
-  .object({
+> = EaCMetadataBaseSchema.merge(
+  z.object({
     Actuators: EaCModuleActuatorsSchema.optional().describe(
       "A collection of module actuators, defining modular configurations for EaC processing.",
     ),
@@ -65,10 +65,10 @@ export const EverythingAsCodeSchema: z.ZodObject<
       .describe(
         "A unique identifier for a parent enterprise, allowing hierarchical relationships within an EaC ecosystem.",
       ),
-  })
-  .describe(
-    "Schema for `EverythingAsCode`, defining the essential structure for managing EaC nodes. This schema includes actuators, details, enterprise identifiers, and hierarchical properties to enable dynamic and scalable code management.",
-  );
+  }),
+).describe(
+  "Schema for `EverythingAsCode`, defining the essential structure for managing EaC nodes. This schema includes actuators, details, enterprise identifiers, hierarchical properties, and extensible metadata to enable dynamic and scalable code management.",
+);
 
 /**
  * Type guard for `EverythingAsCode`.

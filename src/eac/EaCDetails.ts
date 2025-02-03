@@ -3,7 +3,7 @@ import {
   EaCVertexDetails,
   EaCVertexDetailsSchema,
 } from "./EaCVertexDetails.ts";
-import { EaCMetadataBase } from "./EaCMetadataBase.ts";
+import { EaCMetadataBase, EaCMetadataBaseSchema } from "./EaCMetadataBase.ts";
 
 /**
  * Everything as Code (EaC) details.
@@ -32,16 +32,17 @@ export const EaCDetailsSchema: z.ZodObject<
   z.ZodTypeAny,
   EaCDetails<EaCVertexDetails>,
   EaCDetails<EaCVertexDetails>
-> = z
-  .object({
-    Details: EaCVertexDetailsSchema.optional().describe(
-      "Contains properties specific to the EaC node, supporting consistent identification and categorization within the graph.",
-    ),
-  })
-  .catchall(z.unknown())
-  .describe(
-    "Schema for Everything as Code (EaC) details, encapsulating node-specific information in the `Details` field for structured data handling within the EaC graph.",
-  );
+> = EaCMetadataBaseSchema.merge(
+  z
+    .object({
+      Details: EaCVertexDetailsSchema.optional().describe(
+        "Contains properties specific to the EaC node, supporting consistent identification and categorization within the graph.",
+      ),
+    })
+    .catchall(z.unknown()),
+).describe(
+  "Schema for Everything as Code (EaC) details, encapsulating node-specific information in the `Details` field for structured data handling within the EaC graph.",
+);
 
 /**
  * Type guard for `EaCDetails`.

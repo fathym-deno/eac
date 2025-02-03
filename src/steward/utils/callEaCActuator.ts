@@ -35,7 +35,10 @@ export async function callEaCActuator<T extends EaCMetadataBase>(
   Errors: EaCActuatorErrorResponse[];
   Result: T;
 }> {
-  const current = (currentEaC[key as keyof typeof currentEaC] || {}) as T;
+  const current = (currentEaC[key as keyof typeof currentEaC] || {}) as Record<
+    string,
+    unknown
+  >;
 
   const parentEaC = currentEaC?.ParentEnterpriseLookup
     ? await loadEac(currentEaC.ParentEnterpriseLookup)
@@ -112,13 +115,13 @@ export async function callEaCActuator<T extends EaCMetadataBase>(
     return {
       Checks: checks,
       Errors: errors,
-      Result: current,
+      Result: current as T,
     };
   } else {
     return {
       Checks: [],
       Errors: [],
-      Result: current,
+      Result: current as T,
     };
   }
 }

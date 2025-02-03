@@ -4,21 +4,23 @@ import { z } from "./.deps.ts";
  * The base type for Everything as Code (EaC) to create open EaC types.
  * This represents an extensible metadata structure with arbitrary keys and values.
  */
-export type EaCMetadataBase =
-  | Record<string | number | symbol, unknown>
-  | undefined;
+export type EaCMetadataBase = Record<string, unknown>;
 
 /**
  * Schema for `EaCMetadataBase`.
- * Validates that the object is either an extensible metadata structure (record of arbitrary keys and values) or undefined.
+ * Validates that the object is an extensible metadata structure with arbitrary keys and values.
  */
-export const EaCMetadataBaseSchema: z.ZodType<EaCMetadataBase> = z
-  .union([
-    z.record(z.union([z.string(), z.number(), z.symbol()]), z.unknown()),
-    z.undefined(),
-  ])
+export const EaCMetadataBaseSchema: z.ZodObject<
+  {},
+  "strip",
+  z.ZodUnknown,
+  z.objectOutputType<{}, z.ZodUnknown, "strip">,
+  z.objectInputType<{}, z.ZodUnknown, "strip">
+> = z
+  .object({})
+  .catchall(z.unknown()) // Allows arbitrary key-value pairs for extensibility
   .describe(
-    "Schema for EaCMetadataBase, allowing an open metadata structure with arbitrary keys and values or undefined.",
+    "Schema for EaCMetadataBase, allowing an open metadata structure with arbitrary keys and values.",
   );
 
 /**
