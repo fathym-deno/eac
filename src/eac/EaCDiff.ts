@@ -21,9 +21,11 @@ export const EaCDiffSchema = EverythingAsCodeSchema.omit({
   EnterpriseLookup: true,
   ParentEnterpriseLookup: true,
   Details: true,
-}).describe(
-  "Schema for EaCDiff, representing differences between two Everything as Code (EaC) graphs, excluding `EnterpriseLookup`, `ParentEnterpriseLookup`, and `Details`.",
-);
+})
+  .catchall(z.unknown())
+  .describe(
+    "Schema for EaCDiff, representing differences between two Everything as Code (EaC) graphs, excluding `EnterpriseLookup`, `ParentEnterpriseLookup`, and `Details`.",
+  );
 
 /**
  * Type guard for `EaCDiff`.
