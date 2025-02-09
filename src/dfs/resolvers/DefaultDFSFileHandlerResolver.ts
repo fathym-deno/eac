@@ -3,6 +3,7 @@ import {
   DFSFileHandlerResolver,
   EaCDistributedFileSystemDetails,
   IoCContainer,
+  isEaCAzureBlobStorageDistributedFileSystemDetails,
   isEaCDenoKVDistributedFileSystemDetails,
   isEaCESMDistributedFileSystemDetails,
   isEaCJSRDistributedFileSystemDetails,
@@ -20,6 +21,8 @@ export class DefaultDFSFileHandlerResolver implements DFSFileHandlerResolver {
 
     if (dfs.WorkerPath) {
       toResolveName = "EaCWorkerDistributedFileSystem";
+    } else if (isEaCAzureBlobStorageDistributedFileSystemDetails(dfs)) {
+      toResolveName = "EaCAzureBlobStorageDistributedFileSystem";
     } else if (isEaCDenoKVDistributedFileSystemDetails(dfs)) {
       toResolveName = "EaCDenoKVDistributedFileSystem";
     } else if (isEaCESMDistributedFileSystemDetails(dfs)) {

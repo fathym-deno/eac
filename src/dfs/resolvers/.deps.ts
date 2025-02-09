@@ -9,6 +9,7 @@ export { IoCContainer } from "jsr:@fathym/ioc@0.0.13";
 
 export {
   type EaCDistributedFileSystemDetails,
+  isEaCAzureBlobStorageDistributedFileSystemDetails,
   isEaCDenoKVDistributedFileSystemDetails,
   isEaCESMDistributedFileSystemDetails,
   isEaCJSRDistributedFileSystemDetails,
