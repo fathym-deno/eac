@@ -1,15 +1,15 @@
 import {
   DFSFileHandlerResolver,
-  EaCJSRDistributedFileSystemHandlerResolver,
+  EaCAzureBlobStorageDistributedFileSystemHandlerResolver,
 } from "./.deps.ts";
 import { EaCDistributedFileSystemWorker } from "./EaCDistributedFileSystemWorker.ts";
 
-export class EaCJSRDistributedFileSystemWorker
+export class EaCAzureBlobStorageDistributedFileSystemWorker
   extends EaCDistributedFileSystemWorker {
   protected loadDFSHandlerResolver(): DFSFileHandlerResolver {
-    return EaCJSRDistributedFileSystemHandlerResolver;
+    return EaCAzureBlobStorageDistributedFileSystemHandlerResolver;
   }
 }
 
 // deno-lint-ignore no-explicit-any
-new EaCJSRDistributedFileSystemWorker(self as any);
+new EaCAzureBlobStorageDistributedFileSystemWorker(self as any);

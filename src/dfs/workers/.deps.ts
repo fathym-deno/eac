@@ -20,6 +20,7 @@ export type {
 } from "../handlers/.exports.ts";
 
 export {
+  EaCAzureBlobStorageDistributedFileSystemHandlerResolver,
   EaCDenoKVDistributedFileSystemHandlerResolver,
   EaCESMDistributedFileSystemHandlerResolver,
   EaCJSRDistributedFileSystemHandlerResolver,
