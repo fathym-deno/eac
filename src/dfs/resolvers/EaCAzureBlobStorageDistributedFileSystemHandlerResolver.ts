@@ -30,7 +30,11 @@ export const EaCAzureBlobStorageDistributedFileSystemHandlerResolver:
         );
         const fileRoot = dfs.FileRoot || "";
 
-        const handler = buildAzureBlobDFSFileHandler(containerClient, fileRoot);
+        const handler = buildAzureBlobDFSFileHandler(
+          dfs.ConnectionString,
+          containerClient,
+          fileRoot,
+        );
 
         handler.LoadAllPaths = async (_revision: string) => {
           try {
@@ -53,68 +57,70 @@ export const EaCAzureBlobStorageDistributedFileSystemHandlerResolver:
         work();
       }, 60 * 1000);
 
-      return {
-        get Root() {
-          return handler.Root;
-        },
+      return handler;
+      // return {
+      //   get Root() {
+      //     return handler.Root;
+      //   },
 
-        GetFileInfo(
-          filePath: string,
-          revision: string,
-          defaultFileName?: string,
-          extensions?: string[],
-          useCascading?: boolean,
-          cacheDb?: Deno.Kv,
-          cacheSeconds?: number,
-        ) {
-          return handler.GetFileInfo(
-            path.join(dfs.FileRoot || "", filePath),
-            revision,
-            defaultFileName,
-            extensions,
-            useCascading,
-            cacheDb,
-            cacheSeconds,
-          );
-        },
+      //   GetFileInfo(
+      //     filePath: string,
+      //     revision: string,
+      //     defaultFileName?: string,
+      //     extensions?: string[],
+      //     useCascading?: boolean,
+      //     cacheDb?: Deno.Kv,
+      //     cacheSeconds?: number,
+      //   ) {
+      //     return handler.GetFileInfo(
+      //       path.join(dfs.FileRoot || "", filePath),
+      //       revision,
+      //       defaultFileName,
+      //       extensions,
+      //       useCascading,
+      //       cacheDb,
+      //       cacheSeconds,
+      //     );
+      //   },
 
-        async LoadAllPaths(revision: string) {
-          const allPaths = await handler.LoadAllPaths(revision);
+      //   async LoadAllPaths(revision: string) {
+      //     debugger;
+      //     const allPaths = await handler.LoadAllPaths(revision);
 
-          return allPaths.map((filePath) =>
-            dfs.FileRoot && filePath.startsWith(dfs.FileRoot)
-              ? filePath.replace(dfs.FileRoot, "")
-              : filePath
-          );
-        },
+      //     return allPaths.map((filePath) =>
+      //       dfs.FileRoot && filePath.startsWith(dfs.FileRoot)
+      //         ? filePath.replace(dfs.FileRoot, "")
+      //         : filePath
+      //     );
+      //   },
 
-        RemoveFile(filePath: string, revision: string, cacheDb?: Deno.Kv) {
-          return handler.RemoveFile(
-            path.join(dfs.FileRoot || "", filePath),
-            revision,
-            cacheDb,
-          );
-        },
+      //   RemoveFile(filePath: string, revision: string, cacheDb?: Deno.Kv) {
+      //     return handler.RemoveFile(
+      //       path.join(dfs.FileRoot || "", filePath),
+      //       revision,
+      //       cacheDb,
+      //     );
+      //   },
 
-        WriteFile(
-          filePath: string,
-          revision: string,
-          stream: ReadableStream<Uint8Array>,
-          ttlSeconds?: number,
-          headers?: Headers,
-          maxChunkSize?: number,
-          cacheDb?: Deno.Kv,
-        ) {
-          return handler.WriteFile(
-            path.join(dfs.FileRoot || "", filePath),
-            revision,
-            stream,
-            ttlSeconds,
-            headers,
-            maxChunkSize,
-            cacheDb,
-          );
-        },
-      };
+      //   WriteFile(
+      //     filePath: string,
+      //     revision: string,
+      //     stream: ReadableStream<Uint8Array>,
+      //     ttlSeconds?: number,
+      //     headers?: Headers,
+      //     maxChunkSize?: number,
+      //     cacheDb?: Deno.Kv,
+      //   ) {
+      //     return handler.WriteFile(
+      //       path.join(dfs.FileRoot || "", filePath),
+      //       revision,
+      //       stream,
+      //       ttlSeconds,
+      //       headers,
+      //       maxChunkSize,
+      //       cacheDb,
+      //     );
+      //   },
+      // };
     },
   };

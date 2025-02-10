@@ -1,9 +1,15 @@
-import { BlobServiceClient } from "npm:@azure/storage-blob@12.26.0";
+import {
+  BlobSASPermissions,
+  BlobServiceClient,
+  generateBlobSASQueryParameters,
+  StorageSharedKeyCredential,
+} from "npm:@azure/storage-blob@12.26.0";
 import { getFileCheckPathsToProcess, withDFSCache } from "./.deps.ts";
 import { DFSFileHandler } from "./DFSFileHandler.ts";
 import { DFSFileInfo } from "./DFSFileInfo.ts";
 
 export const buildAzureBlobDFSFileHandler = (
+  connectionString: string,
   containerClient: ReturnType<BlobServiceClient["getContainerClient"]>,
   fileRoot: string,
 ): DFSFileHandler => {
@@ -22,36 +28,75 @@ export const buildAzureBlobDFSFileHandler = (
       return await withDFSCache(
         finalFilePath,
         async () => {
-          // Get all possible paths to check
           const fileCheckPaths = getFileCheckPathsToProcess(
             filePath,
             defaultFileName,
             extensions,
             useCascading,
           );
+          const fileChecks: Promise<{
+            path: string;
+            exists: boolean;
+            info?: DFSFileInfo;
+          }>[] = [];
 
-          for (const checkPath of fileCheckPaths) {
-            const fullPath = fileRoot ? `${fileRoot}/${checkPath}` : checkPath;
+          fileCheckPaths.forEach((checkPath) => {
+            const fullPath = fileRoot
+              ? `${fileRoot}${checkPath}`.slice(2).replace("//", "/")
+              : checkPath;
             const blobClient = containerClient.getBlobClient(fullPath);
 
-            try {
-              const properties = await blobClient.getProperties();
-              finalFilePath = checkPath;
+            fileChecks.push(
+              (async () => {
+                try {
+                  // **Fast Existence Check**
+                  // if (!(await blobClient.exists())) {
+                  //   return { path: checkPath, exists: false };
+                  // }
 
-              return {
-                Path: finalFilePath,
-                Headers: {
-                  "last-modified": properties.lastModified?.toISOString() || "",
-                  "content-length": properties.contentLength?.toString() || "0",
-                },
-                Contents: (await blobClient.download()).readableStreamBody!,
-              };
-              // deno-lint-ignore no-explicit-any
-            } catch (error: any) {
-              if (error.statusCode !== 404) {
-                throw error;
-              }
-            }
+                  // **Directly Download Contents Without Metadata**
+                  const sasToken = getSasToken(
+                    connectionString,
+                    containerClient.containerName,
+                    blobClient.name,
+                  );
+
+                  // const resp = await fetch(`${blobClient.url}?${sasToken}`);
+                  const resp = await fetch(blobClient.url);
+
+                  if (!resp.ok) {
+                    return { path: checkPath, exists: false };
+                  }
+
+                  return {
+                    path: checkPath,
+                    exists: true,
+                    info: {
+                      Path: checkPath,
+                      Headers: {
+                        // 'content-length':
+                        //   downloadResponse.contentLength?.toString() || '0',
+                      },
+                      Contents: resp.body!,
+                    },
+                  };
+                  // deno-lint-ignore no-explicit-any
+                } catch (error: any) {
+                  if (error.statusCode === 404) {
+                    return { path: checkPath, exists: false };
+                  }
+                  throw error;
+                }
+              })(),
+            );
+          });
+
+          const fileResults = await Promise.all(fileChecks);
+          const foundFile = fileResults.find((res) => res.exists);
+
+          if (foundFile) {
+            finalFilePath = foundFile.path;
+            return foundFile.info;
           }
 
           return undefined;
@@ -82,7 +127,9 @@ export const buildAzureBlobDFSFileHandler = (
     },
 
     async RemoveFile(filePath: string, _revision: string, _cacheDb?: Deno.Kv) {
-      const fullPath = fileRoot ? `${fileRoot}/${filePath}` : filePath;
+      const fullPath = fileRoot
+        ? `${fileRoot}${filePath}`.slice(2).replace("//", "/")
+        : filePath;
       const blobClient = containerClient.getBlobClient(fullPath);
       await blobClient.deleteIfExists();
     },
@@ -96,9 +143,57 @@ export const buildAzureBlobDFSFileHandler = (
       _maxChunkSize = 8000,
       _cacheDb?: Deno.Kv,
     ) {
-      const fullPath = fileRoot ? `${fileRoot}/${filePath}` : filePath;
+      const fullPath = fileRoot
+        ? `${fileRoot}${filePath}`.slice(2).replace("//", "/")
+        : filePath;
       const blockBlobClient = containerClient.getBlockBlobClient(fullPath);
       await blockBlobClient.uploadStream(stream);
     },
   };
 };
+
+function parseConnectionString(connectionString: string) {
+  const matches = connectionString.match(
+    /AccountName=([^;]+);AccountKey=([^;]+)/,
+  );
+  if (!matches) {
+    throw new Error("Invalid Azure Storage connection string format.");
+  }
+
+  return {
+    accountName: matches[1],
+    accountKey: matches[2],
+  };
+}
+
+async function getSasToken(
+  connectionString: string,
+  containerName: string,
+  blobName: string,
+  expiryMinutes = 60,
+): Promise<string> {
+  const { accountName, accountKey } = parseConnectionString(connectionString);
+
+  // ✅ Create a shared key credential
+  const sharedKeyCredential = new StorageSharedKeyCredential(
+    accountName,
+    accountKey,
+  );
+
+  // ✅ Define permissions (read-only access)
+  const permissions = new BlobSASPermissions();
+  permissions.read = true;
+
+  // ✅ Generate SAS token
+  const sasToken = generateBlobSASQueryParameters(
+    {
+      containerName,
+      blobName,
+      permissions,
+      expiresOn: new Date(new Date().valueOf() + expiryMinutes * 60 * 1000), // 1 hour expiry
+    },
+    sharedKeyCredential,
+  ).toString();
+
+  return sasToken;
+}
