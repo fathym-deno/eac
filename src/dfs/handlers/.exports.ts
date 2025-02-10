@@ -1,3 +1,4 @@
+export * from "./buildAzureBlobDFSFileHandler.ts";
 export * from "./buildDenoKVDFSFileHandler.ts";
 export * from "./buildFetchDFSFileHandler.ts";
 export * from "./buildLocalDFSFileHandler.ts";

@@ -19,6 +19,7 @@ export {
 } from "../_/.exports.ts";
 
 export {
+  buildAzureBlobDFSFileHandler,
   buildDenoKVDFSFileHandler,
   buildFetchDFSFileHandler,
   buildLocalDFSFileHandler,

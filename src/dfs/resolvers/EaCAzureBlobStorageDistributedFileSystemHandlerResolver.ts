@@ -1,4 +1,5 @@
 import {
+  buildAzureBlobDFSFileHandler,
   DFSFileHandler,
   DFSFileHandlerResolver,
   getPackageLogger,
@@ -27,104 +28,17 @@ export const EaCAzureBlobStorageDistributedFileSystemHandlerResolver:
         const containerClient = blobServiceClient.getContainerClient(
           dfs.Container,
         );
+        const fileRoot = dfs.FileRoot || "";
 
-        const handler: DFSFileHandler = {
-          get Root() {
-            return dfs.FileRoot || "";
-          },
+        const handler = buildAzureBlobDFSFileHandler(containerClient, fileRoot);
 
-          async GetFileInfo(
-            filePath: string,
-            _revision: string,
-            defaultFileName?: string,
-            extensions?: string[],
-            useCascading?: boolean,
-            cacheDb?: Deno.Kv,
-            cacheSeconds?: number,
-          ) {
-            const fullPath = path.join(dfs.FileRoot || "", filePath);
-            const blobClient = containerClient.getBlobClient(fullPath);
-
-            try {
-              const properties = await blobClient.getProperties();
-
-              return {
-                Path: fullPath,
-                Headers: {
-                  "last-modified": properties.lastModified?.toISOString() || "",
-                  "content-length": properties.contentLength?.toString() || "0",
-                },
-                Contents: (await blobClient.download()).readableStreamBody,
-              };
-              // deno-lint-ignore no-explicit-any
-            } catch (error: any) {
-              if (error.statusCode === 404) {
-                return undefined; // File does not exist
-              }
-              logger.error(`Error retrieving file info: ${fullPath}`, error);
-              throw error;
-            }
-          },
-
-          async LoadAllPaths(_revision: string) {
-            const filePaths: string[] = [];
-
-            try {
-              for await (const blob of containerClient.listBlobsFlat()) {
-                if (dfs.FileRoot && !blob.name.startsWith(dfs.FileRoot)) {
-                  continue;
-                }
-                filePaths.push(blob.name);
-              }
-
-              return filePaths.map((filePath) =>
-                dfs.FileRoot && filePath.startsWith(dfs.FileRoot)
-                  ? filePath.replace(dfs.FileRoot, "")
-                  : filePath
-              );
-            } catch (error) {
-              logger.error("Error listing blob storage paths", error);
-              throw error;
-            }
-          },
-
-          async RemoveFile(
-            filePath: string,
-            _revision: string,
-            _cacheDb?: Deno.Kv,
-          ) {
-            const fullPath = path.join(dfs.FileRoot || "", filePath);
-            const blobClient = containerClient.getBlobClient(fullPath);
-
-            try {
-              await blobClient.deleteIfExists();
-            } catch (error) {
-              logger.error(`Error removing file: ${fullPath}`, error);
-              throw error;
-            }
-          },
-
-          async WriteFile(
-            filePath: string,
-            _revision: string,
-            stream: ReadableStream<Uint8Array>,
-            ttlSeconds?: number,
-            headers?: Headers,
-            maxChunkSize?: number,
-            cacheDb?: Deno.Kv,
-          ) {
-            const fullPath = path.join(dfs.FileRoot || "", filePath);
-            const blockBlobClient = containerClient.getBlockBlobClient(
-              fullPath,
-            );
-
-            try {
-              await blockBlobClient.uploadStream(stream);
-            } catch (error) {
-              logger.error(`Error writing file: ${fullPath}`, error);
-              throw error;
-            }
-          },
+        handler.LoadAllPaths = async (_revision: string) => {
+          try {
+            return await handler.LoadAllPaths(_revision);
+          } catch (err) {
+            logger.error("Error listing blob storage paths", err);
+            throw err;
+          }
         };
 
         return handler;
@@ -139,6 +53,68 @@ export const EaCAzureBlobStorageDistributedFileSystemHandlerResolver:
         work();
       }, 60 * 1000);
 
-      return handler;
+      return {
+        get Root() {
+          return handler.Root;
+        },
+
+        GetFileInfo(
+          filePath: string,
+          revision: string,
+          defaultFileName?: string,
+          extensions?: string[],
+          useCascading?: boolean,
+          cacheDb?: Deno.Kv,
+          cacheSeconds?: number,
+        ) {
+          return handler.GetFileInfo(
+            path.join(dfs.FileRoot || "", filePath),
+            revision,
+            defaultFileName,
+            extensions,
+            useCascading,
+            cacheDb,
+            cacheSeconds,
+          );
+        },
+
+        async LoadAllPaths(revision: string) {
+          const allPaths = await handler.LoadAllPaths(revision);
+
+          return allPaths.map((filePath) =>
+            dfs.FileRoot && filePath.startsWith(dfs.FileRoot)
+              ? filePath.replace(dfs.FileRoot, "")
+              : filePath
+          );
+        },
+
+        RemoveFile(filePath: string, revision: string, cacheDb?: Deno.Kv) {
+          return handler.RemoveFile(
+            path.join(dfs.FileRoot || "", filePath),
+            revision,
+            cacheDb,
+          );
+        },
+
+        WriteFile(
+          filePath: string,
+          revision: string,
+          stream: ReadableStream<Uint8Array>,
+          ttlSeconds?: number,
+          headers?: Headers,
+          maxChunkSize?: number,
+          cacheDb?: Deno.Kv,
+        ) {
+          return handler.WriteFile(
+            path.join(dfs.FileRoot || "", filePath),
+            revision,
+            stream,
+            ttlSeconds,
+            headers,
+            maxChunkSize,
+            cacheDb,
+          );
+        },
+      };
     },
   };
