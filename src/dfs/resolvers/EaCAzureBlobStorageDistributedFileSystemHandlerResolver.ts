@@ -1,3 +1,4 @@
+import { DistributedFileSystemOptions } from "../_/DistributedFileSystemOptions.ts";
 import {
   buildAzureBlobDFSFileHandler,
   DFSFileHandler,

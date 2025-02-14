@@ -1,7 +1,10 @@
+import { DistributedFileSystemOptions } from "./DistributedFileSystemOptions.ts";
 import { EaCDistributedFileSystemAsCode } from "./EaCDistributedFileSystemAsCode.ts";
 
 export type EverythingAsCodeDFS = {
-  DFSs?: Record<string, EaCDistributedFileSystemAsCode>;
+  DFSs?:
+    & DistributedFileSystemOptions
+    & Record<string, EaCDistributedFileSystemAsCode>;
 };
 
 export function isEverythingAsCodeDFS(
