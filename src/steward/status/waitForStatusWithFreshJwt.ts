@@ -11,7 +11,7 @@ export async function waitForStatusWithFreshJwt(
   sleepFor = 400,
 ): Promise<EaCStatus> {
   return await withStatusCheck(async () => {
-    const eacJwt = await parentEaCSvc.EaC.JWT(entLookup, username);
+    const eacJwt = await parentEaCSvc.EaC.JWT(username);
 
     if (!eacJwt.Token) {
       return {
@@ -26,6 +26,6 @@ export async function waitForStatusWithFreshJwt(
 
     const eacSvc = await loadEaCStewardSvc(eacJwt.Token);
 
-    return await eacSvc.Status.Get(entLookup, commitId);
+    return await eacSvc.Status.Get(commitId);
   }, sleepFor);
 }
