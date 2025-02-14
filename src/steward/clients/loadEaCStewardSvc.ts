@@ -38,7 +38,7 @@ export async function loadEaCStewardSvc(
     );
   }
 
-  const eacBaseUrl = Deno.env.get("EAC_API_BASE_URL")!;
+  const eacBaseUrl = Deno.env.get("EaCStewardClient_URL")!;
 
   return new EaCStewardClient(new URL(eacBaseUrl), eacApiKeyEntLookup ?? "");
 }
