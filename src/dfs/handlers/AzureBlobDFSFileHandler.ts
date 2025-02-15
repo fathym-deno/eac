@@ -3,17 +3,18 @@ import {
   BlobServiceClient,
   generateBlobSASQueryParameters,
   StorageSharedKeyCredential,
-} from "npm:@azure/storage-blob@12.26.0";
-import { getFileCheckPathsToProcess, withDFSCache } from "./.deps.ts";
-import { DFSFileHandler } from "./DFSFileHandler.ts";
-import { DFSFileInfo } from "./DFSFileInfo.ts";
+} from 'npm:@azure/storage-blob@12.26.0';
+import { Readable } from 'node:stream';
+import { getFileCheckPathsToProcess, withDFSCache } from './.deps.ts';
+import { DFSFileHandler } from './DFSFileHandler.ts';
+import { DFSFileInfo } from './DFSFileInfo.ts';
 
 /**
  * Implements `DFSFileHandler` for Azure Blob Storage.
  */
 export class AzureBlobDFSFileHandler extends DFSFileHandler {
   private readonly containerClient: ReturnType<
-    BlobServiceClient["getContainerClient"]
+    BlobServiceClient['getContainerClient']
   >;
   private readonly connectionString: string;
   private initialize: Promise<void>;
@@ -28,14 +29,13 @@ export class AzureBlobDFSFileHandler extends DFSFileHandler {
   public constructor(
     connectionString: string,
     containerName: string,
-    public readonly Root: string,
+    public readonly Root: string
   ) {
     super();
     this.connectionString = connectionString;
 
-    const blobServiceClient = BlobServiceClient.fromConnectionString(
-      connectionString,
-    );
+    const blobServiceClient =
+      BlobServiceClient.fromConnectionString(connectionString);
     this.containerClient = blobServiceClient.getContainerClient(containerName);
 
     // Prefetch blob list at startup
@@ -53,7 +53,7 @@ export class AzureBlobDFSFileHandler extends DFSFileHandler {
     extensions?: string[],
     useCascading?: boolean,
     cacheDb?: Deno.Kv,
-    cacheSeconds?: number,
+    cacheSeconds?: number
   ): Promise<DFSFileInfo | undefined> {
     await this.initialize;
 
@@ -71,7 +71,7 @@ export class AzureBlobDFSFileHandler extends DFSFileHandler {
           filePath,
           defaultFileName,
           extensions,
-          useCascading,
+          useCascading
         );
 
         const fileChecks = fileCheckPaths.map(async (checkPath) => {
@@ -113,7 +113,7 @@ export class AzureBlobDFSFileHandler extends DFSFileHandler {
       },
       revision,
       cacheDb,
-      cacheSeconds,
+      cacheSeconds
     );
   }
 
@@ -131,7 +131,7 @@ export class AzureBlobDFSFileHandler extends DFSFileHandler {
   public async RemoveFile(
     filePath: string,
     _revision: string,
-    _cacheDb?: Deno.Kv,
+    _cacheDb?: Deno.Kv
   ): Promise<void> {
     const fullPath = this.formatPath(filePath);
     const blobClient = this.containerClient.getBlobClient(fullPath);
@@ -139,7 +139,7 @@ export class AzureBlobDFSFileHandler extends DFSFileHandler {
   }
 
   /**
-   * Writes a file to blob storage.
+   * Writes a file to Azure Blob Storage.
    */
   public async WriteFile(
     filePath: string,
@@ -148,11 +148,35 @@ export class AzureBlobDFSFileHandler extends DFSFileHandler {
     _ttlSeconds?: number,
     _headers?: Headers,
     _maxChunkSize = 8000,
-    _cacheDb?: Deno.Kv,
+    _cacheDb?: Deno.Kv
   ): Promise<void> {
     const fullPath = this.formatPath(filePath);
     const blockBlobClient = this.containerClient.getBlockBlobClient(fullPath);
-    await blockBlobClient.uploadStream(stream);
+
+    // Convert Deno ReadableStream to Node.js Readable Stream
+    const nodeStream = this.convertToNodeReadable(stream);
+
+    // Upload the Node.js readable stream to Azure Blob Storage
+    await blockBlobClient.uploadStream(nodeStream);
+  }
+
+  /**
+   * Converts a Deno ReadableStream<Uint8Array> into a Node.js Readable stream.
+   */
+  protected convertToNodeReadable(
+    stream: ReadableStream<Uint8Array>
+  ): Readable {
+    const reader = stream.getReader();
+
+    return Readable.from(
+      (async function* () {
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          yield value;
+        }
+      })()
+    );
   }
 
   /**
@@ -168,7 +192,7 @@ export class AzureBlobDFSFileHandler extends DFSFileHandler {
 
     this.blobPaths = filePaths.map((filePath) =>
       this.Root && filePath.startsWith(this.Root)
-        ? filePath.replace(this.Root, "")
+        ? filePath.replace(this.Root, '')
         : filePath
     );
   }
@@ -177,7 +201,7 @@ export class AzureBlobDFSFileHandler extends DFSFileHandler {
    * Formats the file path correctly.
    */
   private formatPath(filePath: string): string {
-    return this.Root ? `${this.Root}${filePath}`.replace("//", "/") : filePath;
+    return this.Root ? `${this.Root}${filePath}`.replace('//', '/') : filePath;
   }
 
   /**
@@ -185,10 +209,10 @@ export class AzureBlobDFSFileHandler extends DFSFileHandler {
    */
   private static parseConnectionString(connectionString: string) {
     const matches = connectionString.match(
-      /AccountName=([^;]+);AccountKey=([^;]+)/,
+      /AccountName=([^;]+);AccountKey=([^;]+)/
     );
     if (!matches) {
-      throw new Error("Invalid Azure Storage connection string format.");
+      throw new Error('Invalid Azure Storage connection string format.');
     }
 
     return {
@@ -203,14 +227,14 @@ export class AzureBlobDFSFileHandler extends DFSFileHandler {
   private async getSasToken(
     containerName: string,
     blobName: string,
-    expiryMinutes = 60,
+    expiryMinutes = 60
   ): Promise<string> {
-    const { accountName, accountKey } = AzureBlobDFSFileHandler
-      .parseConnectionString(this.connectionString);
+    const { accountName, accountKey } =
+      AzureBlobDFSFileHandler.parseConnectionString(this.connectionString);
 
     const sharedKeyCredential = new StorageSharedKeyCredential(
       accountName,
-      accountKey,
+      accountKey
     );
     const permissions = new BlobSASPermissions();
     permissions.read = true;
@@ -222,7 +246,7 @@ export class AzureBlobDFSFileHandler extends DFSFileHandler {
         permissions,
         expiresOn: new Date(new Date().valueOf() + expiryMinutes * 60 * 1000),
       },
-      sharedKeyCredential,
+      sharedKeyCredential
     ).toString();
   }
 }
