@@ -24,9 +24,8 @@ import { ESBuild } from "../../esbuild/.exports.ts";
 import { EaCRuntime } from "./EaCRuntime.ts";
 import { EaCRuntimeContext } from "./EaCRuntimeContext.ts";
 
-export abstract class GenericEaCRuntime<
-  TEaC extends EverythingAsCode = EverythingAsCode,
-> implements EaCRuntime<TEaC> {
+export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
+  implements EaCRuntime<TEaC> {
   protected get logger(): Logger {
     return (this.config.LoggingProvider ?? new EaCLoggingProvider()).Package;
   }
@@ -167,7 +166,9 @@ export abstract class GenericEaCRuntime<
     route: EaCRuntimeHandlerRoute,
   ): EaCRuntimeHandlerSet {
     return async (_req, ctx) => {
-      this.logger.info(`Running route ${route.Name} for ${route.Route}...`);
+      this.logger.info(
+        `Running route ${route.Name} for ${route.ResolverConfig.PathPattern}...`,
+      );
 
       let resp: ReturnType<typeof ctx.Next> = await ctx.Next();
 
@@ -342,9 +343,9 @@ export abstract class GenericEaCRuntime<
 
     return routes
       .filter((route) => {
-        const isMatch = new URLPattern({ pathname: route.Route }).test(
-          apiTestUrl,
-        );
+        const isMatch = new URLPattern({
+          pathname: route.ResolverConfig.PathPattern,
+        }).test(apiTestUrl);
 
         return isMatch;
       })

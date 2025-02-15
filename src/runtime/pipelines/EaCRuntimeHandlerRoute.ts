@@ -19,6 +19,5 @@ export type EaCRuntimeHandlerRoute<
   Name: string;
 
   ResolverConfig: RouteResolverConfiguration;
-
-  Route: string;
+  // Route: string;
 };
