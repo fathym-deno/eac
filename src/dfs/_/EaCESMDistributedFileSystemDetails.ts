@@ -13,8 +13,8 @@ export type EaCESMDistributedFileSystemDetails = {
   /** Entry points for the ESM module resolution. */
   EntryPoints: string[];
 
-  /** Whether to include dependencies in resolution. */
-  IncludeDependencies?: boolean;
+  // /** Whether to include dependencies in resolution. */
+  // IncludeDependencies?: boolean;
 
   /** The root directory for ESM file resolution. */
   Root: string;
@@ -27,7 +27,7 @@ export type EaCESMDistributedFileSystemDetails = {
 export const EaCESMDistributedFileSystemDetailsSchema: z.ZodObject<{
   Type: z.ZodLiteral<"ESM">;
   EntryPoints: z.ZodArray<z.ZodString>;
-  IncludeDependencies: z.ZodOptional<z.ZodBoolean>;
+  // IncludeDependencies: z.ZodOptional<z.ZodBoolean>;
   Root: z.ZodString;
 }> = EaCDistributedFileSystemDetailsSchema.extend({
   Type: z.literal("ESM").describe("The fixed type identifier for this DFS."),
@@ -35,10 +35,10 @@ export const EaCESMDistributedFileSystemDetailsSchema: z.ZodObject<{
     .array(z.string())
     .min(1)
     .describe("Entry points for the ESM module resolution."),
-  IncludeDependencies: z
-    .boolean()
-    .optional()
-    .describe("Whether to include dependencies in resolution."),
+  // IncludeDependencies: z
+  //   .boolean()
+  //   .optional()
+  //   .describe("Whether to include dependencies in resolution."),
   Root: z.string().describe("The root directory for ESM file resolution."),
 }).describe(
   "Schema for EaCESMDistributedFileSystemDetails, defining ESM-specific properties for a Distributed File System.",

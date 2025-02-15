@@ -9,7 +9,7 @@ Deno.test("EaCESMDistributedFileSystemDetails Tests", async (t) => {
   const validESMDFS: EaCESMDistributedFileSystemDetails = {
     Type: "ESM",
     EntryPoints: ["./index.js", "./main.js"],
-    IncludeDependencies: true,
+    // IncludeDependencies: true,
     Root: "/esm-modules",
     Name: "ESM DFS",
     Description: "A DFS for ESM module resolution.",
@@ -37,9 +37,9 @@ Deno.test("EaCESMDistributedFileSystemDetails Tests", async (t) => {
     }, // Wrong type (EntryPoints should be an array)
     { Root: 42, Type: "ESM", EntryPoints: ["./index.js"] }, // Wrong type
     {
-      IncludeDependencies: "not a boolean",
+      // IncludeDependencies: "not a boolean",
       Type: "ESM",
-      EntryPoints: ["./index.js"],
+      EntryPoints: "not an array",
       Root: "/esm-modules",
     }, // Wrong type
     {

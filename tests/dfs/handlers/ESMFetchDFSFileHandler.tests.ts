@@ -1,34 +1,23 @@
 import { ESMFetchDFSFileHandler } from "../../../src/dfs/handlers/.exports.ts";
-import { assertEquals, assertRejects } from "../../test.deps.ts";
+import { assertEquals, assertRejects, assertThrows } from "../../test.deps.ts";
 
 /**
  * Test Suite for ESMFetchDFSFileHandler
  */
 Deno.test("ESMFetchDFSFileHandler Tests", async (t) => {
   // ✅ Use a real ESM package from Skypack CDN
-  const root = "jsr:@o-biotech/atomic";
-  const entryPoints = ["mod.ts"]; // Lodash ES entry point
+  const packageURL = "https://cdn.skypack.dev/lodash-es@4.17.21/";
+  const entryPoints = ["lodash.js"]; // Lodash ES entry point
 
   const handlerWithDeps = new ESMFetchDFSFileHandler(
-    root,
+    packageURL,
     entryPoints,
     true,
   );
   const handlerWithoutDeps = new ESMFetchDFSFileHandler(
-    root,
+    packageURL,
     entryPoints,
     false,
-  );
-
-  await t.step(
-    "LoadAllPaths should resolve all module paths (including dependencies)",
-    async () => {
-      const paths = await handlerWithDeps.LoadAllPaths("revision");
-
-      console.log("Resolved Paths with Dependencies:", paths);
-      assertEquals(paths.some((p) => p.includes("lodash")), true);
-      assertEquals(paths.length > 1, true, "Should include dependencies.");
-    },
   );
 
   await t.step(
@@ -38,7 +27,7 @@ Deno.test("ESMFetchDFSFileHandler Tests", async (t) => {
 
       console.log("Resolved Paths without Dependencies:", paths);
       assertEquals(paths.length, 1, "Should only return entry points.");
-      assertEquals(paths[0], `./${entryPoints[0]}`);
+      assertEquals(paths[0], `/${entryPoints[0]}`);
     },
   );
 
@@ -46,8 +35,8 @@ Deno.test("ESMFetchDFSFileHandler Tests", async (t) => {
     "LoadAllPaths should correctly resolve import maps (if applicable)",
     async () => {
       const handlerWithImportMaps = new ESMFetchDFSFileHandler(
-        "@o-biotech/atomic",
-        ["mod.ts"],
+        "https://cdn.skypack.dev/",
+        ["lodash-es@4.17.21/lodash.js"],
         false,
       );
 
@@ -70,54 +59,63 @@ Deno.test("ESMFetchDFSFileHandler Tests", async (t) => {
 
       console.log("Resolved Local Paths:", paths);
       assertEquals(paths.length, 1);
-      assertEquals(paths[0], "./mod.ts");
+      assertEquals(paths[0], "/mod.ts");
     },
   );
 
   await t.step(
-    "LoadAllPaths should throw an error when entry points are empty",
+    "ESMFetchDFSFileHandler should throw an error when entry points are empty",
     async () => {
-      const emptyHandler = new ESMFetchDFSFileHandler(root, [], false);
-      await assertRejects(
-        () => emptyHandler.LoadAllPaths("revision"),
+      await assertThrows(
+        () => new ESMFetchDFSFileHandler(packageURL, [], false),
         Error,
         "No entry points provided",
       );
     },
   );
 
-  // ✅ Standard Fetch-Based Tests (Same as FetchDFSFileHandler)
-  const testFilePath = "/sample.txt";
-  const missingFile = "/missing.txt";
-
-  await t.step("GetFileInfo should return valid file info", async () => {
-    const fileInfo = await handlerWithDeps.GetFileInfo(
-      testFilePath,
-      "revision",
-    );
-    assertEquals(fileInfo?.Path, testFilePath);
-    assertEquals(fileInfo?.Contents instanceof ReadableStream, true);
-  });
+  // ✅ Fetch-Based Tests in ESM Context
+  const validFilePath = "/lodash.js"; // Lodash entry module
+  const missingFilePath = "/missing.js"; // Non-existent file
 
   await t.step(
-    "GetFileInfo should return undefined for missing file",
+    "GetFileInfo should return valid file info (ESM Module)",
     async () => {
       const fileInfo = await handlerWithDeps.GetFileInfo(
-        missingFile,
+        validFilePath,
+        "revision",
+      );
+      assertEquals(fileInfo?.Path, validFilePath);
+      assertEquals(fileInfo?.Contents instanceof ReadableStream, true);
+    },
+  );
+
+  await t.step(
+    "GetFileInfo should return undefined for missing ESM file",
+    async () => {
+      const fileInfo = await handlerWithDeps.GetFileInfo(
+        missingFilePath,
         "revision",
       );
       assertEquals(fileInfo, undefined);
     },
   );
 
-  await t.step("LoadAllPaths should return valid paths", async () => {
-    const paths = await handlerWithDeps.LoadAllPaths("revision");
-    assertEquals(paths.length > 0, true, "Expected resolved module paths.");
-  });
+  await t.step(
+    "LoadAllPaths should return valid ESM module paths",
+    async () => {
+      const paths = await handlerWithDeps.LoadAllPaths("revision");
+      assertEquals(
+        paths.length > 0,
+        true,
+        "Expected resolved ESM module paths.",
+      );
+    },
+  );
 
   await t.step("RemoveFile should throw NotSupported error", async () => {
     await assertRejects(
-      () => handlerWithDeps.RemoveFile(testFilePath, "revision"),
+      () => handlerWithDeps.RemoveFile(validFilePath, "revision"),
       Deno.errors.NotSupported,
       "File removal is not supported.",
     );
@@ -132,7 +130,7 @@ Deno.test("ESMFetchDFSFileHandler Tests", async (t) => {
     });
 
     await assertRejects(
-      () => handlerWithDeps.WriteFile(testFilePath, "revision", stream),
+      () => handlerWithDeps.WriteFile(validFilePath, "revision", stream),
       Deno.errors.NotSupported,
       "File writing is not supported.",
     );

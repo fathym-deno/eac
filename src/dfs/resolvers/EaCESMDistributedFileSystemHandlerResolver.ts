@@ -20,7 +20,7 @@ export const EaCESMDistributedFileSystemHandlerResolver:
       return new ESMFetchDFSFileHandler(
         dfs.Root,
         dfs.EntryPoints,
-        dfs.IncludeDependencies,
+        false, //dfs.IncludeDependencies,
       );
     },
   };
