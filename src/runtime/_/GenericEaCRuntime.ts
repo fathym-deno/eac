@@ -137,7 +137,12 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
     const orderedRoutes = routeGroup.Routes;
 
     configuredRoutes.push((req, ctx) => {
-      const filteredRoutes = this.filterRoutes(req, ctx, orderedRoutes);
+      const filteredRoutes = this.filterRoutes(
+        req,
+        ctx,
+        routeGroup,
+        orderedRoutes,
+      );
 
       if (filteredRoutes.length) {
         const rPipe = new EaCRuntimeHandlerPipeline();
@@ -334,6 +339,7 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
   protected filterRoutes(
     req: Request,
     ctx: EaCRuntimeContext,
+    routeGroup: EaCRuntimeHandlerRouteGroup,
     routes: EaCRuntimeHandlerRoute[],
   ): EaCRuntimeHandlerRoute[] {
     const apiTestUrl = new URL(
@@ -341,17 +347,19 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
       new URL("https://notused.com"),
     );
 
-    return routes
-      .filter((route) => {
-        const isMatch = new URLPattern({
-          pathname: route.ResolverConfig.PathPattern,
-        }).test(apiTestUrl);
+    return !routeGroup.Activator || routeGroup.Activator(req, ctx)
+      ? routes
+        .filter((route) => {
+          return !route.Activator || route.Activator(req, ctx);
+        })
+        .filter((route) => {
+          const isMatch = new URLPattern({
+            pathname: route.ResolverConfig.PathPattern,
+          }).test(apiTestUrl);
 
-        return isMatch;
-      })
-      .filter((route) => {
-        return route.Activator && !route.Activator(req, ctx);
-      });
+          return isMatch;
+        })
+      : [];
   }
 
   protected async resetRuntime(): Promise<void> {
