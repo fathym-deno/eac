@@ -1,4 +1,3 @@
-import { STATUS_CODE } from "jsr:@std/http@1.0.9/status";
 import {
   EaCLoggingProvider,
   EaCRuntimeConfig,
@@ -11,16 +10,17 @@ import {
   EaCRuntimePlugin,
   EaCRuntimePluginConfig,
   EaCRuntimePluginDef,
+  ESBuild,
   EverythingAsCode,
   generateDirectoryHash,
   IoCContainer,
   IS_BUILDING,
+  IS_DENO_DEPLOY,
   Logger,
   LoggingProvider,
   merge,
+  STATUS_CODE,
 } from "./.deps.ts";
-import { IS_DENO_DEPLOY } from "../config/.exports.ts";
-import { ESBuild } from "../../esbuild/.exports.ts";
 import { EaCRuntime } from "./EaCRuntime.ts";
 import { EaCRuntimeContext } from "./EaCRuntimeContext.ts";
 
@@ -104,7 +104,7 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
       );
     }
 
-    const ctx = await this.buildContext(info);
+    const ctx = await this.buildContext(request, info);
 
     const resp = this.pipeline.Execute(request, ctx);
 
@@ -112,6 +112,7 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
   }
 
   protected async buildContext(
+    req: Request,
     info: Deno.ServeHandlerInfo,
   ): Promise<EaCRuntimeContext> {
     return {
@@ -124,6 +125,7 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
         Logs: await this.IoC.Resolve<LoggingProvider>(LoggingProvider),
         Revision: this.Revision,
       },
+      // URLMatch: buildURLMatch(pattern, req),
       State: {},
     } as unknown as EaCRuntimeContext;
   }
@@ -342,17 +344,16 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
     routeGroup: EaCRuntimeHandlerRouteGroup,
     routes: EaCRuntimeHandlerRoute[],
   ): EaCRuntimeHandlerRoute[] {
-    const apiTestUrl = new URL(
-      `.${ctx.Runtime.URLMatch.Path}`,
-      new URL("https://notused.com"),
-    );
-
     return !routeGroup.Activator || routeGroup.Activator(req, ctx)
       ? routes
         .filter((route) => {
           return !route.Activator || route.Activator(req, ctx);
         })
         .filter((route) => {
+          const apiTestUrl = new URL(
+            ctx.Runtime.URLMatch.FromBase(`.${ctx.Runtime.URLMatch.Path}`),
+          );
+
           const isMatch = new URLPattern({
             pathname: route.ResolverConfig.PathPattern,
           }).test(apiTestUrl);
