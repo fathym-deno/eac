@@ -5,19 +5,19 @@ import {
   getPackageLogger,
   isEaCJSRDistributedFileSystemDetails,
   path,
-} from "./.deps.ts";
+} from './.deps.ts';
 
-export const EaCJSRDistributedFileSystemHandlerResolver:
-  DFSFileHandlerResolver = {
+export const EaCJSRDistributedFileSystemHandlerResolver: DFSFileHandlerResolver =
+  {
     async Resolve(_ioc, dfs): Promise<DFSFileHandler | undefined> {
       if (!isEaCJSRDistributedFileSystemDetails(dfs)) {
         throw new Deno.errors.NotSupported(
-          "The provided dfs is not supported for the EaCJSRDistributedFileSystemHandlerResolver.",
+          'The provided dfs is not supported for the EaCJSRDistributedFileSystemHandlerResolver.'
         );
       }
 
       const loadHandler = async () => {
-        const pkgRoot = new URL(`${dfs.Package}/`, "https://jsr.io/");
+        const pkgRoot = new URL(`${dfs.Package}/`, 'https://jsr.io/');
 
         if (!dfs.Version) {
           const metaPath = new URL(`meta.json`, pkgRoot);
@@ -48,20 +48,23 @@ export const EaCJSRDistributedFileSystemHandlerResolver:
             };
 
             const filePaths = Object.keys(meta.manifest)
-              .filter((fp) => dfs.FileRoot ? fp.startsWith(dfs.FileRoot) : true)
-              .map((fp) =>
-                fp.startsWith("./")
-                  ? fp
-                  : fp.startsWith("/")
-                  ? `.${fp}`
-                  : `./${fp}`
+              .filter((fp) =>
+                dfs.FileRoot ? fp.startsWith(dfs.FileRoot) : true
+              )
+              .map(
+                (fp) => `/${fp}`
+                // fp.startsWith("./")
+                //   ? fp
+                //   : fp.startsWith("/")
+                //   ? `.${fp}`
+                //   : `./${fp}`
               );
 
             return filePaths;
           } catch (err) {
             logger.error(
               `There was an error loading paths for: ${metaPath}`,
-              await metaResp.clone().text(),
+              await metaResp.clone().text()
             );
 
             throw err;
@@ -93,16 +96,16 @@ export const EaCJSRDistributedFileSystemHandlerResolver:
           extensions?: string[],
           useCascading?: boolean,
           cacheDb?: Deno.Kv,
-          cacheSeconds?: number,
+          cacheSeconds?: number
         ) {
           return handler.GetFileInfo(
-            path.join(dfs.FileRoot || "", filePath),
+            path.join(dfs.FileRoot || '', filePath),
             revision,
             defaultFileName,
             extensions,
             useCascading,
             cacheDb,
-            cacheSeconds,
+            cacheSeconds
           );
         },
 
@@ -111,16 +114,16 @@ export const EaCJSRDistributedFileSystemHandlerResolver:
 
           return allPaths.map((path) =>
             dfs.FileRoot && path.startsWith(dfs.FileRoot)
-              ? path.replace(dfs.FileRoot, "")
+              ? path.replace(dfs.FileRoot, '')
               : path
           );
         },
 
         RemoveFile(filePath: string, revision: string, cacheDb?: Deno.Kv) {
           return handler.RemoveFile(
-            path.join(dfs.FileRoot || "", filePath),
+            path.join(dfs.FileRoot || '', filePath),
             revision,
-            cacheDb,
+            cacheDb
           );
         },
 
@@ -131,16 +134,16 @@ export const EaCJSRDistributedFileSystemHandlerResolver:
           ttlSeconds?: number,
           headers?: Headers,
           maxChunkSize?: number,
-          cacheDb?: Deno.Kv,
+          cacheDb?: Deno.Kv
         ) {
           return handler.WriteFile(
-            path.join(dfs.FileRoot || "", filePath),
+            path.join(dfs.FileRoot || '', filePath),
             revision,
             stream,
             ttlSeconds,
             headers,
             maxChunkSize,
-            cacheDb,
+            cacheDb
           );
         },
       };
