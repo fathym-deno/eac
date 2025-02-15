@@ -59,6 +59,6 @@
   "compilerOptions": {
     "lib": ["deno.ns", "deno.unstable", "dom", "esnext"]
   },
-  "unstable": ["kv"],
+  "unstable": ["kv", "unsafe-proto"],
   "lock": false
 }

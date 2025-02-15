@@ -70,4 +70,22 @@ export abstract class DFSFileHandler implements IDFSFileHandler {
     maxChunkSize?: number,
     cacheDb?: Deno.Kv,
   ): Promise<void>;
+
+  /**
+   * Extracts headers from a response, excluding unnecessary ones.
+   * @param response - The `Response` object from fetch.
+   * @returns A filtered record of headers.
+   */
+  protected extractHeaders(response: Response): Record<string, string> {
+    const excludeHeaders = new Set(["content-type"]);
+    const headers: Record<string, string> = {};
+
+    response.headers.forEach((value, key) => {
+      if (!excludeHeaders.has(key)) {
+        headers[key] = value;
+      }
+    });
+
+    return headers;
+  }
 }
