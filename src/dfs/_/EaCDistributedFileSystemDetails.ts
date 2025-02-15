@@ -1,8 +1,8 @@
-import { z } from './.deps.ts';
+import { z } from "./.deps.ts";
 import {
   EaCVertexDetails,
   EaCVertexDetailsSchema,
-} from '../../eac/EaCVertexDetails.ts';
+} from "../../eac/EaCVertexDetails.ts";
 
 /**
  * Represents details for a Distributed File System (DFS) in Everything as Code (EaC).
@@ -11,7 +11,7 @@ import {
  * default files, and other DFS-specific configurations.
  */
 export type EaCDistributedFileSystemDetails<
-  TType extends string | undefined = string
+  TType extends string | undefined = string,
 > = {
   /** The database lookup for caching mechanisms. */
   CacheDBLookup?: string;
@@ -39,38 +39,40 @@ export type EaCDistributedFileSystemDetails<
  * Schema for `EaCDistributedFileSystemDetails`.
  * Ensures that DFS-specific properties conform to expected types while extending `EaCVertexDetailsSchema`.
  */
-export const EaCDistributedFileSystemDetailsSchema =
-  EaCVertexDetailsSchema.extend({
-    CacheDBLookup: z
-      .string()
-      .optional()
-      .describe('The database lookup for caching mechanisms.'),
-    CacheSeconds: z
-      .number()
-      .optional()
-      .describe('The cache expiration time in seconds.'),
-    DefaultFile: z
-      .string()
-      .optional()
-      .describe(
-        'The default file to serve when no specific file is requested.'
-      ),
-    Extensions: z
-      .array(z.string())
-      .optional()
-      .describe('A list of supported file extensions in this DFS.'),
-    Type: z.string().describe('The type identifier for this DFS.'),
-    UseCascading: z
-      .boolean()
-      .optional()
-      .describe('Whether cascading behavior is enabled.'),
-    WorkerPath: z
-      .string()
-      .optional()
-      .describe('The path used for DFS workers.'),
-  }).describe(
-    'Schema for EaCDistributedFileSystemDetails, defining caching, file handling, and worker configurations for a Distributed File System in Everything as Code.'
-  );
+export const EaCDistributedFileSystemDetailsSchema: z.ZodObject<{
+  CacheDBLookup: z.ZodOptional<z.ZodString>;
+  CacheSeconds: z.ZodOptional<z.ZodNumber>;
+  DefaultFile: z.ZodOptional<z.ZodString>;
+  Extensions: z.ZodOptional<z.ZodArray<z.ZodString>>;
+  Type: z.ZodString;
+  UseCascading: z.ZodOptional<z.ZodBoolean>;
+  WorkerPath: z.ZodOptional<z.ZodString>;
+}> = EaCVertexDetailsSchema.extend({
+  CacheDBLookup: z
+    .string()
+    .optional()
+    .describe("The database lookup for caching mechanisms."),
+  CacheSeconds: z
+    .number()
+    .optional()
+    .describe("The cache expiration time in seconds."),
+  DefaultFile: z
+    .string()
+    .optional()
+    .describe("The default file to serve when no specific file is requested."),
+  Extensions: z
+    .array(z.string())
+    .optional()
+    .describe("A list of supported file extensions in this DFS."),
+  Type: z.string().describe("The type identifier for this DFS."),
+  UseCascading: z
+    .boolean()
+    .optional()
+    .describe("Whether cascading behavior is enabled."),
+  WorkerPath: z.string().optional().describe("The path used for DFS workers."),
+}).describe(
+  "Schema for EaCDistributedFileSystemDetails, defining caching, file handling, and worker configurations for a Distributed File System in Everything as Code.",
+);
 
 /**
  * Type guard for `EaCDistributedFileSystemDetails`.
@@ -81,10 +83,11 @@ export const EaCDistributedFileSystemDetailsSchema =
  * @returns True if the object is a valid `EaCDistributedFileSystemDetails<TType>`, false otherwise.
  */
 export function isEaCDistributedFileSystemDetails<
-  TType extends string | undefined = string
+  TType extends string | undefined = string,
 >(type: TType, dfs: unknown): dfs is EaCDistributedFileSystemDetails<TType> {
-  if (!EaCDistributedFileSystemDetailsSchema.safeParse(dfs).success)
+  if (!EaCDistributedFileSystemDetailsSchema.safeParse(dfs).success) {
     return false;
+  }
 
   return !type || (dfs as EaCDistributedFileSystemDetails<TType>).Type === type;
 }
@@ -97,9 +100,9 @@ export function isEaCDistributedFileSystemDetails<
  * @returns The parsed `EaCDistributedFileSystemDetails<TType>` object.
  */
 export function parseEaCDistributedFileSystemDetails<
-  TType extends string | undefined = string
+  TType extends string | undefined = string,
 >(dfs: unknown): EaCDistributedFileSystemDetails<TType> {
   return EaCDistributedFileSystemDetailsSchema.parse(
-    dfs
+    dfs,
   ) as EaCDistributedFileSystemDetails<TType>;
 }

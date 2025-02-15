@@ -24,6 +24,7 @@
     "./dfs/resolvers": "./src/dfs/resolvers/.exports.ts",
     "./dfs/utils": "./src/dfs/utils/.exports.ts",
     "./dfs/workers": "./src/dfs/workers/.exports.ts",
+    "./dfs/workers/azureblobstorage": "./src/dfs/workers/EaCAzureBlobStorageDistributedFileSystemWorker.ts",
     "./dfs/workers/denokv": "./src/dfs/workers/EaCDenoKVDistributedFileSystemWorker.ts",
     "./dfs/workers/esm": "./src/dfs/workers/EaCESMDistributedFileSystemWorker.ts",
     "./dfs/workers/jsr": "./src/dfs/workers/EaCJSRDistributedFileSystemWorker.ts",

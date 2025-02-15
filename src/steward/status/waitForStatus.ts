@@ -9,6 +9,6 @@ export async function waitForStatus(
   sleepFor = 400,
 ): Promise<EaCStatus> {
   return await withStatusCheck(async () => {
-    return await eacSvc.Status.Get(entLookup, commitId);
+    return await eacSvc.Status.Get(commitId);
   }, sleepFor);
 }

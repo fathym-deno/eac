@@ -1,31 +1,65 @@
 import { z } from "./.deps.ts";
-import { EaCDistributedFileSystemAsCode, EaCDistributedFileSystemAsCodeSchema } from "./EaCDistributedFileSystemAsCode.ts";
+import {
+  EaCDistributedFileSystemAsCode,
+  EaCDistributedFileSystemAsCodeSchema,
+} from "./EaCDistributedFileSystemAsCode.ts";
+import {
+  DistributedFileSystemOptions,
+  DistributedFileSystemOptionsSchema,
+} from "./DistributedFileSystemOptions.ts";
 
 /**
  * Represents the Everything as Code (EaC) Distributed File System (DFS) structure.
  *
- * This type contains a record mapping unique keys to `EaCDistributedFileSystemAsCode` objects.
+ * This type contains **optional global DFS options** and a record mapping unique keys to `EaCDistributedFileSystemAsCode` objects.
  */
 export type EverythingAsCodeDFS = {
-  /** A collection of Distributed File Systems (DFS) mapped by unique keys. */
+  /**
+   * **Optional** global configuration options for all DFSs.
+   */
+  $GlobalOptions?: {
+    DFSs?: DistributedFileSystemOptions;
+  };
+
+  /**
+   * A collection of Distributed File Systems (DFS) mapped by unique keys.
+   * It includes **individual DFS configurations** (but not global options).
+   */
   DFSs?: Record<string, EaCDistributedFileSystemAsCode>;
 };
 
 /**
  * Schema for `EverythingAsCodeDFS`.
- * Validates that `DFSs` is an object where each key maps to a valid `EaCDistributedFileSystemAsCode` instance.
+ * - Ensures `$GlobalOptions` is optional.
+ * - Ensures `DFSs` is a **record** of `EaCDistributedFileSystemAsCode` instances.
  */
-export const EverythingAsCodeDFSSchema = z
+export const EverythingAsCodeDFSSchema: z.ZodObject<{
+  $GlobalOptions: z.ZodOptional<
+    z.ZodObject<{
+      DFSs: z.ZodOptional<typeof DistributedFileSystemOptionsSchema>;
+    }>
+  >;
+  DFSs: z.ZodOptional<
+    z.ZodRecord<z.ZodString, typeof EaCDistributedFileSystemAsCodeSchema>
+  >;
+}> = z
   .object({
+    $GlobalOptions: z
+      .object({
+        DFSs: DistributedFileSystemOptionsSchema.optional(),
+      })
+      .optional()
+      .describe(
+        "Optional global configuration options for all DFSs, including worker and performance settings.",
+      ),
+
     DFSs: z
       .record(z.string(), EaCDistributedFileSystemAsCodeSchema)
       .optional()
-      .describe(
-        "A collection of Distributed File Systems (DFSs) mapped by unique keys."
-      ),
+      .describe("A collection of individual Distributed File Systems."),
   })
   .describe(
-    "Schema for EverythingAsCodeDFS, validating its structure with an optional record of DFS mappings."
+    "Schema for EverythingAsCodeDFS, ensuring structured DFS configurations with optional global options.",
   );
 
 /**
@@ -35,7 +69,9 @@ export const EverythingAsCodeDFSSchema = z
  * @param eac - The object to validate.
  * @returns True if the object is a valid `EverythingAsCodeDFS`, false otherwise.
  */
-export function isEverythingAsCodeDFS(eac: unknown): eac is EverythingAsCodeDFS {
+export function isEverythingAsCodeDFS(
+  eac: unknown,
+): eac is EverythingAsCodeDFS {
   return EverythingAsCodeDFSSchema.safeParse(eac).success;
 }
 

@@ -1,8 +1,10 @@
+import { DistributedFileSystemOptions } from "../_/DistributedFileSystemOptions.ts";
 import {
   DFSFileHandler,
   DFSFileHandlerResolver,
   EaCDistributedFileSystemDetails,
   IoCContainer,
+  isEaCAzureBlobStorageDistributedFileSystemDetails,
   isEaCDenoKVDistributedFileSystemDetails,
   isEaCESMDistributedFileSystemDetails,
   isEaCJSRDistributedFileSystemDetails,
@@ -15,11 +17,14 @@ export class DefaultDFSFileHandlerResolver implements DFSFileHandlerResolver {
   public async Resolve(
     ioc: IoCContainer,
     dfs: EaCDistributedFileSystemDetails,
+    options?: DistributedFileSystemOptions,
   ): Promise<DFSFileHandler | undefined> {
     let toResolveName: string = "";
 
-    if (dfs.WorkerPath) {
+    if (!options?.PreventWorkers && dfs.WorkerPath) {
       toResolveName = "EaCWorkerDistributedFileSystem";
+    } else if (isEaCAzureBlobStorageDistributedFileSystemDetails(dfs)) {
+      toResolveName = "EaCAzureBlobStorageDistributedFileSystem";
     } else if (isEaCDenoKVDistributedFileSystemDetails(dfs)) {
       toResolveName = "EaCDenoKVDistributedFileSystem";
     } else if (isEaCESMDistributedFileSystemDetails(dfs)) {
@@ -41,6 +46,6 @@ export class DefaultDFSFileHandlerResolver implements DFSFileHandlerResolver {
       toResolveName,
     );
 
-    return await resolver.Resolve(ioc, dfs);
+    return await resolver.Resolve(ioc, dfs, options);
   }
 }

@@ -1,3 +1,4 @@
+import { z } from "./.deps.ts";
 import { EaCDetails, EaCDetailsSchema } from "./.deps.ts";
 import {
   EaCDistributedFileSystemDetails,
@@ -10,18 +11,22 @@ import {
  *
  * This type extends `EaCDetails` with `EaCDistributedFileSystemDetails`.
  */
-export type EaCDistributedFileSystemAsCode = EaCDetails<EaCDistributedFileSystemDetails>;
+export type EaCDistributedFileSystemAsCode = EaCDetails<
+  EaCDistributedFileSystemDetails
+>;
 
 /**
  * Schema for `EaCDistributedFileSystemAsCode`.
  * Ensures that `Details` conforms to `EaCDistributedFileSystemDetailsSchema`.
  */
-export const EaCDistributedFileSystemAsCodeSchema = EaCDetailsSchema.extend({
+export const EaCDistributedFileSystemAsCodeSchema: z.ZodObject<{
+  Details: z.ZodOptional<typeof EaCDistributedFileSystemDetailsSchema>;
+}> = EaCDetailsSchema.extend({
   Details: EaCDistributedFileSystemDetailsSchema.optional().describe(
-    "Distributed File System (DFS) details."
+    "Distributed File System (DFS) details.",
   ),
 }).describe(
-  "Schema for EaCDistributedFileSystemAsCode, ensuring the correct structure for DFS-based Everything as Code."
+  "Schema for EaCDistributedFileSystemAsCode, ensuring the correct structure for DFS-based Everything as Code.",
 );
 
 /**
@@ -34,10 +39,20 @@ export const EaCDistributedFileSystemAsCodeSchema = EaCDetailsSchema.extend({
 export function isEaCDistributedFileSystemAsCode(
   eac: unknown,
 ): eac is EaCDistributedFileSystemAsCode {
-  return (
-    EaCDistributedFileSystemAsCodeSchema.safeParse(eac).success &&
-    isEaCDistributedFileSystemDetails(undefined, (eac as EaCDistributedFileSystemAsCode).Details)
-  );
+  if (!eac || typeof eac !== "object") return false;
+
+  const obj = eac as EaCDistributedFileSystemAsCode;
+
+  // If Details is present, it must conform to the expected schema
+  if (obj.Details !== undefined) {
+    return (
+      EaCDistributedFileSystemAsCodeSchema.safeParse(eac).success &&
+      isEaCDistributedFileSystemDetails(undefined, obj.Details)
+    );
+  }
+
+  // If Details is missing, it's still valid
+  return EaCDistributedFileSystemAsCodeSchema.safeParse(eac).success;
 }
 
 /**

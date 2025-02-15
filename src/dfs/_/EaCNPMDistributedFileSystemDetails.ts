@@ -1,24 +1,60 @@
+import { z } from "./.deps.ts";
 import {
   EaCDistributedFileSystemDetails,
-  isEaCDistributedFileSystemDetails,
+  EaCDistributedFileSystemDetailsSchema,
 } from "./EaCDistributedFileSystemDetails.ts";
 
+/**
+ * Represents details for an NPM-backed Distributed File System (DFS) in Everything as Code (EaC).
+ *
+ * This type extends `EaCDistributedFileSystemDetails` with NPM-specific properties.
+ */
 export type EaCNPMDistributedFileSystemDetails = {
+  /** The name of the NPM package. */
   Package: string;
 
+  /** The version of the NPM package to use. */
   Version: string;
 } & EaCDistributedFileSystemDetails<"NPM">;
 
+/**
+ * Schema for `EaCNPMDistributedFileSystemDetails`.
+ * Ensures `Type` is explicitly `"NPM"` while extending `EaCDistributedFileSystemDetailsSchema`.
+ */
+export const EaCNPMDistributedFileSystemDetailsSchema: z.ZodObject<{
+  Type: z.ZodLiteral<"NPM">;
+  Package: z.ZodString;
+  Version: z.ZodString;
+}> = EaCDistributedFileSystemDetailsSchema.extend({
+  Type: z.literal("NPM").describe("The fixed type identifier for this DFS."),
+  Package: z.string().describe("The name of the NPM package."),
+  Version: z.string().describe("The version of the NPM package to use."),
+}).describe(
+  "Schema for EaCNPMDistributedFileSystemDetails, defining NPM-specific properties for a Distributed File System.",
+);
+
+/**
+ * Type guard for `EaCNPMDistributedFileSystemDetails`.
+ * Validates if the given object conforms to the `EaCNPMDistributedFileSystemDetails` structure.
+ *
+ * @param dfs - The object to validate.
+ * @returns True if the object is a valid `EaCNPMDistributedFileSystemDetails`, false otherwise.
+ */
 export function isEaCNPMDistributedFileSystemDetails(
   dfs: unknown,
 ): dfs is EaCNPMDistributedFileSystemDetails {
-  const x = dfs as EaCNPMDistributedFileSystemDetails;
+  return EaCNPMDistributedFileSystemDetailsSchema.safeParse(dfs).success;
+}
 
-  return (
-    isEaCDistributedFileSystemDetails("NPM", x) &&
-    x.Package !== undefined &&
-    typeof x.Package === "string" &&
-    x.Version !== undefined &&
-    typeof x.Version === "string"
-  );
+/**
+ * Validates and parses an object as `EaCNPMDistributedFileSystemDetails`.
+ *
+ * @param dfs - The object to validate and parse.
+ * @throws If the object does not conform to the `EaCNPMDistributedFileSystemDetailsSchema`.
+ * @returns The parsed `EaCNPMDistributedFileSystemDetails` object.
+ */
+export function parseEaCNPMDistributedFileSystemDetails(
+  dfs: unknown,
+): EaCNPMDistributedFileSystemDetails {
+  return EaCNPMDistributedFileSystemDetailsSchema.parse(dfs);
 }

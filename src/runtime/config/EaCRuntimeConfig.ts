@@ -9,6 +9,6 @@ export type EaCRuntimeConfig<TEaC extends EverythingAsCode = EverythingAsCode> =
 
     Server: {
       StartRange?: [number, number];
-    } & Deno.ServeOptions;
+    } & Deno.ServeTcpOptions;
   }
   & EaCRuntimeSetupConfig<TEaC>;

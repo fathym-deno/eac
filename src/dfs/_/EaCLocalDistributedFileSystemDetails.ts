@@ -1,20 +1,55 @@
+import { z } from "./.deps.ts";
 import {
   EaCDistributedFileSystemDetails,
-  isEaCDistributedFileSystemDetails,
+  EaCDistributedFileSystemDetailsSchema,
 } from "./EaCDistributedFileSystemDetails.ts";
 
+/**
+ * Represents details for a Local File System-backed Distributed File System (DFS) in Everything as Code (EaC).
+ *
+ * This type extends `EaCDistributedFileSystemDetails` with Local-specific properties.
+ */
 export type EaCLocalDistributedFileSystemDetails = {
+  /** The root path in the local file system. */
   FileRoot: string;
 } & EaCDistributedFileSystemDetails<"Local">;
 
+/**
+ * Schema for `EaCLocalDistributedFileSystemDetails`.
+ * Ensures `Type` is explicitly `"Local"` while extending `EaCDistributedFileSystemDetailsSchema`.
+ */
+export const EaCLocalDistributedFileSystemDetailsSchema: z.ZodObject<{
+  Type: z.ZodLiteral<"Local">;
+  FileRoot: z.ZodString;
+}> = EaCDistributedFileSystemDetailsSchema.extend({
+  Type: z.literal("Local").describe("The fixed type identifier for this DFS."),
+  FileRoot: z.string().describe("The root path in the local file system."),
+}).describe(
+  "Schema for EaCLocalDistributedFileSystemDetails, defining Local-specific properties for a Distributed File System.",
+);
+
+/**
+ * Type guard for `EaCLocalDistributedFileSystemDetails`.
+ * Validates if the given object conforms to the `EaCLocalDistributedFileSystemDetails` structure.
+ *
+ * @param dfs - The object to validate.
+ * @returns True if the object is a valid `EaCLocalDistributedFileSystemDetails`, false otherwise.
+ */
 export function isEaCLocalDistributedFileSystemDetails(
   dfs: unknown,
 ): dfs is EaCLocalDistributedFileSystemDetails {
-  const x = dfs as EaCLocalDistributedFileSystemDetails;
+  return EaCLocalDistributedFileSystemDetailsSchema.safeParse(dfs).success;
+}
 
-  return (
-    isEaCDistributedFileSystemDetails("Local", x) &&
-    x.FileRoot !== undefined &&
-    typeof x.FileRoot === "string"
-  );
+/**
+ * Validates and parses an object as `EaCLocalDistributedFileSystemDetails`.
+ *
+ * @param dfs - The object to validate and parse.
+ * @throws If the object does not conform to the `EaCLocalDistributedFileSystemDetailsSchema`.
+ * @returns The parsed `EaCLocalDistributedFileSystemDetails` object.
+ */
+export function parseEaCLocalDistributedFileSystemDetails(
+  dfs: unknown,
+): EaCLocalDistributedFileSystemDetails {
+  return EaCLocalDistributedFileSystemDetailsSchema.parse(dfs);
 }

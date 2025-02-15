@@ -20,9 +20,7 @@ export class EaCStewardClient extends EaCBaseClient {
       processingSeconds: number,
     ): Promise<EaCCommitResponse> => {
       const response = await fetch(
-        this.loadClientUrl(
-          `${eac.EnterpriseLookup}?processingSeconds=${processingSeconds}`,
-        ),
+        this.loadClientUrl(`enterprise?processingSeconds=${processingSeconds}`),
         {
           method: "POST",
           headers: this.loadHeaders(),
@@ -35,7 +33,7 @@ export class EaCStewardClient extends EaCBaseClient {
 
     Connections: async <T extends EverythingAsCode>(eac: T): Promise<T> => {
       const response = await fetch(
-        this.loadClientUrl(`${eac.EnterpriseLookup}/connections`),
+        this.loadClientUrl(`enterprise/connections`),
         {
           method: "POST",
           headers: this.loadHeaders(),
@@ -72,7 +70,7 @@ export class EaCStewardClient extends EaCBaseClient {
     ): Promise<EaCCommitResponse> => {
       const response = await fetch(
         this.loadClientUrl(
-          `${eac.EnterpriseLookup}?archive=${archive}&processingSeconds=${processingSeconds}`,
+          `enterprise?archive=${archive}&processingSeconds=${processingSeconds}`,
         ),
         {
           method: "DELETE",
@@ -84,8 +82,8 @@ export class EaCStewardClient extends EaCBaseClient {
       return await this.json(response);
     },
 
-    Get: async <T extends EverythingAsCode>(entLookup: string): Promise<T> => {
-      const response = await fetch(this.loadClientUrl(`${entLookup}`), {
+    Get: async <T extends EverythingAsCode>(): Promise<T> => {
+      const response = await fetch(this.loadClientUrl(`enterprise`), {
         headers: this.loadHeaders(),
       });
 
@@ -93,7 +91,6 @@ export class EaCStewardClient extends EaCBaseClient {
     },
 
     JWT: async (
-      entLookup: string | undefined,
       username: string,
       expTime?: number,
     ): Promise<{
@@ -101,7 +98,7 @@ export class EaCStewardClient extends EaCBaseClient {
     }> => {
       const response = await fetch(
         this.loadClientUrl(
-          `jwt?entLookup=${entLookup}&username=${username}&expTime=${
+          `jwt?entLookup=enterprise&username=${username}&expTime=${
             expTime || ""
           }`,
         ),
@@ -133,9 +130,9 @@ export class EaCStewardClient extends EaCBaseClient {
   };
 
   public Status = {
-    CurrentStatus: async (entLookup: string): Promise<EaCStatus> => {
+    CurrentStatus: async (): Promise<EaCStatus> => {
       const response = await fetch(
-        this.loadClientUrl(`${entLookup}/status/current`),
+        this.loadClientUrl(`enterprise/status/current`),
         {
           headers: this.loadHeaders(),
         },
@@ -144,9 +141,9 @@ export class EaCStewardClient extends EaCBaseClient {
       return await this.json(response);
     },
 
-    Get: async (entLookup: string, commitId: string): Promise<EaCStatus> => {
+    Get: async (commitId: string): Promise<EaCStatus> => {
       const response = await fetch(
-        this.loadClientUrl(`${entLookup}/status/${commitId}`),
+        this.loadClientUrl(`enterprise/status/${commitId}`),
         {
           headers: this.loadHeaders(),
         },
@@ -156,7 +153,6 @@ export class EaCStewardClient extends EaCBaseClient {
     },
 
     ListStati: async (
-      entLookup: string,
       take?: number,
       statusTypes?: EaCStatusProcessingTypes[],
     ): Promise<EaCStatus[]> => {
@@ -170,7 +166,7 @@ export class EaCStewardClient extends EaCBaseClient {
 
       const response = await fetch(
         this.loadClientUrl(
-          `${entLookup}/status?${takeParam}&${statusTypeParams}`,
+          `enterprise/status?${takeParam}&${statusTypeParams}`,
         ),
         {
           headers: this.loadHeaders(),
@@ -182,11 +178,8 @@ export class EaCStewardClient extends EaCBaseClient {
   };
 
   public Users = {
-    Invite: async (
-      entLookup: string,
-      userEaC: EaCUserRecord,
-    ): Promise<EaCCommitResponse> => {
-      const response = await fetch(this.loadClientUrl(`${entLookup}/users`), {
+    Invite: async (userEaC: EaCUserRecord): Promise<EaCCommitResponse> => {
+      const response = await fetch(this.loadClientUrl(`enterprise/users`), {
         method: "POST",
         headers: this.loadHeaders(),
         body: JSON.stringify(userEaC),
@@ -195,8 +188,8 @@ export class EaCStewardClient extends EaCBaseClient {
       return await this.json(response);
     },
 
-    List: async (entLookup: string): Promise<EaCUserRecord[]> => {
-      const response = await fetch(this.loadClientUrl(`${entLookup}/users`), {
+    List: async (): Promise<EaCUserRecord[]> => {
+      const response = await fetch(this.loadClientUrl(`enterprise/users`), {
         headers: this.loadHeaders(),
       });
 

@@ -1,1 +1,1 @@
-export * from './EaCAPIJWTPayload.tests.ts';
+export * from "./EaCAPIJWTPayload.tests.ts";

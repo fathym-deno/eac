@@ -2,6 +2,8 @@
  * The core Everything as Code (EaC) Distributed File System types.
  * @module
  */
+export * from "./DistributedFileSystemOptions.ts";
+export * from "./EaCAzureBlobStorageDistributedFileSystemDetails.ts";
 export * from "./EaCDenoKVDistributedFileSystemDetails.ts";
 export * from "./EaCDistributedFileSystemAsCode.ts";
 export * from "./EaCDistributedFileSystemDetails.ts";

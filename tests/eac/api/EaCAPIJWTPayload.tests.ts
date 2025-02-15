@@ -1,4 +1,7 @@
-import { isEaCAPIJWTPayload, parseEaCAPIJWTPayload } from "../../../src/eac/.exports.ts";
+import {
+  isEaCAPIJWTPayload,
+  parseEaCAPIJWTPayload,
+} from "../../../src/eac/.exports.ts";
 import { assertEquals, assertThrows } from "../../test.deps.ts";
 
 Deno.test("EaCAPIJWTPayload Tests", async (t) => {
@@ -33,10 +36,16 @@ Deno.test("EaCAPIJWTPayload Tests", async (t) => {
     }
   });
 
-  await t.step("parseEaCAPIJWTPayload should return correct values for valid inputs", () => {
-    assertEquals(parseEaCAPIJWTPayload(validPayload), validPayload);
-    assertEquals(parseEaCAPIJWTPayload(minimalValidPayload), minimalValidPayload);
-  });
+  await t.step(
+    "parseEaCAPIJWTPayload should return correct values for valid inputs",
+    () => {
+      assertEquals(parseEaCAPIJWTPayload(validPayload), validPayload);
+      assertEquals(
+        parseEaCAPIJWTPayload(minimalValidPayload),
+        minimalValidPayload,
+      );
+    },
+  );
 
   await t.step("parseEaCAPIJWTPayload should throw for invalid inputs", () => {
     for (const invalid of invalidPayloads) {
