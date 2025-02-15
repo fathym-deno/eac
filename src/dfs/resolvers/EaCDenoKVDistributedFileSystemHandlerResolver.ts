@@ -1,5 +1,5 @@
 import {
-  buildDenoKVDFSFileHandler,
+  DenoKVDFSFileHandler,
   DFSFileHandler,
   DFSFileHandlerResolver,
   isEaCDenoKVDistributedFileSystemDetails,
@@ -14,9 +14,11 @@ export const EaCDenoKVDistributedFileSystemHandlerResolver:
         );
       }
 
+      // Resolve Deno.Kv instance from IoC
       const denoKv = await ioc.Resolve(Deno.Kv, dfs.DatabaseLookup);
 
-      return buildDenoKVDFSFileHandler(
+      // Directly create an instance of DenoKVDFSFileHandler
+      return new DenoKVDFSFileHandler(
         denoKv,
         dfs.RootKey || ["DFS"],
         dfs.FileRoot,

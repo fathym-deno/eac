@@ -1,15 +1,15 @@
 import { DistributedFileSystemOptions } from "../_/DistributedFileSystemOptions.ts";
 import {
-  buildAzureBlobDFSFileHandler,
+  AzureBlobDFSFileHandler,
   DFSFileHandler,
   DFSFileHandlerResolver,
   getPackageLogger,
   isEaCAzureBlobStorageDistributedFileSystemDetails,
-  path,
 } from "./.deps.ts";
 
-import { BlobServiceClient } from "npm:@azure/storage-blob@12.26.0";
-
+/**
+ * Resolver for Azure Blob Storage Distributed File Systems (DFS).
+ */
 export const EaCAzureBlobStorageDistributedFileSystemHandlerResolver:
   DFSFileHandlerResolver = {
     async Resolve(_ioc, dfs): Promise<DFSFileHandler | undefined> {
@@ -19,109 +19,18 @@ export const EaCAzureBlobStorageDistributedFileSystemHandlerResolver:
         );
       }
 
-      const loadHandler = async () => {
-        const logger = await getPackageLogger(import.meta);
+      const logger = await getPackageLogger(import.meta);
 
-        // Initialize Azure Blob Storage client
-        const blobServiceClient = BlobServiceClient.fromConnectionString(
+      try {
+        // Directly create an instance of AzureBlobDFSFileHandler
+        return new AzureBlobDFSFileHandler(
           dfs.ConnectionString,
-        );
-        const containerClient = blobServiceClient.getContainerClient(
           dfs.Container,
+          dfs.FileRoot || "",
         );
-        const fileRoot = dfs.FileRoot || "";
-
-        const handler = buildAzureBlobDFSFileHandler(
-          dfs.ConnectionString,
-          containerClient,
-          fileRoot,
-        );
-
-        handler.LoadAllPaths = async (_revision: string) => {
-          try {
-            return await handler.LoadAllPaths(_revision);
-          } catch (err) {
-            logger.error("Error listing blob storage paths", err);
-            throw err;
-          }
-        };
-
-        return handler;
-      };
-
-      let handler = await loadHandler();
-
-      setInterval(() => {
-        const work = async () => {
-          handler = await loadHandler();
-        };
-        work();
-      }, 60 * 1000);
-
-      return handler;
-      // return {
-      //   get Root() {
-      //     return handler.Root;
-      //   },
-
-      //   GetFileInfo(
-      //     filePath: string,
-      //     revision: string,
-      //     defaultFileName?: string,
-      //     extensions?: string[],
-      //     useCascading?: boolean,
-      //     cacheDb?: Deno.Kv,
-      //     cacheSeconds?: number,
-      //   ) {
-      //     return handler.GetFileInfo(
-      //       path.join(dfs.FileRoot || "", filePath),
-      //       revision,
-      //       defaultFileName,
-      //       extensions,
-      //       useCascading,
-      //       cacheDb,
-      //       cacheSeconds,
-      //     );
-      //   },
-
-      //   async LoadAllPaths(revision: string) {
-      //     debugger;
-      //     const allPaths = await handler.LoadAllPaths(revision);
-
-      //     return allPaths.map((filePath) =>
-      //       dfs.FileRoot && filePath.startsWith(dfs.FileRoot)
-      //         ? filePath.replace(dfs.FileRoot, "")
-      //         : filePath
-      //     );
-      //   },
-
-      //   RemoveFile(filePath: string, revision: string, cacheDb?: Deno.Kv) {
-      //     return handler.RemoveFile(
-      //       path.join(dfs.FileRoot || "", filePath),
-      //       revision,
-      //       cacheDb,
-      //     );
-      //   },
-
-      //   WriteFile(
-      //     filePath: string,
-      //     revision: string,
-      //     stream: ReadableStream<Uint8Array>,
-      //     ttlSeconds?: number,
-      //     headers?: Headers,
-      //     maxChunkSize?: number,
-      //     cacheDb?: Deno.Kv,
-      //   ) {
-      //     return handler.WriteFile(
-      //       path.join(dfs.FileRoot || "", filePath),
-      //       revision,
-      //       stream,
-      //       ttlSeconds,
-      //       headers,
-      //       maxChunkSize,
-      //       cacheDb,
-      //     );
-      //   },
-      // };
+      } catch (err) {
+        logger.error("Error initializing Azure Blob Storage DFS handler", err);
+        throw err;
+      }
     },
   };

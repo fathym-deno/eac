@@ -1,12 +1,15 @@
 import {
-  buildFetchDFSFileHandler,
   DFSFileHandler,
   DFSFileHandlerResolver,
-  getPackageLogger,
+  EaCJSRDistributedFileSystemDetails,
   isEaCJSRDistributedFileSystemDetails,
+  JSRFetchDFSFileHandler,
   path,
 } from "./.deps.ts";
 
+/**
+ * Resolver for JSR-based Distributed File Systems (DFS).
+ */
 export const EaCJSRDistributedFileSystemHandlerResolver:
   DFSFileHandlerResolver = {
     async Resolve(_ioc, dfs): Promise<DFSFileHandler | undefined> {
@@ -16,134 +19,58 @@ export const EaCJSRDistributedFileSystemHandlerResolver:
         );
       }
 
-      const loadHandler = async () => {
-        const pkgRoot = new URL(`${dfs.Package}/`, "https://jsr.io/");
+      const jsrDFS = dfs as EaCJSRDistributedFileSystemDetails;
 
-        if (!dfs.Version) {
-          const metaPath = new URL(`meta.json`, pkgRoot);
+      const pkgRoot = new URL(`${jsrDFS.Package}/`, "https://jsr.io/");
+      let isCheckingForUpdates = false; // Prevents redundant checks
+      let currentVersion = jsrDFS.Version || "";
 
-          const metaResp = await fetch(metaPath);
+      async function getLatestVersion(): Promise<string> {
+        const metaPath = new URL(`meta.json`, pkgRoot);
+        const metaResp = await fetch(metaPath);
+        const meta = (await metaResp.json()) as { latest: string };
+        return meta.latest;
+      }
 
-          const meta = (await metaResp.json()) as {
-            latest: string;
-          };
+      async function loadHandler(version: string) {
+        const fileRoot = new URL(`${version}/`, pkgRoot);
+        return new JSRFetchDFSFileHandler(fileRoot.href, jsrDFS.FileRoot);
+      }
 
-          dfs.Version = meta.latest;
-        }
+      // Initial Load
+      if (!currentVersion) {
+        currentVersion = await getLatestVersion();
+      }
+      let handler = await loadHandler(currentVersion);
 
-        const fileRoot = new URL(`${dfs.Version}/`, pkgRoot);
+      async function checkForUpdates() {
+        if (isCheckingForUpdates) return; // Avoid duplicate checks
 
-        const handler = buildFetchDFSFileHandler(fileRoot.href);
-
-        handler.LoadAllPaths = async (_revision: string) => {
-          const logger = await getPackageLogger(import.meta);
-
-          const metaPath = `${fileRoot.href.slice(0, -1)}_meta.json`;
-
-          const metaResp = await fetch(metaPath);
-
-          try {
-            const meta = (await metaResp.clone().json()) as {
-              manifest: { [filePath: string]: unknown };
-            };
-
-            const filePaths = Object.keys(meta.manifest)
-              .filter((fp) => dfs.FileRoot ? fp.startsWith(dfs.FileRoot) : true)
-              .map(
-                (fp) => `/${fp}`,
-                // fp.startsWith("./")
-                //   ? fp
-                //   : fp.startsWith("/")
-                //   ? `.${fp}`
-                //   : `./${fp}`
-              );
-
-            return filePaths;
-          } catch (err) {
-            logger.error(
-              `There was an error loading paths for: ${metaPath}`,
-              await metaResp.clone().text(),
+        isCheckingForUpdates = true;
+        try {
+          const latestVersion = await getLatestVersion();
+          if (latestVersion !== currentVersion) {
+            console.log(
+              `Updating JSR DFS handler from ${currentVersion} to ${latestVersion}`,
             );
-
-            throw err;
+            currentVersion = latestVersion;
+            handler = await loadHandler(currentVersion);
           }
-        };
+        } catch (error) {
+          console.error("Failed to check for JSR version updates:", error);
+        } finally {
+          isCheckingForUpdates = false;
+        }
+      }
 
-        return handler;
-      };
-
-      let handler = await loadHandler();
-
-      setInterval(() => {
-        const work = async () => {
-          handler = await loadHandler();
-        };
-
-        work();
-      }, 60 * 1000);
-
-      return {
-        get Root() {
-          return handler.Root;
+      return new Proxy(handler, {
+        get(target, prop) {
+          return async (...args: unknown[]) => {
+            const result = Reflect.get(handler, prop).apply(handler, args);
+            checkForUpdates();
+            return result;
+          };
         },
-
-        GetFileInfo(
-          filePath: string,
-          revision: string,
-          defaultFileName?: string,
-          extensions?: string[],
-          useCascading?: boolean,
-          cacheDb?: Deno.Kv,
-          cacheSeconds?: number,
-        ) {
-          return handler.GetFileInfo(
-            path.join(dfs.FileRoot || "", filePath),
-            revision,
-            defaultFileName,
-            extensions,
-            useCascading,
-            cacheDb,
-            cacheSeconds,
-          );
-        },
-
-        async LoadAllPaths(revision: string) {
-          const allPaths = await handler.LoadAllPaths(revision);
-
-          return allPaths.map((path) =>
-            dfs.FileRoot && path.startsWith(dfs.FileRoot)
-              ? path.replace(dfs.FileRoot, "")
-              : path
-          );
-        },
-
-        RemoveFile(filePath: string, revision: string, cacheDb?: Deno.Kv) {
-          return handler.RemoveFile(
-            path.join(dfs.FileRoot || "", filePath),
-            revision,
-            cacheDb,
-          );
-        },
-
-        WriteFile(
-          filePath: string,
-          revision: string,
-          stream: ReadableStream<Uint8Array>,
-          ttlSeconds?: number,
-          headers?: Headers,
-          maxChunkSize?: number,
-          cacheDb?: Deno.Kv,
-        ) {
-          return handler.WriteFile(
-            path.join(dfs.FileRoot || "", filePath),
-            revision,
-            stream,
-            ttlSeconds,
-            headers,
-            maxChunkSize,
-            cacheDb,
-          );
-        },
-      };
+      });
     },
   };

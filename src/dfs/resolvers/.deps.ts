@@ -1,14 +1,12 @@
-export * as denoGraph from "jsr:@deno/graph@0.81.2";
-
 export * as path from "jsr:@std/path@1.0.8";
 
-export { loadDenoConfig } from "jsr:@fathym/common@0.2.175/build";
 export { getPackageLogger } from "jsr:@fathym/common@0.2.175/log";
 
 export { IoCContainer } from "jsr:@fathym/ioc@0.0.13";
 
 export {
   type EaCDistributedFileSystemDetails,
+  type EaCJSRDistributedFileSystemDetails,
   isEaCAzureBlobStorageDistributedFileSystemDetails,
   isEaCDenoKVDistributedFileSystemDetails,
   isEaCESMDistributedFileSystemDetails,
@@ -19,12 +17,15 @@ export {
 } from "../_/.exports.ts";
 
 export {
-  buildAzureBlobDFSFileHandler,
-  buildDenoKVDFSFileHandler,
-  buildFetchDFSFileHandler,
-  buildLocalDFSFileHandler,
-  buildWorkerDFSFileHandler,
+  AzureBlobDFSFileHandler,
+  DenoKVDFSFileHandler,
   type DFSFileHandler,
   type DFSFileHandlerResolver,
   type DFSFileInfo,
+  ESMFetchDFSFileHandler,
+  FetchDFSFileHandler,
+  JSRFetchDFSFileHandler,
+  LocalDFSFileHandler,
+  NPMFetchDFSFileHandler,
+  WorkerDFSFileHandler,
 } from "../handlers/.exports.ts";
