@@ -16,6 +16,8 @@ export class AzureBlobDFSFileHandler extends DFSFileHandler {
     BlobServiceClient["getContainerClient"]
   >;
   private readonly connectionString: string;
+  private initialize: Promise<void>;
+  private blobPaths: string[] = [];
 
   /**
    * Creates an instance of `AzureBlobDFSFileHandler` and initializes the container client.
@@ -31,13 +33,19 @@ export class AzureBlobDFSFileHandler extends DFSFileHandler {
     super();
     this.connectionString = connectionString;
 
-    // Initialize the Blob Storage client and container client
     const blobServiceClient = BlobServiceClient.fromConnectionString(
       connectionString,
     );
     this.containerClient = blobServiceClient.getContainerClient(containerName);
+
+    // Prefetch blob list at startup
+    this.initialize = this.initializeBlobList();
   }
 
+  /**
+   * Retrieves file information but only if it exists in the blob list.
+   * @returns A `DFSFileInfo` object if found, otherwise `undefined`.
+   */
   public async GetFileInfo(
     filePath: string,
     revision: string,
@@ -47,6 +55,13 @@ export class AzureBlobDFSFileHandler extends DFSFileHandler {
     cacheDb?: Deno.Kv,
     cacheSeconds?: number,
   ): Promise<DFSFileInfo | undefined> {
+    await this.initialize;
+
+    // Ensure requested file exists in blob list
+    if (!this.blobPaths.includes(filePath)) {
+      return undefined;
+    }
+
     let finalFilePath = filePath;
 
     return await withDFSCache(
@@ -102,21 +117,17 @@ export class AzureBlobDFSFileHandler extends DFSFileHandler {
     );
   }
 
+  /**
+   * Returns the preloaded list of file paths.
+   */
   public async LoadAllPaths(_revision: string): Promise<string[]> {
-    const filePaths: string[] = [];
-
-    for await (const blob of this.containerClient.listBlobsFlat()) {
-      if (this.Root && !blob.name.startsWith(this.Root)) continue;
-      filePaths.push(blob.name);
-    }
-
-    return filePaths.map((filePath) =>
-      this.Root && filePath.startsWith(this.Root)
-        ? filePath.replace(this.Root, "")
-        : filePath
-    );
+    await this.initialize;
+    return this.blobPaths;
   }
 
+  /**
+   * Deletes a file from blob storage.
+   */
   public async RemoveFile(
     filePath: string,
     _revision: string,
@@ -127,6 +138,9 @@ export class AzureBlobDFSFileHandler extends DFSFileHandler {
     await blobClient.deleteIfExists();
   }
 
+  /**
+   * Writes a file to blob storage.
+   */
   public async WriteFile(
     filePath: string,
     _revision: string,
@@ -141,14 +155,34 @@ export class AzureBlobDFSFileHandler extends DFSFileHandler {
     await blockBlobClient.uploadStream(stream);
   }
 
-  // ---------------- PRIVATE METHODS ----------------
+  /**
+   * Loads all paths from Azure Blob Storage once at startup.
+   */
+  private async initializeBlobList(): Promise<void> {
+    const filePaths: string[] = [];
 
-  private formatPath(filePath: string): string {
-    return this.Root
-      ? `${this.Root}${filePath}`.slice(2).replace("//", "/")
-      : filePath;
+    for await (const blob of this.containerClient.listBlobsFlat()) {
+      if (this.Root && !blob.name.startsWith(this.Root)) continue;
+      filePaths.push(`${blob.name.slice(this.Root.length)}`);
+    }
+
+    this.blobPaths = filePaths.map((filePath) =>
+      this.Root && filePath.startsWith(this.Root)
+        ? filePath.replace(this.Root, "")
+        : filePath
+    );
   }
 
+  /**
+   * Formats the file path correctly.
+   */
+  private formatPath(filePath: string): string {
+    return this.Root ? `${this.Root}${filePath}`.replace("//", "/") : filePath;
+  }
+
+  /**
+   * Parses the connection string for storage credentials.
+   */
   private static parseConnectionString(connectionString: string) {
     const matches = connectionString.match(
       /AccountName=([^;]+);AccountKey=([^;]+)/,
@@ -163,6 +197,9 @@ export class AzureBlobDFSFileHandler extends DFSFileHandler {
     };
   }
 
+  /**
+   * Generates a SAS token for secure access.
+   */
   private async getSasToken(
     containerName: string,
     blobName: string,
