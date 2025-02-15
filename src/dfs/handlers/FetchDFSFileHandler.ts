@@ -34,10 +34,8 @@ export class FetchDFSFileHandler extends DFSFileHandler {
     cacheDb?: Deno.Kv,
     cacheSeconds?: number,
   ): Promise<DFSFileInfo | undefined> {
-    let finalFilePath = filePath;
-
     return await withDFSCache(
-      finalFilePath,
+      filePath,
       async () => {
         const isDirectFetch = filePath.startsWith("http://") ||
           filePath.startsWith("https://") ||
@@ -52,47 +50,58 @@ export class FetchDFSFileHandler extends DFSFileHandler {
             useCascading,
           );
 
-        const fileChecks: Promise<Response>[] = [];
-        const usedFileCheckPaths: string[] = [];
-
-        fileCheckPaths.forEach((fcp) => {
+        for (const fcp of fileCheckPaths) {
           const resolvedPath = this.pathResolver ? this.pathResolver(fcp) : fcp;
+          if (!resolvedPath) continue;
 
-          if (resolvedPath && !resolvedPath.startsWith("@")) {
-            try {
-              const fullFilePath = isDirectFetch
-                ? new URL(resolvedPath)
-                : new URL(`.${resolvedPath}`, this.Root);
+          try {
+            const fullFilePath = isDirectFetch
+              ? new URL(resolvedPath)
+              : new URL(`.${resolvedPath}`, this.Root);
 
-              usedFileCheckPaths.push(resolvedPath);
-              fileChecks.push(fetch(fullFilePath));
-            } catch (err) {
-              if (!(err instanceof TypeError)) {
-                throw err;
-              }
+            const response = await fetch(fullFilePath);
+
+            if (response.ok && response.body) {
+              // ✅ Create a ReadableStream to ensure we process and close the response correctly
+              const stream = new ReadableStream<Uint8Array>({
+                start(controller) {
+                  (async () => {
+                    try {
+                      const reader = response.body!.getReader();
+                      let done = false;
+                      while (!done) {
+                        const { value, done: readDone } = await reader.read();
+                        if (readDone) break;
+                        if (value) controller.enqueue(value);
+                      }
+                      controller.close();
+                    } catch (err) {
+                      controller.error(err);
+                    }
+                  })();
+                },
+              });
+
+              return {
+                Path: resolvedPath,
+                Headers: this.extractHeaders(response),
+                Contents: stream,
+              };
+            } else if (response.body) {
+              await response.body?.cancel();
             }
+          } catch (error) {
+            console.error(`Failed to fetch file: ${resolvedPath}`, error);
           }
-        });
-
-        const fileResps = await Promise.all(fileChecks);
-        const activeFileResp = fileResps.find((fileResp, i) => {
-          if (fileResp.ok) {
-            finalFilePath = usedFileCheckPaths[i];
-          }
-          return fileResp.ok;
-        });
-
-        if (activeFileResp) {
-          const headers = this.extractHeaders(activeFileResp);
-
-          return {
-            Contents: activeFileResp.clone().body!,
-            Headers: headers,
-            Path: finalFilePath,
-          };
         }
 
-        return undefined;
+        throw new Error(
+          `Unable to locate a local file at path ${filePath}${
+            defaultFileName
+              ? `, and no default file was found for ${defaultFileName}.`
+              : "."
+          }`,
+        );
       },
       revision,
       cacheDb,
