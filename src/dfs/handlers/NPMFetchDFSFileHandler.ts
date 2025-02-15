@@ -44,9 +44,6 @@ export class NPMFetchDFSFileHandler extends FetchDFSFileHandler {
       );
 
       if (!match) {
-        console.warn(
-          `Skipping ${filePath}: No valid Skypack module export found.`,
-        );
         return undefined;
       }
 
@@ -60,9 +57,6 @@ export class NPMFetchDFSFileHandler extends FetchDFSFileHandler {
         });
 
         if (!validationResponse.ok) {
-          console.warn(
-            `Skipping ${filePath}: Extracted file does not exist at ${validationUrl}.`,
-          );
           return undefined;
         }
       } catch {
