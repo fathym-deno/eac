@@ -152,7 +152,7 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
         for (const route of filteredRoutes) {
           rPipe.Append(this.buildRouteGroupRouteHandler(routeGroup, route));
 
-          rPipe.Append(route.Handler.Execute);
+          rPipe.Append((req, ctx) => route.Handler.Execute(req, ctx));
         }
 
         return rPipe.Execute(req, ctx);
