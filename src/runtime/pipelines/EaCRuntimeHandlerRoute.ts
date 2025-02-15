@@ -18,6 +18,8 @@ export type EaCRuntimeHandlerRoute<
 
   Name: string;
 
+  Priority?: number;
+
   ResolverConfig: RouteResolverConfiguration;
   // Route: string;
 };
