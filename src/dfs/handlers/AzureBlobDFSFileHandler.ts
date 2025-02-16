@@ -58,11 +58,6 @@ export class AzureBlobDFSFileHandler extends DFSFileHandler {
   ): Promise<DFSFileInfo | undefined> {
     await this.initialize;
 
-    // Ensure requested file exists in the blob list
-    if (!this.blobPaths.includes(filePath)) {
-      return undefined;
-    }
-
     return await withDFSCache(
       filePath,
       async () => {
@@ -74,6 +69,11 @@ export class AzureBlobDFSFileHandler extends DFSFileHandler {
         );
 
         for (const checkPath of fileCheckPaths) {
+          // Ensure requested file exists in the blob list
+          if (!this.blobPaths.includes(checkPath)) {
+            continue;
+          }
+
           const fullPath = this.formatPath(checkPath);
           const blobClient = this.containerClient.getBlobClient(fullPath);
 
