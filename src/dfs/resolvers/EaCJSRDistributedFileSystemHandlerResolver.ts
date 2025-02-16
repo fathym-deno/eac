@@ -74,7 +74,8 @@ export const EaCJSRDistributedFileSystemHandlerResolver:
               console.log(JSON.stringify(prop));
               console.log(JSON.stringify(args));
               console.log(JSON.stringify(ex));
-              throw ex;
+              debugger;
+              return undefined;
             }
           };
         },
