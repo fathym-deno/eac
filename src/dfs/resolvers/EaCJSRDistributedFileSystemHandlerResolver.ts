@@ -66,9 +66,16 @@ export const EaCJSRDistributedFileSystemHandlerResolver:
       return new Proxy(handler, {
         get(target, prop) {
           return async (...args: unknown[]) => {
-            const result = Reflect.get(handler, prop).apply(handler, args);
-            checkForUpdates();
-            return result;
+            try {
+              const result = Reflect.get(handler, prop).apply(handler, args);
+              checkForUpdates();
+              return result;
+            } catch (ex) {
+              console.log(JSON.stringify(prop));
+              console.log(JSON.stringify(args));
+              console.log(JSON.stringify(ex));
+              throw ex;
+            }
           };
         },
       });
