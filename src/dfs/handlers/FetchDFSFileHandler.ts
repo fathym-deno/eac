@@ -89,6 +89,7 @@ export class FetchDFSFileHandler extends DFSFileHandler {
               };
             } else if (response.body) {
               await response.body?.cancel();
+              return undefined;
             }
           } catch (error) {
             console.error(`Failed to fetch file: ${resolvedPath}`, error);

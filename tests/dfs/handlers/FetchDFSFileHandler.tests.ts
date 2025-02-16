@@ -24,12 +24,9 @@ Deno.test("FetchDFSFileHandler Tests", async (t) => {
     }
   });
 
-  await t.step("GetFileInfo should throw for missing file", async () => {
-    await assertRejects(
-      () => dfsHandler.GetFileInfo(missingFile, "revision"),
-      Error,
-      `Unable to locate a local file at path ${missingFile}.`,
-    );
+  await t.step("GetFileInfo should be undefined for missing file", async () => {
+    const fileInfo = await dfsHandler.GetFileInfo(missingFile, "revision");
+    assertEquals(fileInfo, undefined);
   });
 
   await t.step("LoadAllPaths should throw NotSupported error", async () => {

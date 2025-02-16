@@ -42,13 +42,8 @@ export class ESMFetchDFSFileHandler extends FetchDFSFileHandler {
   ): Promise<DFSFileInfo | undefined> {
     await this.initialize;
 
-    // If the requested filePath isn't in our known module list, return undefined
-    if (!this.modulePaths.includes(filePath)) {
-      return undefined;
-    }
-
     // Otherwise, fetch as normal
-    return super.GetFileInfo(
+    const fileInfo = await super.GetFileInfo(
       filePath,
       revision,
       defaultFileName,
@@ -57,6 +52,12 @@ export class ESMFetchDFSFileHandler extends FetchDFSFileHandler {
       cacheDb,
       cacheSeconds,
     );
+
+    if (!fileInfo || !this.modulePaths.includes(fileInfo.Path)) {
+      return undefined;
+    }
+
+    return fileInfo;
   }
 
   /**
