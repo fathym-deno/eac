@@ -33,8 +33,11 @@ export const EaCJSRDistributedFileSystemHandlerResolver:
       }
 
       async function loadHandler(version: string) {
-        const fileRoot = new URL(`${version}/`, pkgRoot);
-        return new JSRFetchDFSFileHandler(fileRoot.href, jsrDFS.FileRoot);
+        return new JSRFetchDFSFileHandler(
+          jsrDFS.Package,
+          jsrDFS.Version,
+          jsrDFS.FileRoot,
+        );
       }
 
       // Initial Load
