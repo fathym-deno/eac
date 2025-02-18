@@ -1,6 +1,6 @@
 import { DFSFileInfo } from "./DFSFileInfo.ts";
 import { FetchDFSFileHandler } from "./FetchDFSFileHandler.ts";
-import { toText } from "jsr:@std/streams@1.0.8/to-text";
+import { toText } from "jsr:@std/streams@1.0.9/to-text";
 
 /**
  * Implements `DFSFileHandler` for NPM-based file storage via Skypack CDN.

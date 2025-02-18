@@ -1,4 +1,4 @@
-export type { KnownMethod } from "jsr:@fathym/common@0.2.177/http";
+export type { KnownMethod } from "jsr:@fathym/common@0.2.178/http";
 
 export type { EverythingAsCode } from "../../eac/.exports.ts";
 
