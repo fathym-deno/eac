@@ -9,6 +9,7 @@ Deno.test("JSRFetchDFSFileHandler Tests", async (t) => {
   const packageName = "@fathym/atomic";
   const version = ""; // This should resolve to the latest version
   const handler = new JSRFetchDFSFileHandler(packageName, version);
+  const rootedHandler = new JSRFetchDFSFileHandler(packageName, version, '/src/');
 
   await t.step(
     "ResolveVersion should correctly determine the latest version",
@@ -31,6 +32,21 @@ Deno.test("JSRFetchDFSFileHandler Tests", async (t) => {
     "LoadAllPaths should retrieve all JSR module paths",
     async () => {
       const paths = await handler.LoadAllPaths("revision");
+
+      console.log("Resolved Paths:", paths);
+      assertEquals(paths.length > 0, true, "Should retrieve module paths.");
+      assertEquals(
+        paths.some((p) => p.startsWith("/")),
+        true,
+        "Paths should start with '/'",
+      );
+    },
+  );
+
+  await t.step(
+    "LoadAllPaths should retrieve all JSR module paths from File Root",
+    async () => {
+      const paths = await rootedHandler.LoadAllPaths("revision");
 
       console.log("Resolved Paths:", paths);
       assertEquals(paths.length > 0, true, "Should retrieve module paths.");
