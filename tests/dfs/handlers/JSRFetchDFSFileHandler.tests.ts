@@ -9,7 +9,11 @@ Deno.test("JSRFetchDFSFileHandler Tests", async (t) => {
   const packageName = "@fathym/atomic";
   const version = ""; // This should resolve to the latest version
   const handler = new JSRFetchDFSFileHandler(packageName, version);
-  const rootedHandler = new JSRFetchDFSFileHandler(packageName, version, '/src/');
+  const rootedHandler = new JSRFetchDFSFileHandler(
+    packageName,
+    version,
+    "/src/",
+  );
 
   await t.step(
     "ResolveVersion should correctly determine the latest version",
