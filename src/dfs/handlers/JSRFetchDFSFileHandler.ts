@@ -149,7 +149,7 @@ export class JSRFetchDFSFileHandler extends FetchDFSFileHandler {
 
       this.modulePaths = Object.keys(meta.manifest)
         .filter((fp) => (this.fileRoot ? fp.startsWith(this.fileRoot) : true))
-        .map((fp) => `${fp}`);
+        .map((fp) => (this.fileRoot ? fp.slice(this.fileRoot!.length) : fp));
     } catch (err) {
       logger.error(`Error loading paths from ${metaPath}`);
       throw err;

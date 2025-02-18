@@ -1,4 +1,5 @@
 import {
+  buildURLMatch,
   EaCLoggingProvider,
   EaCRuntimeConfig,
   EaCRuntimeHandler,
@@ -152,7 +153,9 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
         for (const route of filteredRoutes) {
           rPipe.Append(this.buildRouteGroupRouteHandler(routeGroup, route));
 
-          rPipe.Append((req, ctx) => route.Handler.Execute(req, ctx));
+          rPipe.Append((req, ctx) => {
+            return route.Handler.Execute(req, ctx);
+          });
         }
 
         return rPipe.Execute(req, ctx);
@@ -172,10 +175,12 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
     _routeGroup: EaCRuntimeHandlerRouteGroup,
     route: EaCRuntimeHandlerRoute,
   ): EaCRuntimeHandlerSet {
-    return async (_req, ctx) => {
+    return async (req, ctx) => {
       this.logger.info(
         `Running route ${route.Name} for ${route.ResolverConfig.PathPattern}...`,
       );
+
+      this.setURLMatch(req, ctx, route.ResolverConfig.PathPattern);
 
       let resp: ReturnType<typeof ctx.Next> = await ctx.Next();
 
@@ -344,19 +349,31 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
     routeGroup: EaCRuntimeHandlerRouteGroup,
     routes: EaCRuntimeHandlerRoute[],
   ): EaCRuntimeHandlerRoute[] {
+    this.setURLMatch(req, ctx, "*");
+
     return !routeGroup.Activator || routeGroup.Activator(req, ctx)
       ? routes
         .filter((route) => {
-          return !route.Activator || route.Activator(req, ctx);
+          const actCtx = { ...ctx };
+
+          this.setURLMatch(req, actCtx, "*");
+
+          return !route.Activator || route.Activator(req, actCtx);
         })
         .filter((route) => {
-          const apiTestUrl = new URL(
-            ctx.Runtime.URLMatch.FromBase(`.${ctx.Runtime.URLMatch.Path}`),
+          const actCtx = { ...ctx };
+
+          this.setURLMatch(req, actCtx, "*");
+
+          const testUrl = new URL(
+            actCtx.Runtime.URLMatch.FromBase(
+              `.${actCtx.Runtime.URLMatch.Path}`,
+            ),
           );
 
           const isMatch = new URLPattern({
             pathname: route.ResolverConfig.PathPattern,
-          }).test(apiTestUrl);
+          }).test(testUrl);
 
           return isMatch;
         })
@@ -379,6 +396,23 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
     }
 
     this.Middleware = this.config.Middleware || [];
+  }
+
+  protected setURLMatch(
+    req: Request,
+    ctx: EaCRuntimeContext,
+    pathPattern: string,
+  ): void {
+    const pattern = new URLPattern({
+      pathname: pathPattern,
+    });
+
+    ctx.Runtime = merge(
+      ctx.Runtime,
+      {
+        URLMatch: buildURLMatch(pattern, req),
+      } as EaCRuntimeContext["Runtime"],
+    );
   }
 
   protected shouldContinueToNextRoute(
