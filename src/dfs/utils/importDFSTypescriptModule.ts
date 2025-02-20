@@ -36,7 +36,7 @@ export async function importDFSTypescriptModule(
 
         let apiUrl: string;
 
-        filePath = file.Path;
+        filePath = file.ImportPath || file.Path;
 
         if (filePath.startsWith("http://") || filePath.startsWith("https://")) {
           apiUrl = filePath;
