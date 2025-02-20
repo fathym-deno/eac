@@ -74,6 +74,21 @@ Deno.test("JSRFetchDFSFileHandler Tests", async (t) => {
   );
 
   await t.step(
+    "GetFileInfo should return valid file info (if module exists) for default file",
+    async () => {
+      const testFilePath = "/src/atoms/.exports.ts"; // Use first resolved module file
+
+      const fileInfo = await handler.GetFileInfo(
+        "/src/atoms",
+        "revision",
+        ".exports.ts",
+      );
+      assertEquals(fileInfo?.Path, "/src/atoms/.exports.ts");
+      assertEquals(fileInfo?.Contents instanceof ReadableStream, true);
+    },
+  );
+
+  await t.step(
     "GetFileInfo should return undefined for missing JSR file",
     async () => {
       const missingFile = "/nonexistent.js";

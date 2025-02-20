@@ -1,6 +1,6 @@
-import { getFileCheckPathsToProcess, withDFSCache } from "./.deps.ts";
-import { DFSFileHandler } from "./DFSFileHandler.ts";
-import { DFSFileInfo } from "./DFSFileInfo.ts";
+import { getFileCheckPathsToProcess, withDFSCache } from './.deps.ts';
+import { DFSFileHandler } from './DFSFileHandler.ts';
+import { DFSFileInfo } from './DFSFileInfo.ts';
 
 /**
  * Implements `DFSFileHandler` using HTTP(S) and local file fetching.
@@ -15,7 +15,7 @@ export class FetchDFSFileHandler extends DFSFileHandler {
    */
   public constructor(
     public Root: string,
-    pathResolver?: (filePath: string) => string,
+    pathResolver?: (filePath: string) => string
   ) {
     super();
     this.pathResolver = pathResolver;
@@ -32,23 +32,24 @@ export class FetchDFSFileHandler extends DFSFileHandler {
     extensions?: string[],
     useCascading?: boolean,
     cacheDb?: Deno.Kv,
-    cacheSeconds?: number,
+    cacheSeconds?: number
   ): Promise<DFSFileInfo | undefined> {
     return await withDFSCache(
       filePath,
       async () => {
-        const isDirectFetch = filePath.startsWith("http://") ||
-          filePath.startsWith("https://") ||
-          filePath.startsWith("file:///");
+        const isDirectFetch =
+          filePath.startsWith('http://') ||
+          filePath.startsWith('https://') ||
+          filePath.startsWith('file:///');
 
         const fileCheckPaths = isDirectFetch
           ? [filePath]
           : getFileCheckPathsToProcess(
-            filePath,
-            defaultFileName,
-            extensions,
-            useCascading,
-          );
+              filePath,
+              defaultFileName,
+              extensions,
+              useCascading
+            );
 
         for (const fcp of fileCheckPaths) {
           const resolvedPath = this.pathResolver ? this.pathResolver(fcp) : fcp;
@@ -89,24 +90,24 @@ export class FetchDFSFileHandler extends DFSFileHandler {
               };
             } else if (response.body) {
               await response.body?.cancel();
-              return undefined;
             }
-          } catch (error) {
-            console.error(`Failed to fetch file: ${resolvedPath}`, error);
-          }
+            // deno-lint-ignore no-empty
+          } catch {}
         }
 
-        throw new Error(
+        console.debug(
           `Unable to locate a local file at path ${filePath}${
             defaultFileName
               ? `, and no default file was found for ${defaultFileName}.`
-              : "."
-          }`,
+              : '.'
+          }`
         );
+
+        return undefined;
       },
       revision,
       cacheDb,
-      cacheSeconds,
+      cacheSeconds
     );
   }
 
@@ -116,7 +117,7 @@ export class FetchDFSFileHandler extends DFSFileHandler {
    */
   public async LoadAllPaths(_revision: string): Promise<string[]> {
     throw new Deno.errors.NotSupported(
-      "Retrieval of fetch paths is not supported.",
+      'Retrieval of fetch paths is not supported.'
     );
   }
 
@@ -127,9 +128,9 @@ export class FetchDFSFileHandler extends DFSFileHandler {
   public async RemoveFile(
     _filePath: string,
     _revision: string,
-    _cacheDb?: Deno.Kv,
+    _cacheDb?: Deno.Kv
   ): Promise<void> {
-    throw new Deno.errors.NotSupported("File removal is not supported.");
+    throw new Deno.errors.NotSupported('File removal is not supported.');
   }
 
   /**
@@ -143,8 +144,8 @@ export class FetchDFSFileHandler extends DFSFileHandler {
     _ttlSeconds?: number,
     _headers?: Headers,
     _maxChunkSize = 8000,
-    _cacheDb?: Deno.Kv,
+    _cacheDb?: Deno.Kv
   ): Promise<void> {
-    throw new Deno.errors.NotSupported("File writing is not supported.");
+    throw new Deno.errors.NotSupported('File writing is not supported.');
   }
 }
