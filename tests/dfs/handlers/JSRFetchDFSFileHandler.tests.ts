@@ -78,12 +78,12 @@ Deno.test("JSRFetchDFSFileHandler Tests", async (t) => {
     async () => {
       const testFilePath = "/src/atoms/.exports.ts"; // Use first resolved module file
 
-      const fileInfo = await handler.GetFileInfo(
-        "/src/atoms",
+      const fileInfo = await rootedHandler.GetFileInfo(
+        "/atoms",
         "revision",
         ".exports.ts",
       );
-      assertEquals(fileInfo?.Path, "/src/atoms/.exports.ts");
+      assertEquals(fileInfo?.Path, "/atoms/.exports.ts");
       assertEquals(fileInfo?.Contents instanceof ReadableStream, true);
     },
   );

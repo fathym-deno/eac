@@ -20,6 +20,14 @@ export class JSRFetchDFSFileHandler extends FetchDFSFileHandler {
     this.version = version;
     this.fileRoot = fileRoot;
 
+    if (this.fileRoot && !this.fileRoot.startsWith("/")) {
+      this.fileRoot = `/${this.fileRoot}`;
+    }
+
+    if (this.fileRoot && !this.fileRoot.endsWith("/")) {
+      this.fileRoot = `${this.fileRoot}/`;
+    }
+
     // Initialize version and module paths once
     this.initialize = this.initializeModulePaths();
   }
@@ -49,6 +57,10 @@ export class JSRFetchDFSFileHandler extends FetchDFSFileHandler {
       cacheDb,
       cacheSeconds,
     );
+
+    if (fileInfo && this.fileRoot) {
+      fileInfo.Path = fileInfo.Path.slice(this.fileRoot.length - 1);
+    }
 
     if (!fileInfo || !this.modulePaths.includes(fileInfo.Path)) {
       return undefined;
