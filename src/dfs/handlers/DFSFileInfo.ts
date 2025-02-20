@@ -4,6 +4,8 @@ export type DFSFileInfo<TModule = any> = {
 
   Headers?: Record<string, string>;
 
+  ImportPath?: string;
+
   Module?: TModule;
 
   Path: string;

@@ -58,8 +58,12 @@ export class JSRFetchDFSFileHandler extends FetchDFSFileHandler {
       cacheSeconds,
     );
 
-    if (fileInfo && this.fileRoot) {
-      fileInfo.Path = fileInfo.Path.slice(this.fileRoot.length - 1);
+    if (fileInfo) {
+      fileInfo.ImportPath = fileInfo?.Path;
+
+      if (this.fileRoot) {
+        fileInfo.Path = fileInfo.Path.slice(this.fileRoot.length - 1);
+      }
     }
 
     if (!fileInfo || !this.modulePaths.includes(fileInfo.Path)) {
