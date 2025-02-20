@@ -50,6 +50,8 @@ export class FetchDFSFileHandler extends DFSFileHandler {
             useCascading,
           );
 
+        let fileInfo: DFSFileInfo | undefined = undefined;
+
         for (const fcp of fileCheckPaths) {
           const resolvedPath = this.pathResolver ? this.pathResolver(fcp) : fcp;
           if (!resolvedPath) continue;
@@ -82,11 +84,13 @@ export class FetchDFSFileHandler extends DFSFileHandler {
                 },
               });
 
-              return {
+              fileInfo = {
                 Path: resolvedPath,
                 Headers: this.extractHeaders(response),
                 Contents: stream,
               };
+
+              break;
             } else if (response.body) {
               await response.body?.cancel();
             }
@@ -102,7 +106,7 @@ export class FetchDFSFileHandler extends DFSFileHandler {
           }`,
         );
 
-        return undefined;
+        return fileInfo;
       },
       revision,
       cacheDb,
