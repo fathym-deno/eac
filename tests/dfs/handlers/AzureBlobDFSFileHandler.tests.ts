@@ -18,12 +18,10 @@ Deno.test("AzureBlobDFSFileHandler Tests", async (t) => {
   }
 
   const handler = new AzureBlobDFSFileHandler("test", {
-    Details: {
-      Type: "AzureBlobStorage",
-      ConnectionString: connectionString,
-      Container: container,
-      FileRoot: fileRoot,
-    } as EaCAzureBlobStorageDistributedFileSystemDetails,
+    Type: "AzureBlobStorage",
+    ConnectionString: connectionString,
+    Container: container,
+    FileRoot: fileRoot,
   });
 
   await t.step("GetFileInfo should return valid file info", async () => {

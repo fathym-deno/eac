@@ -16,16 +16,13 @@ import { DFSFileInfo } from "./DFSFileInfo.ts";
 /**
  * Implements `DFSFileHandler` for Azure Blob Storage.
  */
-export class AzureBlobDFSFileHandler extends DFSFileHandler {
+export class AzureBlobDFSFileHandler
+  extends DFSFileHandler<EaCAzureBlobStorageDistributedFileSystemDetails> {
   protected blobPaths: string[] = [];
 
   protected readonly containerClient: ReturnType<
     BlobServiceClient["getContainerClient"]
   >;
-
-  protected get details(): EaCAzureBlobStorageDistributedFileSystemDetails {
-    return this.dfs.Details as EaCAzureBlobStorageDistributedFileSystemDetails;
-  }
 
   protected initialize: Promise<void>;
 
@@ -33,8 +30,11 @@ export class AzureBlobDFSFileHandler extends DFSFileHandler {
     return this.details?.FileRoot || "";
   }
 
-  public constructor(dfsLookup: string, dfs: EaCDistributedFileSystemAsCode) {
-    super(dfsLookup, dfs);
+  public constructor(
+    dfsLookup: string,
+    details: EaCAzureBlobStorageDistributedFileSystemDetails,
+  ) {
+    super(dfsLookup, details);
 
     const blobServiceClient = BlobServiceClient.fromConnectionString(
       this.details.ConnectionString,

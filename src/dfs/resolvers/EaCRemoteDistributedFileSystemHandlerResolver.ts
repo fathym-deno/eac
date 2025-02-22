@@ -1,3 +1,4 @@
+import { RemoteFetchDFSFileHandler } from "../handlers/RemoteFetchDFSFileHandler.ts";
 import {
   DFSFileHandler,
   DFSFileHandlerResolver,
@@ -23,6 +24,6 @@ export const EaCRemoteDistributedFileSystemHandlerResolver:
         );
       }
 
-      return new FetchDFSFileHandler(dfsLookup, dfs);
+      return new RemoteFetchDFSFileHandler(dfsLookup, dfs);
     },
   };

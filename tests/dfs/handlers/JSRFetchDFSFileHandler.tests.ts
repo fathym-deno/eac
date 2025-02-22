@@ -10,19 +10,15 @@ Deno.test("JSRFetchDFSFileHandler Tests", async (t) => {
   const packageName = "@fathym/atomic";
   const version = ""; // This should resolve to the latest version
   const handler = new JSRFetchDFSFileHandler("test", {
-    Details: {
-      Type: "JSR",
-      Package: packageName,
-      Version: version,
-    } as EaCJSRDistributedFileSystemDetails,
+    Type: "JSR",
+    Package: packageName,
+    Version: version,
   });
   const rootedHandler = new JSRFetchDFSFileHandler("test", {
-    Details: {
-      Type: "JSR",
-      Package: packageName,
-      Version: version,
-      FileRoot: "/src/",
-    } as EaCJSRDistributedFileSystemDetails,
+    Type: "JSR",
+    Package: packageName,
+    Version: version,
+    FileRoot: "/src/",
   });
 
   await t.step(
@@ -94,11 +90,9 @@ Deno.test("JSRFetchDFSFileHandler Tests", async (t) => {
     "JSRFetchDFSFileHandler should throw an error for invalid package",
     async () => {
       const invalidHandler = new JSRFetchDFSFileHandler("test", {
-        Details: {
-          Type: "JSR",
-          Package: "@invalid/package",
-          Version: "",
-        } as EaCJSRDistributedFileSystemDetails,
+        Type: "JSR",
+        Package: "@invalid/package",
+        Version: "",
       });
       await assertRejects(
         () => invalidHandler.LoadAllPaths("revision"),

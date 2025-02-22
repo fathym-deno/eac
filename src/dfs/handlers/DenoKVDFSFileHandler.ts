@@ -13,14 +13,11 @@ import { DFSFileInfo } from "./DFSFileInfo.ts";
 /**
  * Implements `DFSFileHandler` for Deno KV-backed storage.
  */
-export class DenoKVDFSFileHandler extends DFSFileHandler {
+export class DenoKVDFSFileHandler
+  extends DFSFileHandler<EaCDenoKVDistributedFileSystemDetails> {
   private readonly fileStream: DenoKVFileStream;
   private readonly rootKey: Deno.KvKey;
   private readonly pathResolver?: (filePath: string) => string;
-
-  protected get details(): EaCDenoKVDistributedFileSystemDetails {
-    return this.dfs.Details as EaCDenoKVDistributedFileSystemDetails;
-  }
 
   public get Root(): string {
     return this.details?.FileRoot || "";
@@ -36,11 +33,11 @@ export class DenoKVDFSFileHandler extends DFSFileHandler {
    */
   public constructor(
     dfsLookup: string,
-    dfs: EaCDistributedFileSystemAsCode,
+    deatils: EaCDenoKVDistributedFileSystemDetails,
     protected readonly denoKv: Deno.Kv,
     pathResolver?: (filePath: string) => string,
   ) {
-    super(dfsLookup, dfs);
+    super(dfsLookup, deatils);
 
     this.fileStream = new DenoKVFileStream(denoKv);
 

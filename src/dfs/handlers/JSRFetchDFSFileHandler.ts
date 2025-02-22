@@ -11,25 +11,22 @@ import { FetchDFSFileHandler } from "./FetchDFSFileHandler.ts";
  * Specialized DFS handler for JSR-backed file systems.
  * Handles version resolution and file retrieval from jsr.io.
  */
-export class JSRFetchDFSFileHandler extends FetchDFSFileHandler {
+export class JSRFetchDFSFileHandler
+  extends FetchDFSFileHandler<EaCJSRDistributedFileSystemDetails> {
   private initialize: Promise<void>;
   private modulePaths: string[] = [];
 
-  protected get detailsJSR(): EaCJSRDistributedFileSystemDetails {
-    return this.dfs.Details as EaCJSRDistributedFileSystemDetails;
-  }
-
   public override get Root(): string {
-    return this.detailsJSR
+    return this.details
       ? new URL(
-        `${this.detailsJSR.Version}/`,
-        new URL(`${this.detailsJSR.Package}/`, "https://jsr.io/"),
+        `${this.details.Version}/`,
+        new URL(`${this.details.Package}/`, "https://jsr.io/"),
       ).href
       : "";
   }
 
-  constructor(dfsLookup: string, dfs: EaCDistributedFileSystemAsCode) {
-    super(dfsLookup, dfs);
+  constructor(dfsLookup: string, details: EaCJSRDistributedFileSystemDetails) {
+    super(dfsLookup, details);
 
     this.initialize = this.initializeModulePaths();
   }
@@ -51,7 +48,7 @@ export class JSRFetchDFSFileHandler extends FetchDFSFileHandler {
 
     // Otherwise, fetch as normal
     const fileInfo = await super.GetFileInfo(
-      path.join(this.detailsJSR.FileRoot || "", filePath),
+      path.join(this.details.FileRoot || "", filePath),
       revision,
       defaultFileName,
       extensions,
@@ -63,9 +60,9 @@ export class JSRFetchDFSFileHandler extends FetchDFSFileHandler {
     if (fileInfo) {
       fileInfo.ImportPath = fileInfo?.Path;
 
-      if (this.detailsJSR.FileRoot) {
+      if (this.details.FileRoot) {
         fileInfo.Path = fileInfo.Path.slice(
-          this.detailsJSR.FileRoot.length - 1,
+          this.details.FileRoot.length - 1,
         );
       }
     }
@@ -96,7 +93,7 @@ export class JSRFetchDFSFileHandler extends FetchDFSFileHandler {
   ): Promise<void> {
     await this.initialize;
     return super.RemoveFile(
-      path.join(this.detailsJSR.FileRoot || "", filePath),
+      path.join(this.details.FileRoot || "", filePath),
       revision,
       cacheDb,
     );
@@ -117,7 +114,7 @@ export class JSRFetchDFSFileHandler extends FetchDFSFileHandler {
   ): Promise<void> {
     await this.initialize;
     return super.WriteFile(
-      path.join(this.detailsJSR.FileRoot || "", filePath),
+      path.join(this.details.FileRoot || "", filePath),
       revision,
       stream,
       ttlSeconds,
@@ -134,7 +131,7 @@ export class JSRFetchDFSFileHandler extends FetchDFSFileHandler {
   protected async checkPackageExists(): Promise<void> {
     const metaPath = new URL(
       `meta.json`,
-      new URL(`${this.detailsJSR.Package}/`, "https://jsr.io/"),
+      new URL(`${this.details.Package}/`, "https://jsr.io/"),
     );
     const metaResp = await fetch(metaPath);
 
@@ -142,7 +139,7 @@ export class JSRFetchDFSFileHandler extends FetchDFSFileHandler {
       await metaResp.body?.cancel();
 
       throw new Error(
-        `Package "${this.detailsJSR.Package}" does not exist or is unavailable.`,
+        `Package "${this.details.Package}" does not exist or is unavailable.`,
       );
     }
 
@@ -169,13 +166,11 @@ export class JSRFetchDFSFileHandler extends FetchDFSFileHandler {
 
       this.modulePaths = Object.keys(meta.manifest)
         .filter((fp) =>
-          this.detailsJSR.FileRoot
-            ? fp.startsWith(this.detailsJSR.FileRoot)
-            : true
+          this.details.FileRoot ? fp.startsWith(this.details.FileRoot) : true
         )
         .map((fp) =>
-          this.detailsJSR.FileRoot
-            ? fp.slice(this.detailsJSR.FileRoot!.length - 1)
+          this.details.FileRoot
+            ? fp.slice(this.details.FileRoot!.length - 1)
             : fp
         );
     } catch (err) {
@@ -189,15 +184,15 @@ export class JSRFetchDFSFileHandler extends FetchDFSFileHandler {
    * Fetches the latest version if none is provided.
    */
   protected async resolveVersion(): Promise<void> {
-    if (!this.detailsJSR.Version) {
+    if (!this.details.Version) {
       const metaPath = new URL(
         `meta.json`,
-        new URL(`${this.detailsJSR.Package}/`, "https://jsr.io/"),
+        new URL(`${this.details.Package}/`, "https://jsr.io/"),
       );
       const metaResp = await fetch(metaPath);
 
       const meta = (await metaResp.json()) as { latest: string };
-      this.detailsJSR.Version = meta.latest;
+      this.details.Version = meta.latest;
     }
   }
 }

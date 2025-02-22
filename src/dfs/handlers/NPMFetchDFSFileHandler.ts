@@ -9,20 +9,17 @@ import { toText } from "jsr:@std/streams@1.0.9/to-text";
 /**
  * Implements `DFSFileHandler` for NPM-based file storage via Skypack CDN.
  */
-export class NPMFetchDFSFileHandler extends FetchDFSFileHandler {
-  protected get detailsJSR(): EaCNPMDistributedFileSystemDetails {
-    return this.dfs.Details as EaCNPMDistributedFileSystemDetails;
-  }
-
+export class NPMFetchDFSFileHandler
+  extends FetchDFSFileHandler<EaCNPMDistributedFileSystemDetails> {
   public override get Root(): string {
-    return this.detailsJSR
-      ? new URL(`${this.detailsJSR.Package}/`, "https://cdn.skypack.dev/")
+    return this.details
+      ? new URL(`${this.details.Package}/`, "https://cdn.skypack.dev/")
         .href
       : "";
   }
 
-  constructor(dfsLookup: string, dfs: EaCDistributedFileSystemAsCode) {
-    super(dfsLookup, dfs);
+  constructor(dfsLookup: string, details: EaCNPMDistributedFileSystemDetails) {
+    super(dfsLookup, details);
   }
 
   /**

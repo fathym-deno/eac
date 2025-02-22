@@ -10,10 +10,8 @@ export const UnknownEaCDistributedFileSystemHandlerResolver:
     Resolve(_ioc, dfsLookup, _dfs): Promise<DFSFileHandler | undefined> {
       return Promise.resolve(
         new LocalDFSFileHandler(dfsLookup, {
-          Details: {
-            Type: "Local",
-            FileRoot: ".",
-          } as EaCLocalDistributedFileSystemDetails,
+          Type: "Local",
+          FileRoot: ".",
         }),
       );
     },

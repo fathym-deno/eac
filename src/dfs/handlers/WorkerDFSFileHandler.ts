@@ -14,14 +14,14 @@ export class WorkerDFSFileHandler extends DFSFileHandler {
   private readonly dfsWorkerClient: EaCDistributedFileSystemWorkerClient;
 
   public override get Root(): string {
-    return this.dfs.Details?.WorkerPath || "";
+    return this.details.WorkerPath || "";
   }
 
-  constructor(dfsLookup: string, dfs: EaCDistributedFileSystemAsCode) {
-    super(dfsLookup, dfs);
+  constructor(dfsLookup: string, details: EaCDistributedFileSystemDetails) {
+    super(dfsLookup, details);
 
     this.dfsWorkerClient = new EaCDistributedFileSystemWorkerClient(
-      dfs.Details!.WorkerPath!,
+      details.WorkerPath!,
     );
   }
 

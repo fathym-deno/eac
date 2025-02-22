@@ -1,5 +1,6 @@
 import {
   EaCDistributedFileSystemAsCode,
+  EaCDistributedFileSystemDetails,
   getPackageLoggerSync,
   Logger,
 } from "./.deps.ts";
@@ -10,7 +11,10 @@ import { IDFSFileHandler } from "./IDFSFileHandler.ts";
  * Abstract base class implementing `IDFSFileHandler`.
  * Concrete implementations must provide method implementations.
  */
-export abstract class DFSFileHandler implements IDFSFileHandler {
+export abstract class DFSFileHandler<
+  TDetails extends EaCDistributedFileSystemDetails =
+    EaCDistributedFileSystemDetails,
+> implements IDFSFileHandler {
   protected readonly logger: Logger;
 
   /**
@@ -19,7 +23,7 @@ export abstract class DFSFileHandler implements IDFSFileHandler {
    */
   public constructor(
     protected dfsLookup: string,
-    protected dfs: EaCDistributedFileSystemAsCode,
+    protected details: TDetails,
     logger?: Logger,
   ) {
     this.logger = logger ?? getPackageLoggerSync(import.meta);

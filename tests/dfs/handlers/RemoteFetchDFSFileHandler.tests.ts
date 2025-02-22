@@ -1,5 +1,5 @@
 import { EaCRemoteDistributedFileSystemDetails } from "../../../src/dfs/handlers/.deps.ts";
-import { FetchDFSFileHandler } from "../../../src/dfs/handlers/.exports.ts";
+import { RemoteFetchDFSFileHandler } from "../../../src/dfs/handlers/RemoteFetchDFSFileHandler.ts";
 import { assertEquals, assertRejects } from "../../test.deps.ts";
 
 /**
@@ -14,11 +14,9 @@ Deno.test("FetchDFSFileHandler Tests", async (t) => {
   ];
   const missingFile = "/does-not-exist.txt"; // ❌ Should return 404
 
-  const dfsHandler = new FetchDFSFileHandler("test", {
-    Details: {
-      Type: "Remote",
-      RemoteRoot: realRoot,
-    } as EaCRemoteDistributedFileSystemDetails,
+  const dfsHandler = new RemoteFetchDFSFileHandler("test", {
+    Type: "Remote",
+    RemoteRoot: realRoot,
   });
 
   await t.step("GetFileInfo should return valid file info", async () => {

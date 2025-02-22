@@ -15,13 +15,11 @@ Deno.test("DenoKVDFSFileHandler Tests", async (t) => {
   const dfsHandler = new DenoKVDFSFileHandler(
     "test",
     {
-      Details: {
-        Type: "DenoKV",
-        DatabaseLookup: "",
-        FileRoot: rootPath,
-        RootKey: rootKey,
-        SegmentPath: segmentPath,
-      } as EaCDenoKVDistributedFileSystemDetails,
+      Type: "DenoKV",
+      DatabaseLookup: "",
+      FileRoot: rootPath,
+      RootKey: rootKey,
+      SegmentPath: segmentPath,
     },
     mockKv,
   );

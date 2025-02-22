@@ -33,7 +33,7 @@ export const EaCJSRDistributedFileSystemHandlerResolver:
       }
 
       async function loadHandler(version: string) {
-        return new JSRFetchDFSFileHandler(dfsLookup, dfs);
+        return new JSRFetchDFSFileHandler(dfsLookup, jsrDFS);
       }
 
       // Initial Load

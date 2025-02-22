@@ -16,10 +16,8 @@ Deno.test("LocalDFSFileHandler Tests", async (t) => {
   await Deno.writeTextFile(`${testRoot}/${validFile}`, "Hello, Local DFS!");
 
   const dfsHandler = new LocalDFSFileHandler("test", {
-    Details: {
-      Type: "Local",
-      FileRoot: testRoot,
-    } as EaCLocalDistributedFileSystemDetails,
+    Type: "Local",
+    FileRoot: testRoot,
   });
 
   await t.step("GetFileInfo should return valid file info", async () => {

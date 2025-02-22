@@ -11,16 +11,13 @@ import { DFSFileInfo } from "./DFSFileInfo.ts";
 /**
  * Implements `DFSFileHandler` for ESM-based file systems.
  */
-export class ESMFetchDFSFileHandler extends FetchDFSFileHandler {
+export class ESMFetchDFSFileHandler
+  extends FetchDFSFileHandler<EaCESMDistributedFileSystemDetails> {
   private initialize: Promise<void>;
   private modulePaths: string[] = [];
 
-  protected get detailsESM(): EaCESMDistributedFileSystemDetails {
-    return this.dfs.Details as EaCESMDistributedFileSystemDetails;
-  }
-
   public override get Root(): string {
-    return this.detailsESM?.Root;
+    return this.details?.Root;
   }
 
   /**
@@ -29,10 +26,13 @@ export class ESMFetchDFSFileHandler extends FetchDFSFileHandler {
    * @param entryPoints - The entry points to analyze.
    * @param includeDependencies - Whether to include dependencies in file resolution.
    */
-  public constructor(dfsLookup: string, dfs: EaCDistributedFileSystemAsCode) {
-    super(dfsLookup, dfs);
+  public constructor(
+    dfsLookup: string,
+    details: EaCESMDistributedFileSystemDetails,
+  ) {
+    super(dfsLookup, details);
 
-    if (!this.detailsESM.EntryPoints?.length) {
+    if (!this.details.EntryPoints?.length) {
       throw new Error("No entry points provided.");
     }
 
@@ -128,7 +128,7 @@ export class ESMFetchDFSFileHandler extends FetchDFSFileHandler {
     let resolvedRoot = await this.resolveRoot();
 
     // Resolve entry points relative to the root
-    const roots = this.detailsESM.EntryPoints.map((ep) =>
+    const roots = this.details.EntryPoints.map((ep) =>
       new URL(ep, resolvedRoot).href
     );
 

@@ -13,21 +13,18 @@ import { DFSFileInfo } from "./DFSFileInfo.ts";
 /**
  * Implements `DFSFileHandler` for local file system storage.
  */
-export class LocalDFSFileHandler extends DFSFileHandler {
-  protected get details(): EaCLocalDistributedFileSystemDetails {
-    return this.dfs.Details as EaCLocalDistributedFileSystemDetails;
-  }
-
+export class LocalDFSFileHandler
+  extends DFSFileHandler<EaCLocalDistributedFileSystemDetails> {
   public override get Root(): string {
     return this.details?.FileRoot;
   }
 
   constructor(
     dfsLookup: string,
-    dfs: EaCDistributedFileSystemAsCode,
+    details: EaCLocalDistributedFileSystemDetails,
     protected readonly pathResolver?: (filePath: string) => string,
   ) {
-    super(dfsLookup, dfs);
+    super(dfsLookup, details);
   }
 
   public async GetFileInfo(

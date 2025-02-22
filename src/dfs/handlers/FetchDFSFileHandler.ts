@@ -1,8 +1,7 @@
 import {
-  EaCDistributedFileSystemAsCode,
+  EaCDistributedFileSystemDetails,
   EaCRemoteDistributedFileSystemDetails,
   getFileCheckPathsToProcess,
-  getPackageLoggerSync,
   Logger,
   withDFSCache,
 } from "./.deps.ts";
@@ -12,30 +11,17 @@ import { DFSFileInfo } from "./DFSFileInfo.ts";
 /**
  * Implements `DFSFileHandler` using HTTP(S) and local file fetching.
  */
-export class FetchDFSFileHandler extends DFSFileHandler {
+export abstract class FetchDFSFileHandler<
+  TDetails extends EaCDistributedFileSystemDetails,
+> extends DFSFileHandler<TDetails> {
   protected readonly pathResolver?: (filePath: string) => string;
-
-  private get details(): EaCRemoteDistributedFileSystemDetails {
-    return this.dfs.Details as EaCRemoteDistributedFileSystemDetails;
-  }
-
-  public get Root(): string {
-    let fileRoot: string;
-    try {
-      fileRoot = this.details ? new URL(this.details.RemoteRoot).href : "";
-    } catch (error) {
-      throw new Error(`Invalid RemoteRoot URL: ${this.details.RemoteRoot}`);
-    }
-
-    return fileRoot;
-  }
 
   public constructor(
     dfsLookup: string,
-    dfs: EaCDistributedFileSystemAsCode,
+    details: TDetails,
     pathResolver?: (filePath: string) => string,
   ) {
-    super(dfsLookup, dfs);
+    super(dfsLookup, details);
 
     this.pathResolver = pathResolver;
   }

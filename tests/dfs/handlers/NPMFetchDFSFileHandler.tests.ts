@@ -11,11 +11,9 @@ Deno.test("NPMFetchDFSFileHandler Tests", async (t) => {
   // ✅ Using a real NPM package from Skypack CDN
   const packageName = "lodash-es@4.17.21";
   const handler = new NPMFetchDFSFileHandler("test", {
-    Details: {
-      Type: "NPM",
-      Package: packageName,
-      Version: "latest",
-    } as EaCNPMDistributedFileSystemDetails,
+    Type: "NPM",
+    Package: packageName,
+    Version: "latest",
   });
 
   await t.step("Constructor should set correct Root URL", () => {

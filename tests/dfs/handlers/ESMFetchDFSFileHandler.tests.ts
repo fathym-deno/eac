@@ -11,20 +11,16 @@ Deno.test("ESMFetchDFSFileHandler Tests", async (t) => {
   const entryPoints = ["lodash.js"]; // Lodash ES entry point
 
   const handlerWithDeps = new ESMFetchDFSFileHandler("test", {
-    Details: {
-      Type: "ESM",
-      EntryPoints: entryPoints,
-      Root: packageURL,
-      IncludeDependencies: true,
-    } as EaCESMDistributedFileSystemDetails,
+    Type: "ESM",
+    EntryPoints: entryPoints,
+    Root: packageURL,
+    IncludeDependencies: true,
   });
   const handlerWithoutDeps = new ESMFetchDFSFileHandler("test", {
-    Details: {
-      Type: "ESM",
-      EntryPoints: entryPoints,
-      Root: packageURL,
-      IncludeDependencies: false,
-    } as EaCESMDistributedFileSystemDetails,
+    Type: "ESM",
+    EntryPoints: entryPoints,
+    Root: packageURL,
+    IncludeDependencies: false,
   });
 
   await t.step(
@@ -42,11 +38,9 @@ Deno.test("ESMFetchDFSFileHandler Tests", async (t) => {
     "LoadAllPaths should correctly resolve import maps (if applicable)",
     async () => {
       const handlerWithImportMaps = new ESMFetchDFSFileHandler("test", {
-        Details: {
-          Type: "ESM",
-          EntryPoints: ["lodash-es@4.17.21/lodash.js"],
-          Root: "https://cdn.skypack.dev/",
-        } as EaCESMDistributedFileSystemDetails,
+        Type: "ESM",
+        EntryPoints: ["lodash-es@4.17.21/lodash.js"],
+        Root: "https://cdn.skypack.dev/",
       });
 
       const paths = await handlerWithImportMaps.LoadAllPaths("revision");
@@ -63,12 +57,10 @@ Deno.test("ESMFetchDFSFileHandler Tests", async (t) => {
     "LoadAllPaths should correctly resolve local file URLs",
     async () => {
       const localHandler = new ESMFetchDFSFileHandler("test", {
-        Details: {
-          Type: "ESM",
-          EntryPoints: ["mod.ts"],
-          Root: "file:///",
-          IncludeDependencies: false,
-        } as EaCESMDistributedFileSystemDetails,
+        Type: "ESM",
+        EntryPoints: ["mod.ts"],
+        Root: "file:///",
+        IncludeDependencies: false,
       });
       const paths = await localHandler.LoadAllPaths("revision");
 
@@ -84,11 +76,9 @@ Deno.test("ESMFetchDFSFileHandler Tests", async (t) => {
       await assertThrows(
         () =>
           new ESMFetchDFSFileHandler("test", {
-            Details: {
-              Type: "ESM",
-              EntryPoints: [],
-              Root: packageURL,
-            } as EaCESMDistributedFileSystemDetails,
+            Type: "ESM",
+            EntryPoints: [],
+            Root: packageURL,
           }),
         Error,
         "No entry points provided",
