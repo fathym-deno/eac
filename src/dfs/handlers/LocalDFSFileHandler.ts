@@ -19,7 +19,7 @@ export class LocalDFSFileHandler extends DFSFileHandler {
   }
 
   public override get Root(): string {
-    return this.details.FileRoot;
+    return this.details?.FileRoot;
   }
 
   constructor(

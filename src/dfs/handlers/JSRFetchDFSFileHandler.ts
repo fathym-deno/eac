@@ -20,10 +20,12 @@ export class JSRFetchDFSFileHandler extends FetchDFSFileHandler {
   }
 
   public override get Root(): string {
-    return new URL(
-      `${this.detailsJSR.Version}/`,
-      new URL(`${this.detailsJSR.Package}/`, "https://jsr.io/"),
-    ).href;
+    return this.detailsJSR
+      ? new URL(
+        `${this.detailsJSR.Version}/`,
+        new URL(`${this.detailsJSR.Package}/`, "https://jsr.io/"),
+      ).href
+      : "";
   }
 
   constructor(dfsLookup: string, dfs: EaCDistributedFileSystemAsCode) {

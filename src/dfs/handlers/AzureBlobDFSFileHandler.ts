@@ -30,7 +30,7 @@ export class AzureBlobDFSFileHandler extends DFSFileHandler {
   protected initialize: Promise<void>;
 
   public get Root(): string {
-    return this.details.FileRoot || "";
+    return this.details?.FileRoot || "";
   }
 
   public constructor(dfsLookup: string, dfs: EaCDistributedFileSystemAsCode) {

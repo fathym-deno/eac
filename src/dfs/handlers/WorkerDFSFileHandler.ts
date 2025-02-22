@@ -14,7 +14,7 @@ export class WorkerDFSFileHandler extends DFSFileHandler {
   private readonly dfsWorkerClient: EaCDistributedFileSystemWorkerClient;
 
   public override get Root(): string {
-    return this.dfs.Details!.WorkerPath || "";
+    return this.dfs.Details?.WorkerPath || "";
   }
 
   constructor(dfsLookup: string, dfs: EaCDistributedFileSystemAsCode) {

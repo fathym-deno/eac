@@ -20,7 +20,7 @@ export class ESMFetchDFSFileHandler extends FetchDFSFileHandler {
   }
 
   public override get Root(): string {
-    return this.detailsESM.Root;
+    return this.detailsESM?.Root;
   }
 
   /**

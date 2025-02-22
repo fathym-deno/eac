@@ -15,8 +15,10 @@ export class NPMFetchDFSFileHandler extends FetchDFSFileHandler {
   }
 
   public override get Root(): string {
-    return new URL(`${this.detailsJSR.Package}/`, "https://cdn.skypack.dev/")
-      .href;
+    return this.detailsJSR
+      ? new URL(`${this.detailsJSR.Package}/`, "https://cdn.skypack.dev/")
+        .href
+      : "";
   }
 
   constructor(dfsLookup: string, dfs: EaCDistributedFileSystemAsCode) {

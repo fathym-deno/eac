@@ -23,7 +23,7 @@ export class DenoKVDFSFileHandler extends DFSFileHandler {
   }
 
   public get Root(): string {
-    return this.details.FileRoot || "";
+    return this.details?.FileRoot || "";
   }
 
   /**

@@ -20,14 +20,14 @@ export class FetchDFSFileHandler extends DFSFileHandler {
   }
 
   public get Root(): string {
-    let fileRoot: URL;
+    let fileRoot: string;
     try {
-      fileRoot = new URL(this.details.RemoteRoot);
+      fileRoot = this.details ? new URL(this.details.RemoteRoot).href : "";
     } catch (error) {
       throw new Error(`Invalid RemoteRoot URL: ${this.details.RemoteRoot}`);
     }
 
-    return fileRoot.href;
+    return fileRoot;
   }
 
   public constructor(
