@@ -11,7 +11,7 @@ export async function waitForStatusWithFreshJwt(
   sleepFor = 400,
 ): Promise<EaCStatus> {
   return await withStatusCheck(async () => {
-    const eacJwt = await parentEaCSvc.EaC.JWT(username);
+    const eacJwt = await parentEaCSvc.EaC.JWT(entLookup, username);
 
     if (!eacJwt.Token) {
       return {

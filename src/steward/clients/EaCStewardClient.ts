@@ -91,6 +91,7 @@ export class EaCStewardClient extends EaCBaseClient {
     },
 
     JWT: async (
+      entLookup: string,
       username: string,
       expTime?: number,
     ): Promise<{
@@ -98,7 +99,7 @@ export class EaCStewardClient extends EaCBaseClient {
     }> => {
       const response = await fetch(
         this.loadClientUrl(
-          `jwt?entLookup=enterprise&username=${username}&expTime=${
+          `jwt?entLookup=${entLookup}&username=${username}&expTime=${
             expTime || ""
           }`,
         ),
