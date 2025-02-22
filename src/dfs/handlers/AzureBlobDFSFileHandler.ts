@@ -1,12 +1,15 @@
 import {
   BlobSASPermissions,
   BlobServiceClient,
+  Buffer,
+  EaCAzureBlobStorageDistributedFileSystemDetails,
+  EaCDistributedFileSystemAsCode,
   generateBlobSASQueryParameters,
+  getFileCheckPathsToProcess,
+  Readable,
   StorageSharedKeyCredential,
-} from "npm:@azure/storage-blob@12.26.0";
-import { Readable } from "node:stream";
-import { Buffer } from "node:buffer";
-import { getFileCheckPathsToProcess, withDFSCache } from "./.deps.ts";
+  withDFSCache,
+} from "./.deps.ts";
 import { DFSFileHandler } from "./DFSFileHandler.ts";
 import { DFSFileInfo } from "./DFSFileInfo.ts";
 
@@ -14,31 +17,31 @@ import { DFSFileInfo } from "./DFSFileInfo.ts";
  * Implements `DFSFileHandler` for Azure Blob Storage.
  */
 export class AzureBlobDFSFileHandler extends DFSFileHandler {
-  private readonly containerClient: ReturnType<
+  protected blobPaths: string[] = [];
+
+  protected readonly containerClient: ReturnType<
     BlobServiceClient["getContainerClient"]
   >;
-  private readonly connectionString: string;
-  private initialize: Promise<void>;
-  private blobPaths: string[] = [];
 
-  /**
-   * Creates an instance of `AzureBlobDFSFileHandler` and initializes the container client.
-   * @param connectionString - The Azure Storage connection string.
-   * @param containerName - The name of the blob storage container.
-   * @param Root - The root path within the container.
-   */
-  public constructor(
-    connectionString: string,
-    containerName: string,
-    public readonly Root: string,
-  ) {
-    super();
-    this.connectionString = connectionString;
+  protected get details(): EaCAzureBlobStorageDistributedFileSystemDetails {
+    return this.dfs.Details as EaCAzureBlobStorageDistributedFileSystemDetails;
+  }
+
+  protected initialize: Promise<void>;
+
+  public get Root(): string {
+    return this.details.FileRoot || "";
+  }
+
+  public constructor(dfsLookup: string, dfs: EaCDistributedFileSystemAsCode) {
+    super(dfsLookup, dfs);
 
     const blobServiceClient = BlobServiceClient.fromConnectionString(
-      connectionString,
+      this.details.ConnectionString,
     );
-    this.containerClient = blobServiceClient.getContainerClient(containerName);
+    this.containerClient = blobServiceClient.getContainerClient(
+      this.details.Container,
+    );
 
     // Prefetch blob list at startup
     this.initialize = this.initializeBlobList();
@@ -243,7 +246,9 @@ export class AzureBlobDFSFileHandler extends DFSFileHandler {
     expiryMinutes = 60,
   ): Promise<string> {
     const { accountName, accountKey } = AzureBlobDFSFileHandler
-      .parseConnectionString(this.connectionString);
+      .parseConnectionString(
+        this.details.ConnectionString,
+      );
 
     const sharedKeyCredential = new StorageSharedKeyCredential(
       accountName,

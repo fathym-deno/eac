@@ -19,11 +19,12 @@ export async function loadDFSFileHandler(
     throw new Error(`Distributed file system not found: ${dfsLookup}`);
   }
 
-  return loadFileHandler(ioc, dfs, options);
+  return loadFileHandler(ioc, dfsLookup, dfs, options);
 }
 
 export async function loadFileHandler(
   ioc: IoCContainer,
+  dfsLookup: string,
   dfs: EaCDistributedFileSystemDetails,
   options: DistributedFileSystemOptions,
 ): Promise<DFSFileHandler | undefined> {
@@ -33,6 +34,7 @@ export async function loadFileHandler(
 
   const fileHandler = await defaultDFSFileHandlerResolver.Resolve(
     ioc,
+    dfsLookup,
     dfs,
     options,
   );

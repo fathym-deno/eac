@@ -1,3 +1,4 @@
+import { EaCAzureBlobStorageDistributedFileSystemDetails } from "../../../src/dfs/handlers/.deps.ts";
 import { AzureBlobDFSFileHandler } from "../../../src/dfs/handlers/.exports.ts";
 import { assertEquals, assertRejects } from "../../test.deps.ts";
 
@@ -16,11 +17,14 @@ Deno.test("AzureBlobDFSFileHandler Tests", async (t) => {
     return;
   }
 
-  const handler = new AzureBlobDFSFileHandler(
-    connectionString,
-    container,
-    fileRoot,
-  );
+  const handler = new AzureBlobDFSFileHandler("test", {
+    Details: {
+      Type: "AzureBlobStorage",
+      ConnectionString: connectionString,
+      Container: container,
+      FileRoot: fileRoot,
+    } as EaCAzureBlobStorageDistributedFileSystemDetails,
+  });
 
   await t.step("GetFileInfo should return valid file info", async () => {
     const testFilePath = "/index.html"; // Assuming this file exists in Azure Blob Storage

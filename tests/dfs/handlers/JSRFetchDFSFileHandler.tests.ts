@@ -1,4 +1,5 @@
 import { JSRFetchDFSFileHandler } from "../../../src/dfs/handlers/.exports.ts";
+import { EaCJSRDistributedFileSystemDetails } from "../../../src/dfs/resolvers/.deps.ts";
 import { assertEquals, assertRejects, assertThrows } from "../../test.deps.ts";
 
 /**
@@ -8,29 +9,21 @@ Deno.test("JSRFetchDFSFileHandler Tests", async (t) => {
   // ✅ Use a real JSR package example
   const packageName = "@fathym/atomic";
   const version = ""; // This should resolve to the latest version
-  const handler = new JSRFetchDFSFileHandler(packageName, version);
-  const rootedHandler = new JSRFetchDFSFileHandler(
-    packageName,
-    version,
-    "/src/",
-  );
-
-  await t.step(
-    "ResolveVersion should correctly determine the latest version",
-    async () => {
-      await handler["resolveVersion"]();
-      assertEquals(
-        typeof handler["version"],
-        "string",
-        "Version should be resolved as a string.",
-      );
-      assertEquals(
-        handler["version"]!.length > 0,
-        true,
-        "Version should not be empty.",
-      );
-    },
-  );
+  const handler = new JSRFetchDFSFileHandler("test", {
+    Details: {
+      Type: "JSR",
+      Package: packageName,
+      Version: version,
+    } as EaCJSRDistributedFileSystemDetails,
+  });
+  const rootedHandler = new JSRFetchDFSFileHandler("test", {
+    Details: {
+      Type: "JSR",
+      Package: packageName,
+      Version: version,
+      FileRoot: "/src/",
+    } as EaCJSRDistributedFileSystemDetails,
+  });
 
   await t.step(
     "LoadAllPaths should retrieve all JSR module paths",
@@ -100,7 +93,13 @@ Deno.test("JSRFetchDFSFileHandler Tests", async (t) => {
   await t.step(
     "JSRFetchDFSFileHandler should throw an error for invalid package",
     async () => {
-      const invalidHandler = new JSRFetchDFSFileHandler("@invalid/package");
+      const invalidHandler = new JSRFetchDFSFileHandler("test", {
+        Details: {
+          Type: "JSR",
+          Package: "@invalid/package",
+          Version: "",
+        } as EaCJSRDistributedFileSystemDetails,
+      });
       await assertRejects(
         () => invalidHandler.LoadAllPaths("revision"),
         Error,

@@ -2,6 +2,7 @@ import { toJson } from "jsr:@std/streams@1.0.9/to-json";
 import { NPMFetchDFSFileHandler } from "../../../src/dfs/handlers/.exports.ts";
 import { assertEquals, assertRejects, assertThrows } from "../../test.deps.ts";
 import { toText } from "jsr:@std/streams@1.0.9/to-text";
+import { EaCNPMDistributedFileSystemDetails } from "../../../src/dfs/handlers/.deps.ts";
 
 /**
  * Test Suite for NPMFetchDFSFileHandler
@@ -9,7 +10,13 @@ import { toText } from "jsr:@std/streams@1.0.9/to-text";
 Deno.test("NPMFetchDFSFileHandler Tests", async (t) => {
   // ✅ Using a real NPM package from Skypack CDN
   const packageName = "lodash-es@4.17.21";
-  const handler = new NPMFetchDFSFileHandler(packageName);
+  const handler = new NPMFetchDFSFileHandler("test", {
+    Details: {
+      Type: "NPM",
+      Package: packageName,
+      Version: "latest",
+    } as EaCNPMDistributedFileSystemDetails,
+  });
 
   await t.step("Constructor should set correct Root URL", () => {
     assertEquals(

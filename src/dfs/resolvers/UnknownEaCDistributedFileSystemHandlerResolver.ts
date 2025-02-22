@@ -1,3 +1,4 @@
+import { EaCLocalDistributedFileSystemDetails } from "../handlers/.deps.ts";
 import {
   DFSFileHandler,
   DFSFileHandlerResolver,
@@ -6,7 +7,14 @@ import {
 
 export const UnknownEaCDistributedFileSystemHandlerResolver:
   DFSFileHandlerResolver = {
-    Resolve(_ioc, _dfs): Promise<DFSFileHandler | undefined> {
-      return Promise.resolve(new LocalDFSFileHandler("."));
+    Resolve(_ioc, dfsLookup, _dfs): Promise<DFSFileHandler | undefined> {
+      return Promise.resolve(
+        new LocalDFSFileHandler(dfsLookup, {
+          Details: {
+            Type: "Local",
+            FileRoot: ".",
+          } as EaCLocalDistributedFileSystemDetails,
+        }),
+      );
     },
   };

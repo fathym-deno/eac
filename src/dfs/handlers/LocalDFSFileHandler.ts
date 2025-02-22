@@ -1,4 +1,6 @@
 import {
+  EaCDistributedFileSystemAsCode,
+  EaCLocalDistributedFileSystemDetails,
   existsSync,
   getFileCheckPathsToProcess,
   getFilesList,
@@ -12,11 +14,20 @@ import { DFSFileInfo } from "./DFSFileInfo.ts";
  * Implements `DFSFileHandler` for local file system storage.
  */
 export class LocalDFSFileHandler extends DFSFileHandler {
+  protected get details(): EaCLocalDistributedFileSystemDetails {
+    return this.dfs.Details as EaCLocalDistributedFileSystemDetails;
+  }
+
+  public override get Root(): string {
+    return this.details.FileRoot;
+  }
+
   constructor(
-    public readonly Root: string,
+    dfsLookup: string,
+    dfs: EaCDistributedFileSystemAsCode,
     protected readonly pathResolver?: (filePath: string) => string,
   ) {
-    super();
+    super(dfsLookup, dfs);
   }
 
   public async GetFileInfo(
@@ -37,6 +48,8 @@ export class LocalDFSFileHandler extends DFSFileHandler {
           extensions,
           useCascading,
         );
+
+        let fileInfo: DFSFileInfo | undefined = undefined;
 
         for (const fcp of fileCheckPaths) {
           const resolvedPath = this.pathResolver ? this.pathResolver(fcp) : fcp;
@@ -76,19 +89,24 @@ export class LocalDFSFileHandler extends DFSFileHandler {
               },
             });
 
-            return { Path: resolvedPath, Contents: stream };
-          } catch (error) {
-            console.error(`Failed to read file: ${fullFilePath}`, error);
-          }
+            fileInfo = { Path: resolvedPath, Contents: stream };
+
+            break;
+            // deno-lint-ignore no-empty
+          } catch {}
         }
 
-        throw new Error(
-          `Unable to locate a local file at path ${filePath}${
-            defaultFileName
-              ? `, and no default file was found for ${defaultFileName}.`
-              : "."
-          }`,
-        );
+        if (!fileInfo) {
+          console.log(
+            `Unable to locate a local file at path ${filePath}${
+              defaultFileName
+                ? `, and no default file was found for ${defaultFileName}.`
+                : "."
+            }`,
+          );
+        }
+
+        return fileInfo;
       },
       revision,
       cacheDb,

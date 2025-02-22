@@ -1,4 +1,11 @@
-import { getFileCheckPathsToProcess, withDFSCache } from "./.deps.ts";
+import {
+  EaCDistributedFileSystemAsCode,
+  EaCRemoteDistributedFileSystemDetails,
+  getFileCheckPathsToProcess,
+  getPackageLoggerSync,
+  Logger,
+  withDFSCache,
+} from "./.deps.ts";
 import { DFSFileHandler } from "./DFSFileHandler.ts";
 import { DFSFileInfo } from "./DFSFileInfo.ts";
 
@@ -6,18 +13,30 @@ import { DFSFileInfo } from "./DFSFileInfo.ts";
  * Implements `DFSFileHandler` using HTTP(S) and local file fetching.
  */
 export class FetchDFSFileHandler extends DFSFileHandler {
-  private readonly pathResolver?: (filePath: string) => string;
+  protected readonly pathResolver?: (filePath: string) => string;
 
-  /**
-   * Creates an instance of `FetchDFSFileHandler`.
-   * @param root - The base URL or directory to resolve paths.
-   * @param pathResolver - Optional function to transform file paths before fetching.
-   */
+  private get details(): EaCRemoteDistributedFileSystemDetails {
+    return this.dfs.Details as EaCRemoteDistributedFileSystemDetails;
+  }
+
+  public get Root(): string {
+    let fileRoot: URL;
+    try {
+      fileRoot = new URL(this.details.RemoteRoot);
+    } catch (error) {
+      throw new Error(`Invalid RemoteRoot URL: ${this.details.RemoteRoot}`);
+    }
+
+    return fileRoot.href;
+  }
+
   public constructor(
-    public Root: string,
+    dfsLookup: string,
+    dfs: EaCDistributedFileSystemAsCode,
     pathResolver?: (filePath: string) => string,
   ) {
-    super();
+    super(dfsLookup, dfs);
+
     this.pathResolver = pathResolver;
   }
 
@@ -98,13 +117,15 @@ export class FetchDFSFileHandler extends DFSFileHandler {
           } catch {}
         }
 
-        console.debug(
-          `Unable to locate a local file at path ${filePath}${
-            defaultFileName
-              ? `, and no default file was found for ${defaultFileName}.`
-              : "."
-          }`,
-        );
+        if (!fileInfo) {
+          this.logger.debug(
+            `Unable to locate a fetch file at path ${filePath}${
+              defaultFileName
+                ? `, and no default file was found for ${defaultFileName}.`
+                : "."
+            }`,
+          );
+        }
 
         return fileInfo;
       },

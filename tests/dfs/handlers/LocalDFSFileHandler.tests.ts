@@ -1,3 +1,4 @@
+import { EaCLocalDistributedFileSystemDetails } from "../../../src/dfs/handlers/.deps.ts";
 import { LocalDFSFileHandler } from "../../../src/dfs/handlers/.exports.ts";
 import { assertEquals, assertRejects } from "../../test.deps.ts";
 
@@ -14,7 +15,12 @@ Deno.test("LocalDFSFileHandler Tests", async (t) => {
   await Deno.mkdir(testRoot, { recursive: true });
   await Deno.writeTextFile(`${testRoot}/${validFile}`, "Hello, Local DFS!");
 
-  const dfsHandler = new LocalDFSFileHandler(testRoot);
+  const dfsHandler = new LocalDFSFileHandler("test", {
+    Details: {
+      Type: "Local",
+      FileRoot: testRoot,
+    } as EaCLocalDistributedFileSystemDetails,
+  });
 
   await t.step("GetFileInfo should return valid file info", async () => {
     const fileInfo = await dfsHandler.GetFileInfo(validFile, revision);
@@ -22,13 +28,14 @@ Deno.test("LocalDFSFileHandler Tests", async (t) => {
     assertEquals(fileInfo?.Contents instanceof ReadableStream, true);
   });
 
-  await t.step("GetFileInfo should throw for missing file", async () => {
-    await assertRejects(
-      () => dfsHandler.GetFileInfo(missingFile, revision),
-      Error,
-      `Unable to locate a local file at path ${missingFile}.`,
-    );
-  });
+  await t.step(
+    "GetFileInfo should return undefined for missing file",
+    async () => {
+      const missingFile = "/nonexistent.js";
+      const fileInfo = await dfsHandler.GetFileInfo(missingFile, "revision");
+      assertEquals(fileInfo, undefined);
+    },
+  );
 
   await t.step(
     "LoadAllPaths should return files in the directory",

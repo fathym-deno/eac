@@ -12,7 +12,7 @@ import {
  */
 export const EaCJSRDistributedFileSystemHandlerResolver:
   DFSFileHandlerResolver = {
-    async Resolve(_ioc, dfs): Promise<DFSFileHandler | undefined> {
+    async Resolve(_ioc, dfsLookup, dfs): Promise<DFSFileHandler | undefined> {
       if (!isEaCJSRDistributedFileSystemDetails(dfs)) {
         throw new Deno.errors.NotSupported(
           "The provided dfs is not supported for the EaCJSRDistributedFileSystemHandlerResolver.",
@@ -33,11 +33,7 @@ export const EaCJSRDistributedFileSystemHandlerResolver:
       }
 
       async function loadHandler(version: string) {
-        return new JSRFetchDFSFileHandler(
-          jsrDFS.Package,
-          jsrDFS.Version,
-          jsrDFS.FileRoot,
-        );
+        return new JSRFetchDFSFileHandler(dfsLookup, dfs);
       }
 
       // Initial Load

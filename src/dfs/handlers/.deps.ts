@@ -1,16 +1,39 @@
 export * as denoGraph from "jsr:@deno/graph@0.88.0";
 
+export { Logger } from "jsr:@std/log@0.224.14/logger";
 export * as path from "jsr:@std/path@1.0.8";
 
 export { loadDenoConfig } from "jsr:@fathym/common@0.2.179/build";
-export { getPackageLogger } from "jsr:@fathym/common@0.2.179/log";
+export {
+  getPackageLogger,
+  getPackageLoggerSync,
+  LoggingProvider,
+} from "jsr:@fathym/common@0.2.179/log";
 export { existsSync, getFilesList } from "jsr:@fathym/common@0.2.179/path";
 
 export { IoCContainer } from "jsr:@fathym/ioc@0.0.14";
 
+export {
+  BlobSASPermissions,
+  BlobServiceClient,
+  generateBlobSASQueryParameters,
+  StorageSharedKeyCredential,
+} from "npm:@azure/storage-blob@12.26.0";
+
+export { Readable } from "node:stream";
+export { Buffer } from "node:buffer";
+
 export type {
   DistributedFileSystemOptions,
+  EaCAzureBlobStorageDistributedFileSystemDetails,
+  EaCDenoKVDistributedFileSystemDetails,
+  EaCDistributedFileSystemAsCode,
   EaCDistributedFileSystemDetails,
+  EaCESMDistributedFileSystemDetails,
+  EaCJSRDistributedFileSystemDetails,
+  EaCLocalDistributedFileSystemDetails,
+  EaCNPMDistributedFileSystemDetails,
+  EaCRemoteDistributedFileSystemDetails,
 } from "../_/.exports.ts";
 
 export {

@@ -10,7 +10,7 @@ import {
  */
 export const EaCRemoteDistributedFileSystemHandlerResolver:
   DFSFileHandlerResolver = {
-    async Resolve(_ioc, dfs): Promise<DFSFileHandler | undefined> {
+    async Resolve(_ioc, dfsLookup, dfs): Promise<DFSFileHandler | undefined> {
       if (!isEaCRemoteDistributedFileSystemDetails(dfs)) {
         throw new Deno.errors.NotSupported(
           "The provided dfs is not supported for the EaCRemoteDistributedFileSystemHandlerResolver.",
@@ -23,13 +23,6 @@ export const EaCRemoteDistributedFileSystemHandlerResolver:
         );
       }
 
-      let fileRoot: URL;
-      try {
-        fileRoot = new URL(dfs.RemoteRoot);
-      } catch (error) {
-        throw new Error(`Invalid RemoteRoot URL: ${dfs.RemoteRoot}`);
-      }
-
-      return new FetchDFSFileHandler(fileRoot.href);
+      return new FetchDFSFileHandler(dfsLookup, dfs);
     },
   };

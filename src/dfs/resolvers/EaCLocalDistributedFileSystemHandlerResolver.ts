@@ -10,7 +10,7 @@ import {
  */
 export const EaCLocalDistributedFileSystemHandlerResolver:
   DFSFileHandlerResolver = {
-    async Resolve(_ioc, dfs): Promise<DFSFileHandler | undefined> {
+    async Resolve(_ioc, dfsLookup, dfs): Promise<DFSFileHandler | undefined> {
       if (!isEaCLocalDistributedFileSystemDetails(dfs)) {
         throw new Deno.errors.NotSupported(
           "The provided dfs is not supported for the EaCLocalDistributedFileSystemHandlerResolver.",
@@ -21,6 +21,6 @@ export const EaCLocalDistributedFileSystemHandlerResolver:
         throw new Error("FileRoot must be provided for Local DFS resolution.");
       }
 
-      return new LocalDFSFileHandler(dfs.FileRoot);
+      return new LocalDFSFileHandler(dfsLookup, dfs);
     },
   };

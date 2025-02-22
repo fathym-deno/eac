@@ -51,6 +51,7 @@ export abstract class EaCDistributedFileSystemWorker extends FathymWorker<
 
     this.dfsHandler = await resolver.Resolve(
       new IoCContainer(),
+      this.config.DFSLookup,
       this.config.DFS,
     );
 

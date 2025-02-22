@@ -1,4 +1,6 @@
+import { fdatasyncSync } from "node:fs";
 import {
+  EaCDistributedFileSystemAsCode,
   EaCDistributedFileSystemDetails,
   EaCDistributedFileSystemWorkerClient,
 } from "./.deps.ts";
@@ -11,16 +13,16 @@ import { DFSFileInfo } from "./DFSFileInfo.ts";
 export class WorkerDFSFileHandler extends DFSFileHandler {
   private readonly dfsWorkerClient: EaCDistributedFileSystemWorkerClient;
 
-  public Root: string;
+  public override get Root(): string {
+    return this.dfs.Details!.WorkerPath || "";
+  }
 
-  constructor(workerPath: string) {
-    super();
+  constructor(dfsLookup: string, dfs: EaCDistributedFileSystemAsCode) {
+    super(dfsLookup, dfs);
 
     this.dfsWorkerClient = new EaCDistributedFileSystemWorkerClient(
-      workerPath!,
+      dfs.Details!.WorkerPath!,
     );
-
-    this.Root = workerPath;
   }
 
   public async GetFileInfo(

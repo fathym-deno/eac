@@ -1,4 +1,10 @@
-import { denoGraph, loadDenoConfig, path } from "./.deps.ts";
+import {
+  denoGraph,
+  EaCDistributedFileSystemAsCode,
+  EaCESMDistributedFileSystemDetails,
+  loadDenoConfig,
+  path,
+} from "./.deps.ts";
 import { FetchDFSFileHandler } from "./FetchDFSFileHandler.ts";
 import { DFSFileInfo } from "./DFSFileInfo.ts";
 
@@ -9,21 +15,27 @@ export class ESMFetchDFSFileHandler extends FetchDFSFileHandler {
   private initialize: Promise<void>;
   private modulePaths: string[] = [];
 
+  protected get detailsESM(): EaCESMDistributedFileSystemDetails {
+    return this.dfs.Details as EaCESMDistributedFileSystemDetails;
+  }
+
+  public override get Root(): string {
+    return this.detailsESM.Root;
+  }
+
   /**
    * Creates an instance of `ESMFetchDFSFileHandler`.
    * @param root - The root URL for the module.
    * @param entryPoints - The entry points to analyze.
    * @param includeDependencies - Whether to include dependencies in file resolution.
    */
-  public constructor(
-    root: string,
-    protected readonly entryPoints: string[],
-    protected readonly includeDependencies?: boolean,
-  ) {
-    super(root);
-    if (!entryPoints?.length) {
+  public constructor(dfsLookup: string, dfs: EaCDistributedFileSystemAsCode) {
+    super(dfsLookup, dfs);
+
+    if (!this.detailsESM.EntryPoints?.length) {
       throw new Error("No entry points provided.");
     }
+
     this.initialize = this.initializeModulePaths();
   }
 
@@ -116,7 +128,9 @@ export class ESMFetchDFSFileHandler extends FetchDFSFileHandler {
     let resolvedRoot = await this.resolveRoot();
 
     // Resolve entry points relative to the root
-    const roots = this.entryPoints.map((ep) => new URL(ep, resolvedRoot).href);
+    const roots = this.detailsESM.EntryPoints.map((ep) =>
+      new URL(ep, resolvedRoot).href
+    );
 
     // Generate dependency graph
     const graph = await denoGraph.createGraph(roots, {});

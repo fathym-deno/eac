@@ -12,7 +12,7 @@ import {
  */
 export const EaCAzureBlobStorageDistributedFileSystemHandlerResolver:
   DFSFileHandlerResolver = {
-    async Resolve(_ioc, dfs): Promise<DFSFileHandler | undefined> {
+    async Resolve(_ioc, dfsLookup, dfs): Promise<DFSFileHandler | undefined> {
       if (!isEaCAzureBlobStorageDistributedFileSystemDetails(dfs)) {
         throw new Deno.errors.NotSupported(
           "The provided dfs is not supported for the EaCAzureBlobStorageDFSHandlerResolver.",
@@ -23,11 +23,7 @@ export const EaCAzureBlobStorageDistributedFileSystemHandlerResolver:
 
       try {
         // Directly create an instance of AzureBlobDFSFileHandler
-        return new AzureBlobDFSFileHandler(
-          dfs.ConnectionString,
-          dfs.Container,
-          dfs.FileRoot || "",
-        );
+        return new AzureBlobDFSFileHandler(dfsLookup, dfs);
       } catch (err) {
         logger.error("Error initializing Azure Blob Storage DFS handler", err);
         throw err;

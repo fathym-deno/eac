@@ -16,6 +16,7 @@ import {
 export class DefaultDFSFileHandlerResolver implements DFSFileHandlerResolver {
   public async Resolve(
     ioc: IoCContainer,
+    dfsLookup: string,
     dfs: EaCDistributedFileSystemDetails,
     options?: DistributedFileSystemOptions,
   ): Promise<DFSFileHandler | undefined> {
@@ -46,6 +47,6 @@ export class DefaultDFSFileHandlerResolver implements DFSFileHandlerResolver {
       toResolveName,
     );
 
-    return await resolver.Resolve(ioc, dfs, options);
+    return await resolver.Resolve(ioc, dfsLookup, dfs, options);
   }
 }

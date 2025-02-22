@@ -1,7 +1,10 @@
 import {
   DenoKVFileStream,
   DenoKVFileStreamData,
+  EaCDenoKVDistributedFileSystemDetails,
+  EaCDistributedFileSystemAsCode,
   getFileCheckPathsToProcess,
+  IoCContainer,
   withDFSCache,
 } from "./.deps.ts";
 import { DFSFileHandler } from "./DFSFileHandler.ts";
@@ -13,8 +16,15 @@ import { DFSFileInfo } from "./DFSFileInfo.ts";
 export class DenoKVDFSFileHandler extends DFSFileHandler {
   private readonly fileStream: DenoKVFileStream;
   private readonly rootKey: Deno.KvKey;
-  private readonly segmentPath?: string;
   private readonly pathResolver?: (filePath: string) => string;
+
+  protected get details(): EaCDenoKVDistributedFileSystemDetails {
+    return this.dfs.Details as EaCDenoKVDistributedFileSystemDetails;
+  }
+
+  public get Root(): string {
+    return this.details.FileRoot || "";
+  }
 
   /**
    * Creates an instance of `DenoKVDFSFileHandler`.
@@ -25,16 +35,17 @@ export class DenoKVDFSFileHandler extends DFSFileHandler {
    * @param pathResolver - Optional resolver for mapping file paths.
    */
   public constructor(
-    private readonly denoKv: Deno.Kv,
-    rootKey: Deno.KvKey,
-    public readonly Root: string,
-    segmentPath?: string,
+    dfsLookup: string,
+    dfs: EaCDistributedFileSystemAsCode,
+    protected readonly denoKv: Deno.Kv,
     pathResolver?: (filePath: string) => string,
   ) {
-    super();
+    super(dfsLookup, dfs);
+
     this.fileStream = new DenoKVFileStream(denoKv);
-    this.rootKey = [...rootKey, "Root", Root];
-    this.segmentPath = segmentPath;
+
+    this.rootKey = [...(this.details.RootKey || ["DFS"]), "Root", this.Root];
+
     this.pathResolver = pathResolver;
   }
 
@@ -186,7 +197,7 @@ export class DenoKVDFSFileHandler extends DFSFileHandler {
         "Revision",
         revision,
         "Path",
-        ...(this.segmentPath?.split("/") || []).filter((fp) => fp),
+        ...(this.details.SegmentPath?.split("/") || []).filter((fp) => fp),
         ...filePath.split("/").filter((fp) => fp),
       ].join("/"),
       new URL("https://notused.com/"),

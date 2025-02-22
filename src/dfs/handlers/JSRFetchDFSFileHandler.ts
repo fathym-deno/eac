@@ -1,4 +1,9 @@
-import { getPackageLogger, path } from "./.deps.ts";
+import {
+  EaCDistributedFileSystemAsCode,
+  EaCJSRDistributedFileSystemDetails,
+  getPackageLogger,
+  path,
+} from "./.deps.ts";
 import { DFSFileInfo } from "./DFSFileInfo.ts";
 import { FetchDFSFileHandler } from "./FetchDFSFileHandler.ts";
 
@@ -8,27 +13,22 @@ import { FetchDFSFileHandler } from "./FetchDFSFileHandler.ts";
  */
 export class JSRFetchDFSFileHandler extends FetchDFSFileHandler {
   private initialize: Promise<void>;
-  private version?: string;
-  private readonly packageName: string;
-  private readonly fileRoot?: string;
   private modulePaths: string[] = [];
 
-  constructor(packageName: string, version?: string, fileRoot?: string) {
-    super(new URL(`${packageName}/`, "https://jsr.io/").href);
+  protected get detailsJSR(): EaCJSRDistributedFileSystemDetails {
+    return this.dfs.Details as EaCJSRDistributedFileSystemDetails;
+  }
 
-    this.packageName = packageName;
-    this.version = version;
-    this.fileRoot = fileRoot;
+  public override get Root(): string {
+    return new URL(
+      `${this.detailsJSR.Version}/`,
+      new URL(`${this.detailsJSR.Package}/`, "https://jsr.io/"),
+    ).href;
+  }
 
-    if (this.fileRoot && !this.fileRoot.startsWith("/")) {
-      this.fileRoot = `/${this.fileRoot}`;
-    }
+  constructor(dfsLookup: string, dfs: EaCDistributedFileSystemAsCode) {
+    super(dfsLookup, dfs);
 
-    if (this.fileRoot && !this.fileRoot.endsWith("/")) {
-      this.fileRoot = `${this.fileRoot}/`;
-    }
-
-    // Initialize version and module paths once
     this.initialize = this.initializeModulePaths();
   }
 
@@ -49,7 +49,7 @@ export class JSRFetchDFSFileHandler extends FetchDFSFileHandler {
 
     // Otherwise, fetch as normal
     const fileInfo = await super.GetFileInfo(
-      path.join(this.fileRoot || "", filePath),
+      path.join(this.detailsJSR.FileRoot || "", filePath),
       revision,
       defaultFileName,
       extensions,
@@ -61,8 +61,10 @@ export class JSRFetchDFSFileHandler extends FetchDFSFileHandler {
     if (fileInfo) {
       fileInfo.ImportPath = fileInfo?.Path;
 
-      if (this.fileRoot) {
-        fileInfo.Path = fileInfo.Path.slice(this.fileRoot.length - 1);
+      if (this.detailsJSR.FileRoot) {
+        fileInfo.Path = fileInfo.Path.slice(
+          this.detailsJSR.FileRoot.length - 1,
+        );
       }
     }
 
@@ -92,7 +94,7 @@ export class JSRFetchDFSFileHandler extends FetchDFSFileHandler {
   ): Promise<void> {
     await this.initialize;
     return super.RemoveFile(
-      path.join(this.fileRoot || "", filePath),
+      path.join(this.detailsJSR.FileRoot || "", filePath),
       revision,
       cacheDb,
     );
@@ -113,7 +115,7 @@ export class JSRFetchDFSFileHandler extends FetchDFSFileHandler {
   ): Promise<void> {
     await this.initialize;
     return super.WriteFile(
-      path.join(this.fileRoot || "", filePath),
+      path.join(this.detailsJSR.FileRoot || "", filePath),
       revision,
       stream,
       ttlSeconds,
@@ -130,7 +132,7 @@ export class JSRFetchDFSFileHandler extends FetchDFSFileHandler {
   protected async checkPackageExists(): Promise<void> {
     const metaPath = new URL(
       `meta.json`,
-      new URL(`${this.packageName}/`, "https://jsr.io/"),
+      new URL(`${this.detailsJSR.Package}/`, "https://jsr.io/"),
     );
     const metaResp = await fetch(metaPath);
 
@@ -138,7 +140,7 @@ export class JSRFetchDFSFileHandler extends FetchDFSFileHandler {
       await metaResp.body?.cancel();
 
       throw new Error(
-        `Package "${this.packageName}" does not exist or is unavailable.`,
+        `Package "${this.detailsJSR.Package}" does not exist or is unavailable.`,
       );
     }
 
@@ -164,8 +166,16 @@ export class JSRFetchDFSFileHandler extends FetchDFSFileHandler {
       };
 
       this.modulePaths = Object.keys(meta.manifest)
-        .filter((fp) => (this.fileRoot ? fp.startsWith(this.fileRoot) : true))
-        .map((fp) => this.fileRoot ? fp.slice(this.fileRoot!.length - 1) : fp);
+        .filter((fp) =>
+          this.detailsJSR.FileRoot
+            ? fp.startsWith(this.detailsJSR.FileRoot)
+            : true
+        )
+        .map((fp) =>
+          this.detailsJSR.FileRoot
+            ? fp.slice(this.detailsJSR.FileRoot!.length - 1)
+            : fp
+        );
     } catch (err) {
       logger.error(`Error loading paths from ${metaPath}`);
       throw err;
@@ -177,21 +187,15 @@ export class JSRFetchDFSFileHandler extends FetchDFSFileHandler {
    * Fetches the latest version if none is provided.
    */
   protected async resolveVersion(): Promise<void> {
-    if (!this.version) {
+    if (!this.detailsJSR.Version) {
       const metaPath = new URL(
         `meta.json`,
-        new URL(`${this.packageName}/`, "https://jsr.io/"),
+        new URL(`${this.detailsJSR.Package}/`, "https://jsr.io/"),
       );
       const metaResp = await fetch(metaPath);
 
       const meta = (await metaResp.json()) as { latest: string };
-      this.version = meta.latest;
+      this.detailsJSR.Version = meta.latest;
     }
-
-    // Update Root URL with resolved version
-    this.Root = new URL(
-      `${this.version}/`,
-      new URL(`${this.packageName}/`, "https://jsr.io/"),
-    ).href;
   }
 }

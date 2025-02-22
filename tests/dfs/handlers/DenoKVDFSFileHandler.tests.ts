@@ -1,3 +1,4 @@
+import { EaCDenoKVDistributedFileSystemDetails } from "../../../src/dfs/handlers/.deps.ts";
 import { DenoKVDFSFileHandler } from "../../../src/dfs/handlers/.exports.ts";
 import { assertEquals, assertRejects } from "../../test.deps.ts";
 
@@ -12,10 +13,17 @@ Deno.test("DenoKVDFSFileHandler Tests", async (t) => {
   const revision = "test-revision";
 
   const dfsHandler = new DenoKVDFSFileHandler(
+    "test",
+    {
+      Details: {
+        Type: "DenoKV",
+        DatabaseLookup: "",
+        FileRoot: rootPath,
+        RootKey: rootKey,
+        SegmentPath: segmentPath,
+      } as EaCDenoKVDistributedFileSystemDetails,
+    },
     mockKv,
-    rootKey,
-    rootPath,
-    segmentPath,
   );
 
   const testFilePath = "/sample.txt";

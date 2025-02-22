@@ -1,3 +1,4 @@
+import { EaCESMDistributedFileSystemDetails } from "../../../src/dfs/handlers/.deps.ts";
 import { ESMFetchDFSFileHandler } from "../../../src/dfs/handlers/.exports.ts";
 import { assertEquals, assertRejects, assertThrows } from "../../test.deps.ts";
 
@@ -9,16 +10,22 @@ Deno.test("ESMFetchDFSFileHandler Tests", async (t) => {
   const packageURL = "https://cdn.skypack.dev/lodash-es@4.17.21/";
   const entryPoints = ["lodash.js"]; // Lodash ES entry point
 
-  const handlerWithDeps = new ESMFetchDFSFileHandler(
-    packageURL,
-    entryPoints,
-    true,
-  );
-  const handlerWithoutDeps = new ESMFetchDFSFileHandler(
-    packageURL,
-    entryPoints,
-    false,
-  );
+  const handlerWithDeps = new ESMFetchDFSFileHandler("test", {
+    Details: {
+      Type: "ESM",
+      EntryPoints: entryPoints,
+      Root: packageURL,
+      IncludeDependencies: true,
+    } as EaCESMDistributedFileSystemDetails,
+  });
+  const handlerWithoutDeps = new ESMFetchDFSFileHandler("test", {
+    Details: {
+      Type: "ESM",
+      EntryPoints: entryPoints,
+      Root: packageURL,
+      IncludeDependencies: false,
+    } as EaCESMDistributedFileSystemDetails,
+  });
 
   await t.step(
     "LoadAllPaths should resolve entry points only (excluding dependencies)",
@@ -34,27 +41,35 @@ Deno.test("ESMFetchDFSFileHandler Tests", async (t) => {
   await t.step(
     "LoadAllPaths should correctly resolve import maps (if applicable)",
     async () => {
-      const handlerWithImportMaps = new ESMFetchDFSFileHandler(
-        "https://cdn.skypack.dev/",
-        ["lodash-es@4.17.21/lodash.js"],
-        false,
-      );
+      const handlerWithImportMaps = new ESMFetchDFSFileHandler("test", {
+        Details: {
+          Type: "ESM",
+          EntryPoints: ["lodash-es@4.17.21/lodash.js"],
+          Root: "https://cdn.skypack.dev/",
+        } as EaCESMDistributedFileSystemDetails,
+      });
 
       const paths = await handlerWithImportMaps.LoadAllPaths("revision");
 
       console.log("Resolved Paths with Import Maps:", paths);
-      assertEquals(paths.some((p) => p.includes("lodash")), true);
+      assertEquals(
+        paths.some((p) => p.includes("lodash")),
+        true,
+      );
     },
   );
 
   await t.step(
     "LoadAllPaths should correctly resolve local file URLs",
     async () => {
-      const localHandler = new ESMFetchDFSFileHandler(
-        "file:///",
-        ["mod.ts"],
-        false,
-      );
+      const localHandler = new ESMFetchDFSFileHandler("test", {
+        Details: {
+          Type: "ESM",
+          EntryPoints: ["mod.ts"],
+          Root: "file:///",
+          IncludeDependencies: false,
+        } as EaCESMDistributedFileSystemDetails,
+      });
       const paths = await localHandler.LoadAllPaths("revision");
 
       console.log("Resolved Local Paths:", paths);
@@ -67,7 +82,14 @@ Deno.test("ESMFetchDFSFileHandler Tests", async (t) => {
     "ESMFetchDFSFileHandler should throw an error when entry points are empty",
     async () => {
       await assertThrows(
-        () => new ESMFetchDFSFileHandler(packageURL, [], false),
+        () =>
+          new ESMFetchDFSFileHandler("test", {
+            Details: {
+              Type: "ESM",
+              EntryPoints: [],
+              Root: packageURL,
+            } as EaCESMDistributedFileSystemDetails,
+          }),
         Error,
         "No entry points provided",
       );

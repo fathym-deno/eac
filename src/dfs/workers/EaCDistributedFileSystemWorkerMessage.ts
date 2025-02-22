@@ -6,6 +6,8 @@ import {
 
 export type EaCDistributedFileSystemWorkerConfig = {
   DFS: EaCDistributedFileSystemDetails;
+
+  DFSLookup: string;
 } & FathymWorkerConfig;
 
 export type EaCDistributedFileSystemWorkerMessageGetFileInfoPayload = {
