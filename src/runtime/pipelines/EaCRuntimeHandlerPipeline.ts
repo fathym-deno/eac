@@ -3,10 +3,10 @@ import {
   getPackageLoggerSync,
   KnownMethod,
   Logger,
-} from "./.deps.ts";
-import { EaCRuntimeHandler } from "./EaCRuntimeHandler.ts";
-import { EaCRuntimeHandlerSet } from "./EaCRuntimeHandlerSet.ts";
-import { EaCRuntimeHandlers } from "./EaCRuntimeHandlers.ts";
+} from './.deps.ts';
+import { EaCRuntimeHandler } from './EaCRuntimeHandler.ts';
+import { EaCRuntimeHandlerSet } from './EaCRuntimeHandlerSet.ts';
+import { EaCRuntimeHandlers } from './EaCRuntimeHandlers.ts';
 
 export class EaCRuntimeHandlerPipeline {
   protected logger: Logger;
@@ -26,7 +26,7 @@ export class EaCRuntimeHandlerPipeline {
           .filter((h) => h)
           .flatMap((h) => {
             return Array.isArray(h) ? h! : [h!];
-          }),
+          })
       );
     }
   }
@@ -34,7 +34,7 @@ export class EaCRuntimeHandlerPipeline {
   public Execute(
     request: Request,
     ctx: EaCRuntimeContext,
-    index = -1,
+    index = -1
   ): Response | Promise<Response> {
     ctx.Next = async (req) => {
       req ??= request;
@@ -45,7 +45,7 @@ export class EaCRuntimeHandlerPipeline {
         let handler: EaCRuntimeHandler | EaCRuntimeHandlers | undefined =
           this.Pipeline[index];
 
-        if (handler && typeof handler !== "function") {
+        if (handler && typeof handler !== 'function') {
           handler = handler[req.method.toUpperCase() as KnownMethod];
 
           // if (!handler) {
@@ -63,19 +63,22 @@ export class EaCRuntimeHandlerPipeline {
           return this.Execute(req, ctx, index);
         }
       } else {
-        this.logger.error(
-          "A Response must be returned from the pipeline for the request %s",
-          req.url,
-        );
+        try {
+          throw new Error(
+            `A Response must be returned from the pipeline for the request ${req.url}`
+          );
+        } catch (err) {
+          this.logger.error(JSON.stringify(err, null, 2));
+        }
 
         return Response.json(
           {
-            Message: "A Response must be returned from the pipeline.",
+            Message: 'A Response must be returned from the pipeline.',
             RequestURL: req.url,
           },
           {
             status: 500,
-          },
+          }
         );
       }
     };
@@ -90,7 +93,7 @@ export class EaCRuntimeHandlerPipeline {
           .filter((h) => h)
           .flatMap((h) => {
             return Array.isArray(h) ? h! : [h!];
-          }),
+          })
       );
     }
   }
