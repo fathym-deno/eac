@@ -16,7 +16,9 @@ import { DFSFileInfo } from "./DFSFileInfo.ts";
 export class LocalDFSFileHandler
   extends DFSFileHandler<EaCLocalDistributedFileSystemDetails> {
   public override get Root(): string {
-    return this.details?.FileRoot;
+    return this.details?.FileRoot?.endsWith("/")
+      ? this.details.FileRoot
+      : `${this.details.FileRoot}/`;
   }
 
   constructor(
