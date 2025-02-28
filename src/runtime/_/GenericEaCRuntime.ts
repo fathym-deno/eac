@@ -227,7 +227,8 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
           worker,
         });
       } catch (err) {
-        this.logger.error("There was an issue initializing esbuild", err);
+        this.logger.error("There was an issue initializing esbuild");
+        this.logger.error(err);
 
         // throw err;
       }

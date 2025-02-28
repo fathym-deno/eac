@@ -133,8 +133,8 @@ export async function handleEaCCommitCheckRequest(
 
         logger.error(
           `Processed EaC commit ${commitCheckReq.CommitID}, from checks, with errors`,
-          errors,
         );
+        logger.error(errors);
       } else {
         let saveEaC = { ...commitCheckReq.EaC } as EverythingAsCode;
 

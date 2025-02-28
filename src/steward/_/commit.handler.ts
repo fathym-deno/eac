@@ -183,10 +183,8 @@ function configureListenQueueOp(
     } else if (errors.length > 0) {
       op = markEaCProcessed(entLookup, op);
 
-      logger.error(
-        `Processed EaC commit ${commitReq.CommitID} with errors`,
-        errors,
-      );
+      logger.error(`Processed EaC commit ${commitReq.CommitID} with errors`);
+      logger.error(errors);
     } else {
       op = markEaCProcessed(entLookup, op).set(
         ["EaC", "Current", entLookup],

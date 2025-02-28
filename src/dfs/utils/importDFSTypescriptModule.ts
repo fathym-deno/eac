@@ -80,8 +80,8 @@ export async function importDFSTypescriptModule(
   } catch (err) {
     logger.error(
       `There was an error importing the file '${filePath}' for DFS '${dfsLookup}'`,
-      err,
     );
+    logger.error(err);
 
     throw err;
   }
