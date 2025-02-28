@@ -21,12 +21,13 @@ import {
   LoggingProvider,
   merge,
   STATUS_CODE,
-} from "./.deps.ts";
-import { EaCRuntime } from "./EaCRuntime.ts";
-import { EaCRuntimeContext } from "./EaCRuntimeContext.ts";
+} from './.deps.ts';
+import { EaCRuntime } from './EaCRuntime.ts';
+import { EaCRuntimeContext } from './EaCRuntimeContext.ts';
 
 export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
-  implements EaCRuntime<TEaC> {
+  implements EaCRuntime<TEaC>
+{
   protected get logger(): Logger {
     return (this.config.LoggingProvider ?? new EaCLoggingProvider()).Package;
   }
@@ -60,16 +61,16 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
 
     this.IoC = new IoCContainer();
 
-    this.Revision = "";
+    this.Revision = '';
 
     if (IS_BUILDING) {
-      Deno.env.set("SUPPORTS_WORKERS", "false");
+      Deno.env.set('SUPPORTS_WORKERS', 'false');
     }
   }
 
   public async Configure(options?: {
     configure?: (
-      rt: EaCRuntime<TEaC>,
+      rt: EaCRuntime<TEaC>
     ) => Promise<EaCRuntimeHandlerRouteGroup[] | undefined>;
   }): Promise<void> {
     await this.resetRuntime();
@@ -80,7 +81,7 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
 
     if (!this.EaC) {
       throw new Error(
-        "An EaC must be provided in the config or via a connection to an EaC Service with the EAC_API_KEY environment variable.",
+        'An EaC must be provided in the config or via a connection to an EaC Service with the EAC_API_KEY environment variable.'
       );
     }
 
@@ -97,11 +98,11 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
 
   public async Handle(
     request: Request,
-    info: Deno.ServeHandlerInfo,
+    info: Deno.ServeHandlerInfo
   ): Promise<Response> {
     if (this.pipeline.Pipeline?.length <= 0) {
       throw new Error(
-        `There is on pipeline properly configured for '${request.url}'.`,
+        `There is on pipeline properly configured for '${request.url}'.`
       );
     }
 
@@ -114,7 +115,7 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
 
   protected async buildContext(
     req: Request,
-    info: Deno.ServeHandlerInfo,
+    info: Deno.ServeHandlerInfo
   ): Promise<EaCRuntimeContext> {
     return {
       Data: {},
@@ -132,7 +133,7 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
   }
 
   protected buildRouteGroupHandlers(
-    routeGroup: EaCRuntimeHandlerRouteGroup,
+    routeGroup: EaCRuntimeHandlerRouteGroup
   ): EaCRuntimeHandler[] {
     let configuredRoutes: EaCRuntimeHandler[] = [];
 
@@ -144,7 +145,7 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
         req,
         ctx,
         routeGroup,
-        orderedRoutes,
+        orderedRoutes
       );
 
       if (filteredRoutes.length) {
@@ -173,11 +174,11 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
 
   protected buildRouteGroupRouteHandler(
     _routeGroup: EaCRuntimeHandlerRouteGroup,
-    route: EaCRuntimeHandlerRoute,
+    route: EaCRuntimeHandlerRoute
   ): EaCRuntimeHandlerSet {
     return async (req, ctx) => {
       this.logger.info(
-        `Running route ${route.Name} for ${route.ResolverConfig.PathPattern}...`,
+        `Running route ${route.Name} for ${route.ResolverConfig.PathPattern} for req ${ctx.Runtime.URLMatch.Path}...`
       );
 
       this.setURLMatch(req, ctx, route.ResolverConfig.PathPattern);
@@ -194,7 +195,7 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
 
   protected async configurationFinalization(): Promise<void> {
     const esbuild = await this.IoC.Resolve<ESBuild>(
-      this.IoC!.Symbol("ESBuild"),
+      this.IoC!.Symbol('ESBuild')
     );
 
     esbuild!.stop();
@@ -204,20 +205,20 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
     let esbuild: ESBuild | undefined;
 
     try {
-      esbuild = await this.IoC.Resolve<ESBuild>(this.IoC!.Symbol("ESBuild"));
+      esbuild = await this.IoC.Resolve<ESBuild>(this.IoC!.Symbol('ESBuild'));
     } catch {
       esbuild = undefined;
     }
 
     if (!esbuild) {
       if (IS_DENO_DEPLOY()) {
-        esbuild = await import("npm:esbuild-wasm@0.24.2");
+        esbuild = await import('npm:esbuild-wasm@0.24.2');
 
-        this.logger.debug("Initialized esbuild with portable WASM.");
+        this.logger.debug('Initialized esbuild with portable WASM.');
       } else {
-        esbuild = await import("npm:esbuild@0.24.2");
+        esbuild = await import('npm:esbuild@0.24.2');
 
-        this.logger.debug("Initialized esbuild with standard build.");
+        this.logger.debug('Initialized esbuild with standard build.');
       }
 
       try {
@@ -227,13 +228,13 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
           worker,
         });
       } catch (err) {
-        this.logger.error("There was an issue initializing esbuild", err);
+        this.logger.error('There was an issue initializing esbuild', err);
 
         // throw err;
       }
 
       this.IoC.Register<ESBuild>(() => esbuild!, {
-        Type: this.IoC!.Symbol("ESBuild"),
+        Type: this.IoC!.Symbol('ESBuild'),
       });
     }
   }
@@ -251,7 +252,7 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
   }
 
   protected async configurePlugins(
-    plugins?: EaCRuntimePluginDef<TEaC>[],
+    plugins?: EaCRuntimePluginDef<TEaC>[]
   ): Promise<void> {
     for (let pluginDef of plugins || []) {
       const pluginKey = pluginDef as EaCRuntimePluginDef<TEaC>;
@@ -261,7 +262,7 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
 
         try {
           // Ensure `plugin` is a string
-          if (typeof plugin !== "string") {
+          if (typeof plugin !== 'string') {
             throw new Error(`Invalid plugin path: ${plugin}`);
           }
 
@@ -271,7 +272,7 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
           // Check if the module has a default export
           if (!Module?.default) {
             throw new Error(
-              `Plugin module "${plugin}" does not have a default export.`,
+              `Plugin module "${plugin}" does not have a default export.`
             );
           }
 
@@ -318,7 +319,7 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
         const pluginCfg = this.pluginConfigs.get(pluginDef);
 
         await pluginDef.Build?.(this.EaC!, this.IoC, pluginCfg);
-      },
+      }
     );
 
     await Promise.all(buildCalls);
@@ -330,9 +331,9 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
         return await pluginDef.AfterEaCResolved?.(
           this.EaC!,
           this.IoC,
-          this.config,
+          this.config
         );
-      },
+      }
     );
 
     const resolved = await Promise.all(resolveCalls);
@@ -347,36 +348,36 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
     req: Request,
     ctx: EaCRuntimeContext,
     routeGroup: EaCRuntimeHandlerRouteGroup,
-    routes: EaCRuntimeHandlerRoute[],
+    routes: EaCRuntimeHandlerRoute[]
   ): EaCRuntimeHandlerRoute[] {
-    this.setURLMatch(req, ctx, "*");
+    this.setURLMatch(req, ctx, '*');
 
     return !routeGroup.Activator || routeGroup.Activator(req, ctx)
       ? routes
-        .filter((route) => {
-          const actCtx = { ...ctx };
+          .filter((route) => {
+            const actCtx = { ...ctx };
 
-          this.setURLMatch(req, actCtx, "*");
+            this.setURLMatch(req, actCtx, '*');
 
-          return !route.Activator || route.Activator(req, actCtx);
-        })
-        .filter((route) => {
-          const actCtx = { ...ctx };
+            return !route.Activator || route.Activator(req, actCtx);
+          })
+          .filter((route) => {
+            const actCtx = { ...ctx };
 
-          this.setURLMatch(req, actCtx, "*");
+            this.setURLMatch(req, actCtx, '*');
 
-          const testUrl = new URL(
-            actCtx.Runtime.URLMatch.FromBase(
-              `.${actCtx.Runtime.URLMatch.Path}`,
-            ),
-          );
+            const testUrl = new URL(
+              actCtx.Runtime.URLMatch.FromBase(
+                `.${actCtx.Runtime.URLMatch.Path}`
+              )
+            );
 
-          const isMatch = new URLPattern({
-            pathname: route.ResolverConfig.PathPattern,
-          }).test(testUrl);
+            const isMatch = new URLPattern({
+              pathname: route.ResolverConfig.PathPattern,
+            }).test(testUrl);
 
-          return isMatch;
-        })
+            return isMatch;
+          })
       : [];
   }
 
@@ -401,23 +402,20 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
   protected setURLMatch(
     req: Request,
     ctx: EaCRuntimeContext,
-    pathPattern: string,
+    pathPattern: string
   ): void {
     const pattern = new URLPattern({
       pathname: pathPattern,
     });
 
-    ctx.Runtime = merge(
-      ctx.Runtime,
-      {
-        URLMatch: buildURLMatch(pattern, req),
-      } as EaCRuntimeContext["Runtime"],
-    );
+    ctx.Runtime = merge(ctx.Runtime, {
+      URLMatch: buildURLMatch(pattern, req),
+    } as EaCRuntimeContext['Runtime']);
   }
 
   protected shouldContinueToNextRoute(
     route: EaCRuntimeHandlerRoute,
-    resp: Response,
+    resp: Response
   ): boolean {
     const contStati = route?.ContinueStati ?? [STATUS_CODE.NotFound];
 
