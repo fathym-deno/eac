@@ -179,6 +179,17 @@ export class EaCStewardClient extends EaCBaseClient {
   };
 
   public Users = {
+    HasAccess: async (): Promise<EaCCommitResponse> => {
+      const response = await fetch(
+        this.loadClientUrl(`enterprise/user/access`),
+        {
+          headers: this.loadHeaders(),
+        },
+      );
+
+      return await this.json(response);
+    },
+
     Invite: async (userEaC: EaCUserRecord): Promise<EaCCommitResponse> => {
       const response = await fetch(this.loadClientUrl(`enterprise/users`), {
         method: "POST",
