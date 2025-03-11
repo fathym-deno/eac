@@ -179,9 +179,9 @@ export class EaCStewardClient extends EaCBaseClient {
   };
 
   public Users = {
-    HasAccess: async (): Promise<EaCCommitResponse> => {
+    Get: async (): Promise<EaCUserRecord> => {
       const response = await fetch(
-        this.loadClientUrl(`enterprise/user/access`),
+        this.loadClientUrl(`enterprise/user/eac`),
         {
           headers: this.loadHeaders(),
         },
