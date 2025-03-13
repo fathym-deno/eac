@@ -21,6 +21,11 @@ export {
   IS_BUILDING,
 } from "../config/.exports.ts";
 
+export {
+  DenoServeEaCProtocolGateway,
+  type EaCProtocolGateway,
+} from "../gateways/.exports.ts";
+
 export { EaCLoggingProvider } from "../logging/.exports.ts";
 
 export type { EaCRuntimePluginDef } from "../plugins/.exports.ts";

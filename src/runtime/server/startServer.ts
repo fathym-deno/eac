@@ -9,7 +9,8 @@ export async function startServer(
   if (!IS_BUILDING) {
     await runtime.Configure(options);
 
-    await Deno.serve(config.Server, (req, info) => runtime.Handle(req, info))
-      .finished;
+    const gateway = await runtime.Gateway();
+
+    await gateway.Start();
   }
 }

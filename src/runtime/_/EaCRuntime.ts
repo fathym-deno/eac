@@ -1,4 +1,5 @@
 import {
+  EaCProtocolGateway,
   EaCRuntimeHandlerRoute,
   EaCRuntimeHandlerRouteGroup,
   EverythingAsCode,
@@ -19,6 +20,8 @@ export type EaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode> = {
       rt: EaCRuntime<TEaC>,
     ) => Promise<EaCRuntimeHandlerRouteGroup[] | undefined>;
   }): Promise<void>;
+
+  Gateway(): Promise<EaCProtocolGateway>;
 
   Handle: Deno.ServeHandler;
 };

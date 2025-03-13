@@ -1,6 +1,8 @@
 import {
   buildURLMatch,
+  DenoServeEaCProtocolGateway,
   EaCLoggingProvider,
+  EaCProtocolGateway,
   EaCRuntimeConfig,
   EaCRuntimeHandler,
   EaCRuntimeHandlerPipeline,
@@ -93,6 +95,13 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
     this.configurePipeline(routeMatrix);
 
     await this.configurationFinalization();
+  }
+
+  public async Gateway(): Promise<EaCProtocolGateway> {
+    return new DenoServeEaCProtocolGateway(
+      this.config as EaCRuntimeConfig,
+      this,
+    );
   }
 
   public async Handle(
