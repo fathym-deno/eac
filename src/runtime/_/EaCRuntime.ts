@@ -23,5 +23,6 @@ export type EaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode> = {
 
   Gateway(): Promise<EaCProtocolGateway>;
 
+  // TODO: Should be its own thing with REquest and Exeuction context i thinkk (encompassing ServeHandlerInfo<Addr>)
   Handle: Deno.ServeHandler;
 };

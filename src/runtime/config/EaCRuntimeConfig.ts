@@ -1,4 +1,5 @@
 import { EaCRuntime, EverythingAsCode, LoggingProvider } from "./.deps.ts";
+import { EaCRuntimeServer } from "./EaCRuntimeServer.ts";
 import { EaCRuntimeSetupConfig } from "./EaCRuntimeSetupConfig.ts";
 
 export type EaCRuntimeConfig<TEaC extends EverythingAsCode = EverythingAsCode> =
@@ -7,8 +8,6 @@ export type EaCRuntimeConfig<TEaC extends EverythingAsCode = EverythingAsCode> =
 
     Runtime: (cfg: EaCRuntimeConfig<TEaC>) => EaCRuntime<TEaC>;
 
-    Server: {
-      StartRange?: [number, number];
-    } & Deno.ServeTcpOptions;
+    Servers?: EaCRuntimeServer[];
   }
   & EaCRuntimeSetupConfig<TEaC>;

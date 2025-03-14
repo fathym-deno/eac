@@ -51,6 +51,8 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
 
   public Middleware?: (EaCRuntimeHandler | EaCRuntimeHandlers)[];
 
+  public OnEaCChanged?: (newEaC: TEaC) => void;
+
   public Revision: string;
 
   constructor(protected config: EaCRuntimeConfig<TEaC>) {
@@ -100,7 +102,7 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
   public async Gateway(): Promise<EaCProtocolGateway> {
     return new DenoServeEaCProtocolGateway(
       this.config as EaCRuntimeConfig,
-      this,
+      this as EaCRuntime,
     );
   }
 

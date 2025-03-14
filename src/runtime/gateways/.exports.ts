@@ -1,2 +1,2 @@
-export * from "./DenoServeEaCProtocolGateway.ts";
-export * from "./EaCProtocolGateway.ts";
+export * from "./DenoServeProtocolGateway.ts";
+export * from "./ProtocolGateway.ts";

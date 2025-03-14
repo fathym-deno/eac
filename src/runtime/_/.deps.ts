@@ -22,8 +22,8 @@ export {
 } from "../config/.exports.ts";
 
 export {
-  DenoServeEaCProtocolGateway,
-  type EaCProtocolGateway,
+  DenoServeProtocolGateway as DenoServeEaCProtocolGateway,
+  type ProtocolGateway as EaCProtocolGateway,
 } from "../gateways/.exports.ts";
 
 export { EaCLoggingProvider } from "../logging/.exports.ts";
