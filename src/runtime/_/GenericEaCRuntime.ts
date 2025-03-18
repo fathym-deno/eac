@@ -335,24 +335,23 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
 
     await Promise.all(buildCalls);
 
-    const resolveCalls = Array.from(this.pluginDefs.values()).map(
-      async (pluginDef) => {
-        const pluginCfg = this.pluginConfigs.get(pluginDef);
+    const resolved: EaCRuntimeHandlerRouteGroup[] = [];
 
-        return await pluginDef.AfterEaCResolved?.(
-          this.EaC!,
-          this.IoC,
-          this.config,
-        );
-      },
-    );
+    for (const pluginDef of this.pluginDefs.values()) {
+      const _pluginCfg = this.pluginConfigs.get(pluginDef);
 
-    const resolved = await Promise.all(resolveCalls);
+      const result = await pluginDef.AfterEaCResolved?.(
+        this.EaC!,
+        this.IoC,
+        this.config,
+      );
 
-    return resolved
-      .flatMap((r) => r)
-      .filter((r) => r)
-      .map((r) => r!);
+      if (result) {
+        resolved.push(...result);
+      }
+    }
+
+    return resolved;
   }
 
   protected filterRoutes(
