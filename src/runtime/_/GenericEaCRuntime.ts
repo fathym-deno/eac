@@ -334,6 +334,7 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
     );
 
     await Promise.all(buildCalls);
+    
     const resolved: EaCRuntimeHandlerRouteGroup[] = [];
 
     for (const pluginDef of this.pluginDefs.values()) {
