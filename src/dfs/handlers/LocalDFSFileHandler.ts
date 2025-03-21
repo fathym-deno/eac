@@ -69,7 +69,7 @@ export class LocalDFSFileHandler
             const file = await Deno.open(fullFilePath, { read: true });
 
             const stream = new ReadableStream<Uint8Array>({
-              start(controller) {
+              pull(controller) {
                 (async () => {
                   try {
                     const buffer = new Uint8Array(1024);
