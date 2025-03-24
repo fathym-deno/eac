@@ -25,6 +25,8 @@ Deno.test("FetchDFSFileHandler Tests", async (t) => {
 
       assertEquals(fileInfo?.Path, filePath);
       assertEquals(fileInfo?.Contents instanceof ReadableStream, true);
+
+      fileInfo?.Contents.cancel();
     }
   });
 

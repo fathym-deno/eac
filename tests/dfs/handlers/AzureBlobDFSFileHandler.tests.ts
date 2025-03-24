@@ -39,6 +39,8 @@ Deno.test("AzureBlobDFSFileHandler Tests", async (t) => {
       true,
       "Contents should be a ReadableStream.",
     );
+
+    fileInfo?.Contents?.cancel();
   });
 
   await t.step(
@@ -53,6 +55,8 @@ Deno.test("AzureBlobDFSFileHandler Tests", async (t) => {
         undefined,
         "Should return undefined for non-existent files.",
       );
+
+      fileInfo?.Contents?.cancel();
     },
   );
 
@@ -90,6 +94,8 @@ Deno.test("AzureBlobDFSFileHandler Tests", async (t) => {
         "File should exist before deletion.",
       );
 
+      fileInfoBefore?.Contents?.cancel();
+
       // Remove the file
       await handler.RemoveFile(tempFile, "revision");
 
@@ -100,6 +106,8 @@ Deno.test("AzureBlobDFSFileHandler Tests", async (t) => {
         undefined,
         "File should not exist after deletion.",
       );
+
+      fileInfoAfter?.Contents?.cancel();
     },
   );
 

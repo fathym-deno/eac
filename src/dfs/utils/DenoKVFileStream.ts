@@ -33,23 +33,46 @@ export class DenoKVFileStream {
 
     const denoKv = this.denoKv;
 
+    let iterator: AsyncIterableIterator<
+      Deno.KvEntry<DenoKVFileStreamData<Uint8Array>>
+    >;
+
     const contents = exists
       ? new ReadableStream<Uint8Array>({
-        async start(controller) {
-          const cachedFileChunks = await denoKv.list<
-            DenoKVFileStreamData<Uint8Array>
-          >({
+        async start() {
+          iterator = denoKv.list<DenoKVFileStreamData<Uint8Array>>({
             prefix: [...key, "Chunks"],
           });
-
-          for await (const cachedFileChunk of cachedFileChunks) {
-            controller.enqueue(cachedFileChunk.value!.Data);
-          }
-
-          controller.close();
         },
+
+        async pull(controller) {
+          try {
+            const result = await iterator.next();
+
+            if (result.done) {
+              controller.close();
+              return;
+            }
+
+            const chunk = result.value?.value?.Data;
+
+            if (chunk) {
+              controller.enqueue(chunk);
+            } else {
+              // You can choose to controller.error(new Error(...)) if this shouldn't happen
+            }
+          } catch (err) {
+            try {
+              controller.error(err);
+            } catch {
+              // Already closed or errored
+            }
+          }
+        },
+
         cancel() {
-          // divined.cancel();
+          // Optional: cleanup logic if needed
+          // iterator.return?.(); // if your iterator supports cleanup
         },
       })
       : undefined;

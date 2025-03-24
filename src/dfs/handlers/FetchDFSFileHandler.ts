@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-empty
 import {
   EaCDistributedFileSystemDetails,
   EaCRemoteDistributedFileSystemDetails,
@@ -69,23 +70,38 @@ export abstract class FetchDFSFileHandler<
             const response = await fetch(fullFilePath);
 
             if (response.ok && response.body) {
-              // ✅ Create a ReadableStream to ensure we process and close the response correctly
+              let reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
+
               const stream = new ReadableStream<Uint8Array>({
-                start(controller) {
-                  (async () => {
-                    try {
-                      const reader = response.body!.getReader();
-                      let done = false;
-                      while (!done) {
-                        const { value, done: readDone } = await reader.read();
-                        if (readDone) break;
-                        if (value) controller.enqueue(value);
-                      }
-                      controller.close();
-                    } catch (err) {
-                      controller.error(err);
+                async pull(controller) {
+                  try {
+                    if (!reader) {
+                      reader = response.body!.getReader(); // Lazy load
                     }
-                  })();
+
+                    const { value, done } = await reader.read();
+
+                    if (done) {
+                      controller.close();
+                      reader.releaseLock();
+                      return;
+                    }
+
+                    controller.enqueue(value);
+                  } catch (err) {
+                    try {
+                      controller.error(err);
+                    } catch {}
+                    reader?.releaseLock();
+                  }
+                },
+
+                cancel() {
+                  try {
+                    reader?.cancel();
+                  } catch {
+                    // Already released
+                  }
                 },
               });
 
@@ -97,9 +113,8 @@ export abstract class FetchDFSFileHandler<
 
               break;
             } else if (response.body) {
-              await response.body?.cancel();
+              await response.body.cancel(); // Ensure cleanup if response failed
             }
-            // deno-lint-ignore no-empty
           } catch {}
         }
 

@@ -59,6 +59,8 @@ Deno.test("JSRFetchDFSFileHandler Tests", async (t) => {
       const fileInfo = await handler.GetFileInfo(testFilePath, "revision");
       assertEquals(fileInfo?.Path, "/src/atoms/.exports.ts");
       assertEquals(fileInfo?.Contents instanceof ReadableStream, true);
+
+      fileInfo?.Contents.cancel();
     },
   );
 
@@ -74,6 +76,8 @@ Deno.test("JSRFetchDFSFileHandler Tests", async (t) => {
       );
       assertEquals(fileInfo?.Path, "/atoms/.exports.ts");
       assertEquals(fileInfo?.Contents instanceof ReadableStream, true);
+
+      fileInfo?.Contents.cancel();
     },
   );
 

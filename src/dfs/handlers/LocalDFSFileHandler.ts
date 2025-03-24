@@ -1,3 +1,5 @@
+// deno-lint-ignore-file no-empty
+import { delay } from "jsr:@std/async@1.0.10/delay";
 import {
   EaCDistributedFileSystemAsCode,
   EaCLocalDistributedFileSystemDetails,
@@ -67,31 +69,11 @@ export class LocalDFSFileHandler
 
           try {
             const file = await Deno.open(fullFilePath, { read: true });
-
-            const stream = new ReadableStream<Uint8Array>({
-              pull(controller) {
-                (async () => {
-                  try {
-                    const buffer = new Uint8Array(1024);
-                    let bytesRead;
-                    while ((bytesRead = await file.read(buffer)) !== null) {
-                      if (bytesRead === 0) break;
-                      controller.enqueue(buffer.subarray(0, bytesRead));
-                    }
-                    controller.close();
-                  } catch (err) {
-                    controller.error(err);
-                  } finally {
-                    file.close(); // Ensure file is closed after read
-                  }
-                })();
-              },
-            });
+            const stream = file.readable;
 
             fileInfo = { Path: resolvedPath, Contents: stream };
 
             break;
-            // deno-lint-ignore no-empty
           } catch {}
         }
 
