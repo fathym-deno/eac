@@ -63,6 +63,11 @@ export class EaCSteward {
               } is already processing.`,
             );
           }
+        } catch (error) {
+          logger.Package.error(
+            "There was an error processing the steward event.",
+          );
+          logger.Package.error(error);
         } finally {
           await commitKv.delete(trackingKey);
 
