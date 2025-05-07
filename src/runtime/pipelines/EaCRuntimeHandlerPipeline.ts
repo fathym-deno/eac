@@ -17,16 +17,26 @@ export class EaCRuntimeHandlerPipeline {
     this.Pipeline = [];
 
     this.logger = getPackageLoggerSync(import.meta);
+    this.logger.debug(
+      "Initialized EaCRuntimeHandlerPipeline with empty pipeline.",
+    );
   }
 
   public Append(...handlers: (EaCRuntimeHandlerSet | undefined)[]): void {
     if (handlers) {
+      const count = handlers.filter((h) => h).length;
+      this.logger.info(`Appending ${count} handler sets to pipeline.`);
+
       this.Pipeline.push(
         ...handlers
           .filter((h) => h)
           .flatMap((h) => {
             return Array.isArray(h) ? h! : [h!];
           }),
+      );
+
+      this.logger.debug(
+        `Pipeline now contains ${this.Pipeline.length} handlers after append.`,
       );
     }
   }
@@ -41,25 +51,30 @@ export class EaCRuntimeHandlerPipeline {
 
       ++index;
 
+      this.logger.debug(
+        `Pipeline execution at index ${index} for ${req.method} ${req.url}`,
+      );
+
       if (this.Pipeline.length > index) {
         let handler: EaCRuntimeHandler | EaCRuntimeHandlers | undefined =
           this.Pipeline[index];
 
         if (handler && typeof handler !== "function") {
+          this.logger.debug(
+            `Resolving method handler for ${req.method} at index ${index}`,
+          );
           handler = handler[req.method.toUpperCase() as KnownMethod];
-
-          // if (!handler) {
-          //   throw new Deno.errors.NotFound(
-          //     `There is not handler configured for the '${req.method}' method.`
-          //   );
-          // }
         }
 
         const response = await handler?.(req, ctx);
 
         if (response) {
+          this.logger.info(`Handler at index ${index} returned a response.`);
           return response;
         } else {
+          this.logger.debug(
+            `Handler at index ${index} returned no response, continuing pipeline.`,
+          );
           return this.Execute(req, ctx, index);
         }
       } else {
@@ -68,7 +83,7 @@ export class EaCRuntimeHandlerPipeline {
             `A Response must be returned from the pipeline for the request ${req.url}`,
           );
         } catch (err) {
-          this.logger.error(JSON.stringify(err, null, 2));
+          this.logger.error(err);
         }
 
         return Response.json(
@@ -83,17 +98,27 @@ export class EaCRuntimeHandlerPipeline {
       }
     };
 
+    this.logger.debug(
+      `Beginning pipeline execution for ${request.method} ${request.url}`,
+    );
     return ctx.Next(request);
   }
 
   public Prepend(...handlers: (EaCRuntimeHandlerSet | undefined)[]): void {
     if (handlers) {
+      const count = handlers.filter((h) => h).length;
+      this.logger.info(`Prepending ${count} handler sets to pipeline.`);
+
       this.Pipeline.unshift(
         ...handlers
           .filter((h) => h)
           .flatMap((h) => {
             return Array.isArray(h) ? h! : [h!];
           }),
+      );
+
+      this.logger.debug(
+        `Pipeline now contains ${this.Pipeline.length} handlers after prepend.`,
       );
     }
   }
