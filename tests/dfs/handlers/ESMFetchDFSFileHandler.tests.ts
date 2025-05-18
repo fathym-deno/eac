@@ -99,6 +99,8 @@ Deno.test("ESMFetchDFSFileHandler Tests", async (t) => {
       );
       assertEquals(fileInfo?.Path, validFilePath);
       assertEquals(fileInfo?.Contents instanceof ReadableStream, true);
+
+      fileInfo?.Contents.cancel();
     },
   );
 
@@ -110,6 +112,8 @@ Deno.test("ESMFetchDFSFileHandler Tests", async (t) => {
         "revision",
       );
       assertEquals(fileInfo, undefined);
+
+      fileInfo?.Contents?.cancel();
     },
   );
 

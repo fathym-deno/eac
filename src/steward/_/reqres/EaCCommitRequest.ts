@@ -9,6 +9,8 @@ export type EaCCommitRequest = {
 
   ProcessingSeconds: number;
 
+  SkipActuators?: boolean;
+
   Username: string;
 } & DenoKVNonce;
 

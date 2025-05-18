@@ -66,6 +66,8 @@ export class ESMFetchDFSFileHandler
     );
 
     if (!fileInfo || !this.modulePaths.includes(fileInfo.Path)) {
+      fileInfo?.Contents?.cancel();
+
       return undefined;
     }
 

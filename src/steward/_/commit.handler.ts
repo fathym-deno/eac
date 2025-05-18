@@ -15,20 +15,20 @@ import {
   markEaCProcessed,
   merge,
   waitOnEaCProcessing,
-} from "./.deps.ts";
-import { EaCCommitCheckRequest } from "./reqres/EaCCommitCheckRequest.ts";
-import { EaCCommitRequest } from "./reqres/EaCCommitRequest.ts";
+} from './.deps.ts';
+import { EaCCommitCheckRequest } from './reqres/EaCCommitCheckRequest.ts';
+import { EaCCommitRequest } from './reqres/EaCCommitRequest.ts';
 
 export async function handleEaCCommitRequest(
   logger: Logger,
   eacKv: Deno.Kv,
   commitKv: Deno.Kv,
-  commitReq: EaCCommitRequest,
+  commitReq: EaCCommitRequest
 ) {
   logger.debug(`Processing EaC commit for ${commitReq.CommitID}`);
 
   if (!commitReq.EaC.EnterpriseLookup) {
-    throw new Error("The enterprise lookup must be provided.");
+    throw new Error('The enterprise lookup must be provided.');
   }
 
   if (commitReq.EaC.Details && !commitReq.EaC.Details!.Description) {
@@ -39,10 +39,10 @@ export async function handleEaCCommitRequest(
     commitReq.EaC;
 
   const statusKey = [
-    "EaC",
-    "Status",
+    'EaC',
+    'Status',
     EnterpriseLookup,
-    "ID",
+    'ID',
     commitReq.CommitID,
   ];
 
@@ -56,12 +56,12 @@ export async function handleEaCCommitRequest(
     () => {
       return handleEaCCommitRequest(logger, eacKv, commitKv, commitReq);
     },
-    commitReq.ProcessingSeconds,
+    commitReq.ProcessingSeconds
   );
 
   const existingEaC = await eacKv.get<EverythingAsCode>([
-    "EaC",
-    "Current",
+    'EaC',
+    'Current',
     EnterpriseLookup,
   ]);
 
@@ -100,8 +100,8 @@ export async function handleEaCCommitRequest(
       toProcess,
       allChecks,
       errors,
-      diffCalls,
-    ),
+      diffCalls
+    )
   );
 
   await processDiffCalls(logger, diffCalls, allChecks, errors, status.value!);
@@ -126,9 +126,9 @@ export async function handleEaCCommitRequest(
       allChecks,
       errors,
       saveEaC,
-      toProcess,
+      toProcess
     ),
-    eacKv,
+    eacKv
   );
 }
 
@@ -141,15 +141,15 @@ function configureListenQueueOp(
   allChecks: EaCActuatorCheckRequest[],
   errors: EaCActuatorErrorResponse[],
   saveEaC: EverythingAsCode,
-  toProcess: { keys: string[] },
+  toProcess: { keys: string[] }
 ): AtomicOperationHandler {
   return (op) => {
     op = op
       .check(existingEaC)
       .check(status)
       .set(
-        ["EaC", "Status", entLookup, "ID", commitReq.CommitID],
-        status.value,
+        ['EaC', 'Status', entLookup, 'ID', commitReq.CommitID],
+        status.value
       );
 
     if (commitReq.Username) {
@@ -162,8 +162,8 @@ function configureListenQueueOp(
       };
 
       op = op
-        .set(["User", commitReq.Username, "EaC", entLookup], eacUserRecord)
-        .set(["EaC", "Users", entLookup, commitReq.Username], eacUserRecord);
+        .set(['User', commitReq.Username, 'EaC', entLookup], eacUserRecord)
+        .set(['EaC', 'Users', entLookup, commitReq.Username], eacUserRecord);
     }
 
     if (allChecks.length > 0) {
@@ -187,8 +187,8 @@ function configureListenQueueOp(
       logger.error(errors);
     } else {
       op = markEaCProcessed(entLookup, op).set(
-        ["EaC", "Current", entLookup],
-        saveEaC,
+        ['EaC', 'Current', entLookup],
+        saveEaC
       );
 
       logger.debug(`Processed EaC commit ${commitReq.CommitID}`);
@@ -203,7 +203,7 @@ async function processDiffCalls(
   diffCalls: Record<number, (() => Promise<void>)[]>,
   allChecks: EaCActuatorCheckRequest[],
   errors: EaCActuatorErrorResponse[],
-  status: EaCStatus,
+  status: EaCStatus
 ): Promise<void> {
   const ordered = Object.keys(diffCalls)
     .map((k) => Number.parseInt(k))
@@ -215,7 +215,7 @@ async function processDiffCalls(
     logger.debug(
       `Processing EaC commit ${status.ID} diff calls (${
         diffCalls[order]?.length || 0
-      }) for order '${order}'`,
+      }) for order '${order}'`
     );
 
     await Promise.all(diffCalls[order].map((dc) => dc()));
@@ -235,7 +235,7 @@ async function processDiffCalls(
     } else if (allChecks.length > 0) {
       status.Processing = EaCStatusProcessingTypes.PROCESSING;
 
-      status.Messages.Queued = "Processing";
+      status.Messages.Queued = 'Processing';
 
       break;
     }
@@ -251,11 +251,11 @@ function processDiffKey(
   toProcess: { keys: string[] },
   allChecks: EaCActuatorCheckRequest[],
   errors: EaCActuatorErrorResponse[],
-  diffCalls: Record<number, (() => Promise<void>)[]>,
+  diffCalls: Record<number, (() => Promise<void>)[]>
 ): (key: string) => void {
   return (key) => {
     logger.debug(
-      `Preparing EaC commit ${commitReq.CommitID} to process key ${key}`,
+      `Preparing EaC commit ${commitReq.CommitID} to process key ${key}`
     );
 
     const diff = (eacDiff as Record<string, unknown>)[key];
@@ -264,7 +264,7 @@ function processDiffKey(
       const actuator = saveEaC.Actuators![key];
 
       if (actuator) {
-        const process = processEaCHandler(
+        const process = processEaCActuator(
           logger,
           denoKv,
           diff,
@@ -274,7 +274,7 @@ function processDiffKey(
           saveEaC,
           toProcess,
           allChecks,
-          errors,
+          errors
         );
 
         diffCalls[actuator.Order] = [
@@ -286,42 +286,43 @@ function processDiffKey(
   };
 }
 
-function processEaCHandler(
+function processEaCActuator(
   logger: Logger,
   denoKv: Deno.Kv,
   diff: unknown,
-  handler: EaCModuleActuator,
+  actuator: EaCModuleActuator,
   commitReq: EaCCommitRequest,
   key: string,
   saveEaC: Record<string, unknown>,
   toProcess: { keys: string[] },
   allChecks: EaCActuatorCheckRequest[],
-  errors: EaCActuatorErrorResponse[],
+  errors: EaCActuatorErrorResponse[]
 ): () => Promise<void> {
   return async () => {
     logger.debug(`Processing EaC commit ${commitReq.CommitID} for key ${key}`);
 
     if (
+      !commitReq.SkipActuators &&
       !Array.isArray(diff) &&
-      typeof diff === "object" &&
+      typeof diff === 'object' &&
       diff !== null &&
       diff !== undefined
     ) {
       const handled = await callEaCActuator(
         async (entLookup) => {
           const eac = await denoKv.get<EverythingAsCode>([
-            "EaC",
-            "Current",
+            'EaC',
+            'Current',
             entLookup,
           ]);
 
           return eac.value!;
         },
-        handler,
+        actuator,
         commitReq,
         key,
         saveEaC,
-        diff as EaCMetadataBase,
+        diff as EaCMetadataBase
       );
 
       toProcess.keys = toProcess.keys.filter((k) => k !== key);

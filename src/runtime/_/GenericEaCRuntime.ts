@@ -76,26 +76,34 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
       rt: EaCRuntime<TEaC>,
     ) => Promise<EaCRuntimeHandlerRouteGroup[] | undefined>;
   }): Promise<void> {
+    this.logger.info("Starting runtime configuration...");
     await this.resetRuntime();
 
+    this.logger.debug("Running configuration setup...");
     await this.configurationSetup();
 
+    this.logger.debug("Configuring plugins...");
     await this.configurePlugins(this.config.Plugins);
 
     if (!this.EaC) {
+      this.logger.error("Missing EaC configuration.");
       throw new Error(
         "An EaC must be provided in the config or via a connection to an EaC Service with the EAC_API_KEY environment variable.",
       );
     }
 
+    this.logger.debug("Finalizing plugins...");
     const routeMatrix = await this.finalizePlugins();
 
     if (options?.configure) {
+      this.logger.debug("Applying user-supplied additional configuration...");
       routeMatrix.push(...((await options.configure(this)) ?? []));
     }
 
+    this.logger.debug("Setting up pipeline...");
     this.configurePipeline(routeMatrix);
 
+    this.logger.info("Runtime configuration complete.");
     await this.configurationFinalization();
   }
 
@@ -110,7 +118,10 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
     request: Request,
     info: Deno.ServeHandlerInfo,
   ): Promise<Response> {
+    this.logger.debug(`Handling request: ${request.method} ${request.url}`);
+
     if (this.pipeline.Pipeline?.length <= 0) {
+      this.logger.error(`Pipeline is not configured for: ${request.url}`);
       throw new Error(
         `There is on pipeline properly configured for '${request.url}'.`,
       );
@@ -156,6 +167,10 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
         ctx,
         routeGroup,
         orderedRoutes,
+      );
+
+      this.logger.debug(
+        `Filtered ${filteredRoutes.length} matching route(s) in group '${routeGroup.Name}'`,
       );
 
       if (filteredRoutes.length) {
@@ -204,6 +219,8 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
   }
 
   protected async configurationFinalization(): Promise<void> {
+    this.logger.debug("Finalizing configuration and stopping ESBuild...");
+
     const esbuild = await this.IoC.Resolve<ESBuild>(
       this.IoC!.Symbol("ESBuild"),
     );
@@ -214,18 +231,26 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
   protected async configurationSetup(): Promise<void> {
     let esbuild: ESBuild | undefined;
 
+    this.logger.debug("Checking IoC for ESBuild registration...");
+
     try {
       esbuild = await this.IoC.Resolve<ESBuild>(this.IoC!.Symbol("ESBuild"));
+      this.logger.debug("ESBuild already registered in IoC.");
     } catch {
+      this.logger.debug("No existing ESBuild found in IoC.");
       esbuild = undefined;
     }
 
     if (!esbuild) {
       if (IS_DENO_DEPLOY()) {
+        this.logger.debug("Running in Deno Deploy - loading esbuild-wasm...");
         esbuild = await import("npm:esbuild-wasm@0.24.2");
 
         this.logger.debug("Initialized esbuild with portable WASM.");
       } else {
+        this.logger.debug(
+          "Running in standard Deno - loading native esbuild...",
+        );
         esbuild = await import("npm:esbuild@0.24.2");
 
         this.logger.debug("Initialized esbuild with standard build.");
@@ -233,17 +258,15 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
 
       try {
         const worker = IS_DENO_DEPLOY() ? false : undefined;
-
-        await esbuild!.initialize({
-          worker,
-        });
+        this.logger.debug("Initializing esbuild...");
+        await esbuild!.initialize({ worker });
+        this.logger.info("Esbuild initialized successfully.");
       } catch (err) {
         this.logger.error("There was an issue initializing esbuild");
         this.logger.error(err);
-
-        // throw err;
       }
 
+      this.logger.debug("Registering esbuild in IoC...");
       this.IoC.Register<ESBuild>(() => esbuild!, {
         Type: this.IoC!.Symbol("ESBuild"),
       });
@@ -251,6 +274,8 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
   }
 
   protected configurePipeline(routeMatrix: EaCRuntimeHandlerRouteGroup[]) {
+    this.logger.debug("Appending middleware and route handlers to pipeline...");
+
     this.pipeline.Append(this.Middleware);
 
     const orderedRouteGroups = Object.entries(routeMatrix)
@@ -266,31 +291,39 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
     plugins?: EaCRuntimePluginDef<TEaC>[],
   ): Promise<void> {
     for (let pluginDef of plugins || []) {
+      this.logger.debug(
+        `Configuring plugin: ${
+          Array.isArray(pluginDef) ? pluginDef[0] : pluginDef.constructor.name
+        }`,
+      );
+
       const pluginKey = pluginDef as EaCRuntimePluginDef<TEaC>;
 
       if (Array.isArray(pluginDef)) {
         const [plugin, ...args] = pluginDef as [string, ...args: unknown[]];
 
         try {
-          // Ensure `plugin` is a string
           if (typeof plugin !== "string") {
+            this.logger.error(`Invalid plugin path: ${plugin}`);
             throw new Error(`Invalid plugin path: ${plugin}`);
           }
 
-          // Perform the dynamic import
+          this.logger.debug(`Dynamically importing plugin module: ${plugin}`);
           const Module = await import(plugin);
 
-          // Check if the module has a default export
           if (!Module?.default) {
+            this.logger.error(
+              `Plugin module "${plugin}" does not have a default export.`,
+            );
             throw new Error(
               `Plugin module "${plugin}" does not have a default export.`,
             );
           }
 
           pluginDef = new Module.default(...args) as EaCRuntimePlugin<TEaC>;
+          this.logger.debug(`Successfully constructed plugin from: ${plugin}`);
         } catch (error) {
-          console.error(`Failed to load plugin "${plugin}":`, error);
-
+          this.logger.error(`Failed to load plugin "${plugin}":`, error);
           throw error;
         }
       }
@@ -304,15 +337,22 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
       this.pluginConfigs.set(pluginKey, pluginConfig);
 
       if (pluginConfig) {
+        this.logger.debug(
+          `Applying plugin config: ${pluginDef.constructor.name}`,
+        );
+
         if (pluginConfig.EaC) {
+          this.logger.debug("Merging plugin EaC...");
           this.EaC = merge(this.EaC || {}, pluginConfig.EaC);
         }
 
         if (pluginConfig.IoC) {
+          this.logger.debug("Copying plugin IoC bindings...");
           pluginConfig.IoC.CopyTo(this.IoC!);
         }
 
         if (pluginConfig.Middleware) {
+          this.logger.debug("Appending plugin middleware...");
           this.Middleware = [
             ...(this.Middleware || []),
             ...pluginConfig.Middleware,
@@ -325,10 +365,12 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
   }
 
   protected async finalizePlugins(): Promise<EaCRuntimeHandlerRouteGroup[]> {
+    this.logger.debug("Building plugin handler pipelines...");
+
     const buildCalls = Array.from(this.pluginDefs.values()).map(
       async (pluginDef) => {
         const pluginCfg = this.pluginConfigs.get(pluginDef);
-
+        this.logger.debug(`Building plugin: ${pluginDef.constructor.name}`);
         await pluginDef.Build?.(this.EaC!, this.IoC, pluginCfg);
       },
     );
@@ -347,6 +389,9 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
       );
 
       if (result) {
+        this.logger.debug(
+          `Plugin '${pluginDef.constructor.name}' returned ${result.length} route group(s).`,
+        );
         resolved.push(...result);
       }
     }
@@ -392,21 +437,25 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
   }
 
   protected async resetRuntime(): Promise<void> {
-    this.Revision = await generateDirectoryHash(Deno.cwd()); //import.meta.resolve("../../"));
+    this.logger.debug("Resetting runtime state...");
+
+    this.Revision = await generateDirectoryHash(Deno.cwd());
+    this.logger.info(`Generated runtime revision: ${this.Revision}`);
 
     this.pluginConfigs = new Map();
-
     this.pluginDefs = new Map();
 
     this.EaC = this.config.EaC;
-
     this.IoC = this.config.IoC || new IoCContainer();
 
     if (this.config.LoggingProvider) {
+      this.logger.debug("Registering custom LoggingProvider in IoC...");
       this.IoC!.Register(LoggingProvider, () => this.config.LoggingProvider);
     }
 
     this.Middleware = this.config.Middleware || [];
+
+    this.logger.debug("Runtime state reset complete.");
   }
 
   protected setURLMatch(
