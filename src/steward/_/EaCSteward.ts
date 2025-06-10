@@ -1,5 +1,5 @@
 import { IoCContainer } from "jsr:@fathym/ioc@0.0.14";
-import { EaCRuntime, IS_BUILDING, Logger, LoggingProvider } from "./.deps.ts";
+import { IS_BUILDING, Logger, LoggingProvider } from "./.deps.ts";
 import { handleEaCCommitCheckRequest } from "./commit-check.handler.ts";
 import { handleEaCCommitRequest } from "./commit.handler.ts";
 import { handleEaCDeleteRequest } from "./delete.handler.ts";

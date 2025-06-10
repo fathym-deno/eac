@@ -10,11 +10,11 @@ import { IDFSFileHandler } from "./IDFSFileHandler.ts";
 /**
  * Abstract base class implementing `IDFSFileHandler`.
  * Concrete implementations must provide method implementations.
+ *
+ * @deprecated Need to refactor to use DFS classes from @fathym/common/dfs
  */
-export abstract class DFSFileHandler<
-  TDetails extends EaCDistributedFileSystemDetails =
-    EaCDistributedFileSystemDetails,
-> implements IDFSFileHandler {
+export abstract class DFSFileHandler<TDetails = Record<string, unknown>>
+  implements IDFSFileHandler {
   protected readonly logger: Logger;
 
   /**

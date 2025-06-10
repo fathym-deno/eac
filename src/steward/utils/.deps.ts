@@ -1,5 +1,5 @@
-export { merge } from "jsr:@fathym/common@0.2.184/merge";
-export { hasKvEntry } from "jsr:@fathym/common@0.2.184/deno-kv";
+export { merge } from "jsr:@fathym/common@0.2.261/merge";
+export { hasKvEntry } from "jsr:@fathym/common@0.2.261/deno-kv";
 
 export type {
   EaCMetadataBase,

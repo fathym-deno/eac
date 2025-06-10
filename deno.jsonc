@@ -16,6 +16,7 @@
     "./runtime/server": "./src/runtime/server/.exports.ts",
     "./steward": "./src/steward/_/.exports.ts",
     "./steward/actuators": "./src/steward/actuators/.exports.ts",
+    "./steward/apis": "./src/steward/apis/.exports.ts",
     "./steward/clients": "./src/steward/clients/.exports.ts",
     "./steward/informants": "./src/steward/informants/.exports.ts",
     "./steward/status": "./src/steward/status/.exports.ts",
