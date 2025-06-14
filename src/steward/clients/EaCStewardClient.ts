@@ -111,10 +111,13 @@ export class EaCStewardClient extends EaCBaseClient {
       return await this.json(response);
     },
 
-    ListForUser: async (): Promise<EaCUserRecord[]> => {
-      const response = await fetch(this.loadClientUrl(`list`), {
-        headers: this.loadHeaders(),
-      });
+    ListForUser: async (username: string): Promise<EaCUserRecord[]> => {
+      const response = await fetch(
+        this.loadClientUrl(`list?username=${username}`),
+        {
+          headers: this.loadHeaders(),
+        },
+      );
 
       return await this.json<EaCUserRecord[]>(response, []);
     },
