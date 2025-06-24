@@ -3,13 +3,13 @@ export * as denoGraph from "jsr:@deno/graph@0.88.0";
 export { Logger } from "jsr:@std/log@0.224.14/logger";
 export * as path from "jsr:@std/path@1.0.8";
 
-export { loadDenoConfig } from "jsr:@fathym/common@0.2.261/build";
+export { loadDenoConfig } from "jsr:@fathym/common@0.2.264/build";
 export {
   getPackageLogger,
   getPackageLoggerSync,
   LoggingProvider,
-} from "jsr:@fathym/common@0.2.261/log";
-export { existsSync, getFilesList } from "jsr:@fathym/common@0.2.261/path";
+} from "jsr:@fathym/common@0.2.264/log";
+export { existsSync, getFilesList } from "jsr:@fathym/common@0.2.264/path";
 
 export { IoCContainer } from "jsr:@fathym/ioc@0.0.14";
 

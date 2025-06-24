@@ -1,7 +1,7 @@
 export { Logger } from "jsr:@std/log@0.224.14";
 
-export type { KnownMethod } from "jsr:@fathym/common@0.2.261/http";
-export { getPackageLoggerSync } from "jsr:@fathym/common@0.2.261/log";
+export type { KnownMethod } from "jsr:@fathym/common@0.2.264/http";
+export { getPackageLoggerSync } from "jsr:@fathym/common@0.2.264/log";
 
 export type { EverythingAsCode } from "../../eac/.exports.ts";
 
