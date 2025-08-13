@@ -51,30 +51,30 @@ export class EaCRuntimeHandlerPipeline {
 
       ++index;
 
-      this.logger.debug(
-        `Pipeline execution at index ${index} for ${req.method} ${req.url}`,
-      );
+      // this.logger.debug(
+      //   `Pipeline execution at index ${index} for ${req.method} ${req.url}`,
+      // );
 
       if (this.Pipeline.length > index) {
         let handler: EaCRuntimeHandler | EaCRuntimeHandlers | undefined =
           this.Pipeline[index];
 
         if (handler && typeof handler !== "function") {
-          this.logger.debug(
-            `Resolving method handler for ${req.method} at index ${index}`,
-          );
+          // this.logger.debug(
+          //   `Resolving method handler for ${req.method} at index ${index}`,
+          // );
           handler = handler[req.method.toUpperCase() as KnownMethod];
         }
 
         const response = await handler?.(req, ctx);
 
         if (response) {
-          this.logger.info(`Handler at index ${index} returned a response.`);
+          // this.logger.info(`Handler at index ${index} returned a response.`);
           return response;
         } else {
-          this.logger.debug(
-            `Handler at index ${index} returned no response, continuing pipeline.`,
-          );
+          // this.logger.debug(
+          //   `Handler at index ${index} returned no response, continuing pipeline.`,
+          // );
           return this.Execute(req, ctx, index);
         }
       } else {
@@ -98,9 +98,9 @@ export class EaCRuntimeHandlerPipeline {
       }
     };
 
-    this.logger.debug(
-      `Beginning pipeline execution for ${request.method} ${request.url}`,
-    );
+    // this.logger.debug(
+    //   `Beginning pipeline execution for ${request.method} ${request.url}`,
+    // );
     return ctx.Next(request);
   }
 
