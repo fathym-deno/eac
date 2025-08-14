@@ -18,9 +18,14 @@ export class EaCStewardClient extends EaCBaseClient {
     Commit: async <T extends EverythingAsCode>(
       eac: T,
       processingSeconds: number,
+      skipActuators?: boolean,
     ): Promise<EaCCommitResponse> => {
+      const skip = skipActuators ? "&skipActuators=true" : "";
+
       const response = await fetch(
-        this.loadClientUrl(`enterprise?processingSeconds=${processingSeconds}`),
+        this.loadClientUrl(
+          `enterprise?processingSeconds=${processingSeconds}${skip}`,
+        ),
         {
           method: "POST",
           headers: this.loadHeaders(),
@@ -48,10 +53,13 @@ export class EaCStewardClient extends EaCBaseClient {
       eac: T,
       username: string,
       processingSeconds: number,
+      skipActuators?: boolean,
     ): Promise<EaCCommitResponse> => {
+      const skip = skipActuators ? "&skipActuators=true" : "";
+
       const response = await fetch(
         this.loadClientUrl(
-          `?processingSeconds=${processingSeconds}&username=${username}`,
+          `?processingSeconds=${processingSeconds}&username=${username}${skip}`,
         ),
         {
           method: "POST",
