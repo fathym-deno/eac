@@ -446,6 +446,7 @@ function processEaCActuator(
         diff !== null
       ) {
         const handled = await callEaCActuator(
+          logger,
           async (entLookup) => {
             const eac = await denoKv.get<EverythingAsCode>([
               "EaC",

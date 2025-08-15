@@ -18,9 +18,18 @@ import { EaCCommitRequest } from "./reqres/EaCCommitRequest.ts";
 // ---------- helpers ----------
 const now = () => Date.now();
 const ms = (t0: number) => Date.now() - t0;
-const safeJson = (v: unknown) => { try { return JSON.stringify(v); } catch { return String(v); } };
+const safeJson = (v: unknown) => {
+  try {
+    return JSON.stringify(v);
+  } catch {
+    return String(v);
+  }
+};
 const summarizeMsgs = (m: Record<string, unknown> | undefined) =>
-  m ? Object.keys(m).slice(0, 5).join(", ") + (Object.keys(m).length > 5 ? ", …" : "") : "∅";
+  m
+    ? Object.keys(m).slice(0, 5).join(", ") +
+      (Object.keys(m).length > 5 ? ", …" : "")
+    : "∅";
 const summarizeErrors = (errs: EaCActuatorErrorResponse[]) => {
   if (!errs?.length) return "none";
   const first = errs[0];
@@ -40,19 +49,21 @@ export async function handleEaCCommitCheckRequest(
 ) {
   const t0 = now();
   const commitId = commitCheckReq.CommitID;
-  logger.info(`[check ${commitId}] start checks=${commitCheckReq.Checks.length}`);
+  logger.info(
+    `[check ${commitId}] start checks=${commitCheckReq.Checks.length}`,
+  );
 
   const { EnterpriseLookup, ParentEnterpriseLookup, Actuators, Details } =
     commitCheckReq.EaC;
 
-  const statusKey = [
-    "EaC", "Status", EnterpriseLookup!, "ID", commitId,
-  ];
+  const statusKey = ["EaC", "Status", EnterpriseLookup!, "ID", commitId];
 
   const status = await eacKv.get<EaCStatus>(statusKey);
 
   if (!status?.value) {
-    logger.error(`[check ${commitId}] status not found at key ${safeJson(statusKey)}`);
+    logger.error(
+      `[check ${commitId}] status not found at key ${safeJson(statusKey)}`,
+    );
     throw new Error(`Status not found for commit ${commitId}`);
   }
 
@@ -69,8 +80,13 @@ export async function handleEaCCommitCheckRequest(
       logger.debug(`[check ${commitId}] (#${idx}) run ${label}`);
 
       const checkResp = await callEaCActuatorCheck(
+        logger,
         async (entLookup) => {
-          const eac = await eacKv.get<EverythingAsCode>(["EaC", "Current", entLookup]);
+          const eac = await eacKv.get<EverythingAsCode>([
+            "EaC",
+            "Current",
+            entLookup,
+          ]);
           return eac.value!;
         },
         Actuators!,
@@ -79,26 +95,34 @@ export async function handleEaCCommitCheckRequest(
       );
 
       // Merge messages into status and persist incrementally
-      status.value!.Messages = merge(status.value!.Messages, checkResp.Messages);
+      status.value!.Messages = merge(
+        status.value!.Messages,
+        checkResp.Messages,
+      );
       await eacKv.set(statusKey, status.value!);
 
       const msgSummary = summarizeMsgs(checkResp.Messages);
       logger.debug(
-        `[check ${commitId}] (#${idx}) ${label} -> complete=${checkResp.Complete} hasError=${!!checkResp.HasError} msgs=[${msgSummary}]`
+        `[check ${commitId}] (#${idx}) ${label} -> complete=${checkResp.Complete} hasError=${!!checkResp
+          .HasError} msgs=[${msgSummary}]`,
       );
 
       if (checkResp.HasError) {
         errors.push({ HasError: true, Messages: checkResp.Messages });
         logger.error(
-          `[check ${commitId}] (#${idx}) ${label} ERROR: ${typeof checkResp.Messages?.Error === "string"
-            ? checkResp.Messages.Error
-            : msgSummary}`
+          `[check ${commitId}] (#${idx}) ${label} ERROR: ${
+            typeof checkResp.Messages?.Error === "string"
+              ? checkResp.Messages.Error
+              : msgSummary
+          }`,
         );
       }
 
       if (!checkResp.Complete) {
         allChecks.push(check);
-        logger.info(`[check ${commitId}] (#${idx}) ${label} not complete → requeue`);
+        logger.info(
+          `[check ${commitId}] (#${idx}) ${label} not complete → requeue`,
+        );
       }
 
       return checkResp;
@@ -120,10 +144,21 @@ export async function handleEaCCommitCheckRequest(
   }
 
   logger.info(
-    `[check ${commitId}] result processing=${EaCStatusProcessingTypes[status.value!.Processing]} ` +
-    `pendingChecks=${allChecks.length} errors=${errors.length} durationMs=${ms(t0)}`
+    `[check ${commitId}] result processing=${
+      EaCStatusProcessingTypes[status.value!.Processing]
+    } ` +
+      `pendingChecks=${allChecks.length} errors=${errors.length} durationMs=${
+        ms(t0)
+      }`,
   );
-  logger.debug(() => `[check ${commitId}] messages keys=[${summarizeMsgs(status.value!.Messages)}]`);
+  logger.debug(
+    () =>
+      `[check ${commitId}] messages keys=[${
+        summarizeMsgs(
+          status.value!.Messages,
+        )
+      }]`,
+  );
 
   await listenQueueAtomic(
     commitKv,
@@ -144,20 +179,32 @@ export async function handleEaCCommitCheckRequest(
         op = enqueueAtomicOperation(op, newCommitCheckReq, 1000 * 10);
 
         logger.info(
-          `[check ${commitId}] requeued ${allChecks.length} check(s) for 10s delay`
+          `[check ${commitId}] requeued ${allChecks.length} check(s) for 10s delay`,
         );
-        logger.debug(() =>
-          `[check ${commitId}] requeue detail: ${safeJson(
-            allChecks.map((c) => ({ key: (c as any).Key, type: (c as any).Type }))
-          )}`
+        logger.debug(
+          () =>
+            `[check ${commitId}] requeue detail: ${
+              safeJson(
+                allChecks.map((c) => ({
+                  key: (c as any).Key,
+                  type: (c as any).Type,
+                })),
+              )
+            }`,
         );
       } else if (errors.length > 0) {
         op = markEaCProcessed(EnterpriseLookup!, op);
 
         logger.error(
-          `[check ${commitId}] processed with errors: ${summarizeErrors(errors)}`
+          `[check ${commitId}] processed with errors: ${
+            summarizeErrors(
+              errors,
+            )
+          }`,
         );
-        logger.debug(() => `[check ${commitId}] errors detail: ${safeJson(errors)}`);
+        logger.debug(
+          () => `[check ${commitId}] errors detail: ${safeJson(errors)}`,
+        );
       } else {
         let saveEaC = { ...commitCheckReq.EaC } as EverythingAsCode;
 
@@ -184,7 +231,7 @@ export async function handleEaCCommitCheckRequest(
 
           logger.info(
             `[check ${commitId}] checks complete → requeued commit for keys ` +
-            commitCheckReq.ToProcessKeys.join(",")
+              commitCheckReq.ToProcessKeys.join(","),
           );
         } else {
           op = markEaCProcessed(EnterpriseLookup!, op);
