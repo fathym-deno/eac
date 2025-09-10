@@ -218,5 +218,19 @@ export class EaCStewardClient extends EaCBaseClient {
 
       return await this.json<EaCUserRecord[]>(response, []);
     },
+
+    Delete: async (username: string): Promise<void> => {
+      const response = await fetch(this.loadClientUrl(`enterprise/users`), {
+        method: "DELETE",
+        headers: this.loadHeaders(),
+        body: JSON.stringify({ Username: username }),
+      });
+
+      if (!response.ok && response.status !== 204) {
+        throw new Error(
+          `Failed to delete user '${username}': ${response.status}`,
+        );
+      }
+    },
   };
 }
