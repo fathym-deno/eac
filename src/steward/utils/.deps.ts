@@ -8,7 +8,7 @@ export type {
   EverythingAsCode,
 } from "../../eac/.exports.ts";
 
-export { type EaCCommitRequest } from "../_/reqres/.exports.ts";
+export { type EaCCommitRequest, type EaCDeleteRequest } from "../_/reqres/.exports.ts";
 
 export {
   type EaCActuatorCheckRequest,

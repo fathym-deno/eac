@@ -1,6 +1,8 @@
 // deno-lint-ignore-file no-explicit-any
 
 import {
+  callEaCActuatorDelete,
+  EaCActuatorErrorResponse,
   EaCStatus,
   EaCStatusProcessingTypes,
   EaCUserRecord,
@@ -57,17 +59,94 @@ export async function handleEaCDeleteRequest(
 
   delete status.value!.Messages.Queued;
 
-  if (deleteReq.Archive) {
-    status.value!.Processing = EaCStatusProcessingTypes.COMPLETE;
-  } else {
-    const { EnterpriseLookup, ParentEnterpriseLookup, ...deleteEaCDiff } =
-      deleteReq.EaC;
+  const deleteErrors: EaCActuatorErrorResponse[] = [];
+  const {
+    EnterpriseLookup: _ent,
+    ParentEnterpriseLookup: _parent,
+    ...deleteEaCDiff
+  } = deleteReq.EaC;
+  const diffKeys = Object.keys(deleteEaCDiff);
 
-    for (const deleteKey in deleteEaCDiff) {
-      const deleteEaCDef = deleteEaCDiff[
-        deleteKey as keyof typeof deleteEaCDiff
-      ] as Record<string, unknown>;
+  logger.debug(
+    `[delete ${deleteReq.CommitID}] diff keys: ${
+      diffKeys.length ? diffKeys.join(", ") : "none"
+    }`,
+  );
 
+  const currentEaC = eac.value!;
+  const loadEaC = async (entLookup: string) => {
+    const existing = await eacKv.get<EverythingAsCode>([
+      "EaC",
+      "Current",
+      entLookup,
+    ]);
+
+    return existing.value!;
+  };
+
+  for (const deleteKey of diffKeys) {
+    const deleteEaCDef = deleteEaCDiff[
+      deleteKey as keyof typeof deleteEaCDiff
+    ];
+
+    const actuator = currentEaC.Actuators?.[deleteKey];
+
+    let moduleDelete: Record<string, unknown> | undefined;
+
+    if (
+      deleteReq.Archive ||
+      deleteEaCDef === null ||
+      deleteEaCDef === undefined
+    ) {
+      const currentSegment = currentEaC[
+        deleteKey as keyof typeof currentEaC
+      ];
+
+      if (
+        currentSegment &&
+        typeof currentSegment === "object" &&
+        !Array.isArray(currentSegment)
+      ) {
+        moduleDelete = currentSegment as Record<string, unknown>;
+      }
+    } else if (
+      typeof deleteEaCDef === "object" &&
+      deleteEaCDef !== null &&
+      !Array.isArray(deleteEaCDef)
+    ) {
+      moduleDelete = deleteEaCDef as Record<string, unknown>;
+    }
+
+    if (
+      actuator &&
+      moduleDelete &&
+      Object.keys(moduleDelete).length > 0
+    ) {
+      const errors = await callEaCActuatorDelete(
+        logger,
+        loadEaC,
+        actuator,
+        deleteReq,
+        deleteKey,
+        currentEaC,
+        moduleDelete,
+      );
+
+      if (errors.length > 0) {
+        deleteErrors.push(...errors);
+      }
+    }
+
+    if (deleteReq.Archive) {
+      continue;
+    }
+
+    if (
+      deleteEaCDef !== null &&
+      typeof deleteEaCDef === "object" &&
+      !Array.isArray(deleteEaCDef) &&
+      currentEaC[deleteKey as keyof typeof currentEaC]
+    ) {
       const deleteFromEaC = (
         deleteRef: Record<string, any>,
         deleteFrom: any,
@@ -87,15 +166,33 @@ export async function handleEaCDeleteRequest(
         }
       };
 
-      if (eac.value?.[deleteKey as keyof typeof eac.value]) {
-        deleteFromEaC(
-          deleteEaCDef,
-          eac.value![deleteKey as keyof typeof eac.value],
-        );
-      }
+      deleteFromEaC(
+        deleteEaCDef as Record<string, any>,
+        currentEaC[deleteKey as keyof typeof currentEaC],
+      );
+    } else if (deleteEaCDef === null) {
+      delete currentEaC[deleteKey as keyof typeof currentEaC];
+    }
+  }
+
+  const hadErrors = deleteErrors.length > 0;
+
+  status.value!.Messages = status.value!.Messages || {};
+  status.value!.Processing = hadErrors
+    ? EaCStatusProcessingTypes.ERROR
+    : EaCStatusProcessingTypes.COMPLETE;
+
+  if (hadErrors) {
+    for (const err of deleteErrors) {
+      status.value!.Messages = {
+        ...status.value!.Messages,
+        ...err.Messages,
+      };
     }
 
-    status.value!.Processing = EaCStatusProcessingTypes.COMPLETE;
+    logger.error(
+      `[delete ${deleteReq.CommitID}] actuator delete errors=${deleteErrors.length}`,
+    );
   }
 
   status.value!.EndTime = new Date();
@@ -123,57 +220,66 @@ export async function handleEaCDeleteRequest(
           status.value,
         );
 
-      if (deleteReq.Archive) {
-        op = op
-          .set(["EaC", "Archive", deleteReq.EaC.EnterpriseLookup!], eac.value)
-          .delete(["EaC", "Current", deleteReq.EaC.EnterpriseLookup!]);
-
-        // TODO(ttrichar): Delete all licenses as well
-
-        for (const eacUserRecord of eacUserRecords) {
+      if (!hadErrors) {
+        if (deleteReq.Archive) {
           op = op
+            .set(
+              ["EaC", "Archive", deleteReq.EaC.EnterpriseLookup!],
+              currentEaC,
+            )
             .delete([
               "EaC",
-              "Users",
-              deleteReq.EaC.EnterpriseLookup!,
-              eacUserRecord.Username,
-            ])
-            .delete([
-              "User",
-              eacUserRecord.Username,
-              "EaC",
+              "Current",
               deleteReq.EaC.EnterpriseLookup!,
             ]);
 
-          if (eacUserRecord.Owner) {
+          // TODO(ttrichar): Delete all licenses as well
+
+          for (const eacUserRecord of eacUserRecords) {
             op = op
-              .set(
-                [
-                  "EaC",
-                  "Archive",
-                  "Users",
-                  deleteReq.EaC.EnterpriseLookup!,
-                  eacUserRecord.Username,
-                ],
-                eacUserRecord,
-              )
-              .set(
-                [
-                  "User",
-                  eacUserRecord.Username,
-                  "Archive",
-                  "EaC",
-                  deleteReq.EaC.EnterpriseLookup!,
-                ],
-                eacUserRecord,
-              );
+              .delete([
+                "EaC",
+                "Users",
+                deleteReq.EaC.EnterpriseLookup!,
+                eacUserRecord.Username,
+              ])
+              .delete([
+                "User",
+                eacUserRecord.Username,
+                "EaC",
+                deleteReq.EaC.EnterpriseLookup!,
+              ]);
+
+            if (eacUserRecord.Owner) {
+              op = op
+                .set(
+                  [
+                    "EaC",
+                    "Archive",
+                    "Users",
+                    deleteReq.EaC.EnterpriseLookup!,
+                    eacUserRecord.Username,
+                  ],
+                  eacUserRecord,
+                )
+                .set(
+                  [
+                    "User",
+                    eacUserRecord.Username,
+                    "Archive",
+                    "EaC",
+                    deleteReq.EaC.EnterpriseLookup!,
+                  ],
+                  eacUserRecord,
+                );
+            }
           }
+        } else {
+          op = op.set(
+            ["EaC", "Current", deleteReq.EaC.EnterpriseLookup!],
+            currentEaC,
+          );
         }
-      } else {
-        op = op.set(
-          ["EaC", "Current", deleteReq.EaC.EnterpriseLookup!],
-          eac.value,
-        );
       }
 
       return op;

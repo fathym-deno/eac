@@ -32,6 +32,7 @@ export {
 
 export {
   callEaCActuator,
+  callEaCActuatorDelete,
   callEaCActuatorCheck,
   markEaCProcessed,
   waitOnEaCProcessing,
