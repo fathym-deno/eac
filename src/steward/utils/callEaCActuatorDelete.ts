@@ -129,8 +129,8 @@ export async function callEaCActuatorDelete<T extends EaCMetadataBase>(
             Error: safe.message,
             Key: key,
             Lookup: lookup,
-            Name: (safe as any).name,
-            Stack: (safe as any).stack,
+            Name: safe.name,
+            Stack: safe.stack,
           },
         });
 

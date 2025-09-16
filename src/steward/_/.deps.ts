@@ -32,8 +32,8 @@ export {
 
 export {
   callEaCActuator,
-  callEaCActuatorDelete,
   callEaCActuatorCheck,
+  callEaCActuatorDelete,
   markEaCProcessed,
   waitOnEaCProcessing,
 } from "../utils/.exports.ts";
