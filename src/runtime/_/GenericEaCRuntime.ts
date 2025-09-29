@@ -421,11 +421,7 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
 
           this.setURLMatch(req, actCtx, "*");
 
-          const testUrl = new URL(
-            actCtx.Runtime.URLMatch.FromBase(
-              `.${actCtx.Runtime.URLMatch.Path}`,
-            ),
-          );
+          const testUrl = new URL(actCtx.Runtime.URLMatch.URL);
 
           const isMatch = new URLPattern({
             pathname: route.ResolverConfig.PathPattern,

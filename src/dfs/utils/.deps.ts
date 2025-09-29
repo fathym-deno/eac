@@ -2,8 +2,8 @@ export { Logger } from "jsr:@std/log@0.224.14";
 export * as path from "jsr:@std/path@1.0.8";
 export { toText } from "jsr:@std/streams@1.0.9";
 
-export { concatUint8Arrays } from "jsr:@fathym/common@0.2.272";
-export { establishHeaders } from "jsr:@fathym/common@0.2.272/http";
+export { concatUint8Arrays } from "jsr:@fathym/common@0.2.273";
+export { establishHeaders } from "jsr:@fathym/common@0.2.273/http";
 
 export { IoCContainer } from "jsr:@fathym/ioc@0.0.14";
 
