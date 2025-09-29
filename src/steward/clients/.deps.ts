@@ -1,8 +1,8 @@
 export type { Logger } from "jsr:@std/log@0.224.14";
 
-export { establishHeaders } from "jsr:@fathym/common@0.2.266/http";
-export { loadJwtConfig } from "jsr:@fathym/common@0.2.266/jwt";
-export type { NullableArrayOrObject } from "jsr:@fathym/common@0.2.266/types";
+export { establishHeaders } from "jsr:@fathym/common@0.2.272/http";
+export { loadJwtConfig } from "jsr:@fathym/common@0.2.272/jwt";
+export type { NullableArrayOrObject } from "jsr:@fathym/common@0.2.272/types";
 
 export type { EaCUserRecord, EverythingAsCode } from "../../eac/.exports.ts";
 

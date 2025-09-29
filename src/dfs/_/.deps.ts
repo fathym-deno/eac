@@ -1,4 +1,4 @@
-export { z } from "jsr:@fathym/common@0.2.266/third-party/zod";
+export { z } from "jsr:@fathym/common@0.2.272/third-party/zod";
 
 export {
   type EaCDetails,
