@@ -20,8 +20,6 @@ export async function callEaCActuatorDelete<T extends EaCMetadataBase>(
   currentEaC: EverythingAsCode,
   toDelete: T,
 ): Promise<EaCActuatorErrorResponse[]> {
-  // deno-lint-ignore no-debugger
-  debugger;
   if (!toDelete || typeof toDelete !== "object") {
     return [];
   }
