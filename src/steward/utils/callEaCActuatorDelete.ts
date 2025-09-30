@@ -1,4 +1,4 @@
-import { Logger } from '../_/.deps.ts';
+import { Logger } from "../_/.deps.ts";
 import {
   EaCActuatorErrorResponse,
   EaCActuatorRequest,
@@ -7,7 +7,7 @@ import {
   EaCModuleActuator,
   EverythingAsCode,
   isEaCActuatorErrorResponse,
-} from './.deps.ts';
+} from "./.deps.ts";
 
 const SKIPPABLE_DELETE_STATUSES = new Set([404, 405, 500, 501]);
 
@@ -20,8 +20,9 @@ export async function callEaCActuatorDelete<T extends EaCMetadataBase>(
   currentEaC: EverythingAsCode,
   toDelete: T,
 ): Promise<EaCActuatorErrorResponse[]> {
-          debugger;
-  if (!toDelete || typeof toDelete !== 'object') {
+  // deno-lint-ignore no-debugger
+  debugger;
+  if (!toDelete || typeof toDelete !== "object") {
     return [];
   }
 
@@ -39,11 +40,13 @@ export async function callEaCActuatorDelete<T extends EaCMetadataBase>(
   }
 
   if (!handler?.APIPath) {
-    logger.debug(`[act-del ${commitId}] key=${key} no actuator API path; skipping delete`);
+    logger.debug(
+      `[act-del ${commitId}] key=${key} no actuator API path; skipping delete`,
+    );
     return [];
   }
 
-  const url = `${handler.APIPath.replace(/\/+$/, '')}/delete`;
+  const url = `${handler.APIPath.replace(/\/+$/, "")}/delete`;
   const errors: EaCActuatorErrorResponse[] = [];
 
   await Promise.all(
@@ -58,16 +61,16 @@ export async function callEaCActuatorDelete<T extends EaCMetadataBase>(
 
       const started = Date.now();
       let response: Response | undefined;
-      let text = '';
+      let text = "";
 
       try {
         response = await fetch(url, {
-          method: 'post',
+          method: "post",
           body: JSON.stringify(body),
           headers: { Authorization: `Bearer ${deleteReq.JWT}` },
         });
 
-        const contentType = response.headers.get('content-type') || '';
+        const contentType = response.headers.get("content-type") || "";
         text = await response.text();
 
         logger.debug(
@@ -101,7 +104,7 @@ export async function callEaCActuatorDelete<T extends EaCMetadataBase>(
             parsedError ?? {
               HasError: true,
               Messages: {
-                Error: text || response.statusText || 'delete failed',
+                Error: text || response.statusText || "delete failed",
                 Key: key,
                 Lookup: lookup,
                 Status: response.status,
