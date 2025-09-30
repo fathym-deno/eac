@@ -1,4 +1,4 @@
-import { Logger } from "../_/.deps.ts";
+import { Logger } from '../_/.deps.ts';
 import {
   EaCActuatorErrorResponse,
   EaCActuatorRequest,
@@ -7,7 +7,9 @@ import {
   EaCModuleActuator,
   EverythingAsCode,
   isEaCActuatorErrorResponse,
-} from "./.deps.ts";
+} from './.deps.ts';
+
+const SKIPPABLE_DELETE_STATUSES = new Set([404, 405, 500, 501]);
 
 export async function callEaCActuatorDelete<T extends EaCMetadataBase>(
   logger: Logger,
@@ -18,7 +20,8 @@ export async function callEaCActuatorDelete<T extends EaCMetadataBase>(
   currentEaC: EverythingAsCode,
   toDelete: T,
 ): Promise<EaCActuatorErrorResponse[]> {
-  if (!toDelete || typeof toDelete !== "object") {
+          debugger;
+  if (!toDelete || typeof toDelete !== 'object') {
     return [];
   }
 
@@ -35,7 +38,12 @@ export async function callEaCActuatorDelete<T extends EaCMetadataBase>(
     return [];
   }
 
-  const url = `${handler.APIPath.replace(/\/+$/, "")}/delete`;
+  if (!handler?.APIPath) {
+    logger.debug(`[act-del ${commitId}] key=${key} no actuator API path; skipping delete`);
+    return [];
+  }
+
+  const url = `${handler.APIPath.replace(/\/+$/, '')}/delete`;
   const errors: EaCActuatorErrorResponse[] = [];
 
   await Promise.all(
@@ -50,16 +58,16 @@ export async function callEaCActuatorDelete<T extends EaCMetadataBase>(
 
       const started = Date.now();
       let response: Response | undefined;
-      let text = "";
+      let text = '';
 
       try {
         response = await fetch(url, {
-          method: "post",
+          method: 'post',
           body: JSON.stringify(body),
           headers: { Authorization: `Bearer ${deleteReq.JWT}` },
         });
 
-        const contentType = response.headers.get("content-type") || "";
+        const contentType = response.headers.get('content-type') || '';
         text = await response.text();
 
         logger.debug(
@@ -69,6 +77,13 @@ export async function callEaCActuatorDelete<T extends EaCMetadataBase>(
         );
 
         if (!response.ok) {
+          if (SKIPPABLE_DELETE_STATUSES.has(response.status)) {
+            logger.info(
+              `[act-del ${commitId}] (#${idx}) ${key}/${lookup} delete not supported (status=${response.status})`,
+            );
+            return;
+          }
+
           let parsedError: EaCActuatorErrorResponse | undefined;
 
           if (text) {
@@ -86,7 +101,7 @@ export async function callEaCActuatorDelete<T extends EaCMetadataBase>(
             parsedError ?? {
               HasError: true,
               Messages: {
-                Error: text || response.statusText || "delete failed",
+                Error: text || response.statusText || 'delete failed',
                 Key: key,
                 Lookup: lookup,
                 Status: response.status,
