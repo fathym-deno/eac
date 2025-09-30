@@ -41,7 +41,7 @@
     "deploy": "deno task build && ftm git",
     "publish:check": "deno publish --dry-run --allow-dirty",
     "test": "deno test -A tests/tests.ts --coverage=cov",
-    "version": "deno run -A jsr:@fathym/common@0.2.273/build/version"
+    "version": "deno run -A jsr:@fathym/common@0/build/version"
   },
   "imports": {
     "@o-biotech/atomic": "https://deno.land/x/fathym_open_biotech_atomic@v0.0.384/mod.ts"
