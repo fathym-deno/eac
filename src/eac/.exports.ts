@@ -1,5 +1,3 @@
-import { resolvePath } from "./.deps.ts";
-
 /**
  * The core Everything as Code (EaC) types.
  * @module
@@ -123,13 +121,3 @@ export * from "./EaCModuleActuators.ts";
 export * from "./EaCUserRecord.ts";
 export * from "./EaCVertexDetails.ts";
 export * from "./EverythingAsCode.ts";
-
-/**
- * Resolve a path to the Fathym Everything as Code module.
- *
- * @param path The path to the file to resolve.
- * @returns The path to the file.
- */
-export function resolveFathymEaCMetaUrl(path: string): string {
-  return resolvePath(path, import.meta.resolve);
-}
