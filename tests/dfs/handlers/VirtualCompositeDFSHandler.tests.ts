@@ -7,7 +7,7 @@ import {
   DFSFileInfo,
 } from "../../../src/dfs/handlers/.exports.ts";
 import { VirtualCompositeDFSHandler } from "../../../src/dfs/handlers/VirtualCompositeDFSHandler.ts";
-import { assertEquals, assertThrows } from "../../test.deps.ts";
+import { assertEquals, assertRejects, assertThrows } from "../../test.deps.ts";
 
 type MockDetails = EaCDistributedFileSystemDetails<"Mock">;
 
@@ -201,7 +201,7 @@ Deno.test("VirtualCompositeDFSHandler overlays and fallbacks", async (t) => {
   await t.step(
     "Removing missing files throws when base handlers cannot handle",
     async () => {
-      await assertThrows(
+      await assertRejects(
         () => handler.RemoveFile("./unknown.ts", revision),
         Deno.errors.NotSupported,
       );

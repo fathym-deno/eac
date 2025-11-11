@@ -9,8 +9,8 @@ export { IoCContainer } from "jsr:@fathym/ioc@0.0.14";
 
 export type {
   DistributedFileSystemOptions,
-  EaCDistributedFileSystemDetails,
   EaCDistributedFileSystemAsCode,
+  EaCDistributedFileSystemDetails,
 } from "../_/.exports.ts";
 
 export { type ESBuild } from "../../esbuild/.exports.ts";

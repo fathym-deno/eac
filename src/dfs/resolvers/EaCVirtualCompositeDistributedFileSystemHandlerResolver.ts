@@ -36,7 +36,9 @@ export const EaCVirtualCompositeDistributedFileSystemHandlerResolver:
       const baseHandlers = [];
 
       for (const baseLookup of baseLookups) {
-        const resolver = await ioc.Resolve<DFSFileHandlerResolver>(ioc.Symbol("DFSFileHandler"));
+        const resolver = await ioc.Resolve<DFSFileHandlerResolver>(
+          ioc.Symbol("DFSFileHandler"),
+        );
 
         const baseDFS = options?.EaC.DFSs?.[baseLookup];
         const baseDetails = baseDFS?.Details;

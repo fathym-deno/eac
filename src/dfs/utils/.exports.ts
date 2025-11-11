@@ -12,4 +12,3 @@ export * from "./loadMiddleware.ts";
 export * from "./loadRequestPathPatterns.ts";
 export * from "./PathMatch.ts";
 export * from "./withDFSCache.ts";
-export * from "./dfsDefinitionRegistry.ts";

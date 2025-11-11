@@ -9,7 +9,7 @@ import { DFSFileHandler } from "./DFSFileHandler.ts";
 
 export type DFSFileHandlerResolverOptions = DistributedFileSystemOptions & {
   EaC: EverythingAsCodeDFS;
-}
+};
 
 export type DFSFileHandlerResolver = {
   Resolve: (
