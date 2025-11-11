@@ -1,4 +1,6 @@
 import { DistributedFileSystemOptions } from "../_/DistributedFileSystemOptions.ts";
+import { EverythingAsCode } from "../handlers/.deps.ts";
+import { DFSFileHandlerResolverOptions } from "../handlers/DFSFileHandlerResolver.ts";
 import {
   DFSFileHandler,
   DFSFileHandlerResolver,
@@ -11,6 +13,7 @@ import {
   isEaCLocalDistributedFileSystemDetails,
   isEaCNPMDistributedFileSystemDetails,
   isEaCRemoteDistributedFileSystemDetails,
+  isEaCVirtualCompositeDistributedFileSystemDetails,
 } from "./.deps.ts";
 
 export class DefaultDFSFileHandlerResolver implements DFSFileHandlerResolver {
@@ -18,7 +21,7 @@ export class DefaultDFSFileHandlerResolver implements DFSFileHandlerResolver {
     ioc: IoCContainer,
     dfsLookup: string,
     dfs: EaCDistributedFileSystemDetails,
-    options?: DistributedFileSystemOptions,
+    options?: DFSFileHandlerResolverOptions,
   ): Promise<DFSFileHandler | undefined> {
     let toResolveName: string = "";
 
@@ -38,6 +41,8 @@ export class DefaultDFSFileHandlerResolver implements DFSFileHandlerResolver {
       toResolveName = "EaCNPMDistributedFileSystem";
     } else if (isEaCRemoteDistributedFileSystemDetails(dfs)) {
       toResolveName = "EaCRemoteDistributedFileSystem";
+    } else if (isEaCVirtualCompositeDistributedFileSystemDetails(dfs)) {
+      toResolveName = "EaCVirtualCompositeDistributedFileSystem";
     } else {
       toResolveName = "UnknownEaCDistributedFileSystem";
     }

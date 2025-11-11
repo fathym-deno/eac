@@ -10,3 +10,4 @@ export * from "./JSRFetchDFSFileHandler.ts";
 export * from "./LocalDFSFileHandler.ts";
 export * from "./NPMFetchDFSFileHandler.ts";
 export * from "./WorkerDFSFileHandler.ts";
+export * from "./VirtualCompositeDFSHandler.ts";

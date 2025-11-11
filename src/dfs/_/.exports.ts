@@ -12,4 +12,5 @@ export * from "./EaCJSRDistributedFileSystemDetails.ts";
 export * from "./EaCLocalDistributedFileSystemDetails.ts";
 export * from "./EaCNPMDistributedFileSystemDetails.ts";
 export * from "./EaCRemoteDistributedFileSystemDetails.ts";
+export * from "./EaCVirtualCompositeDistributedFileSystemDetails.ts";
 export * from "./EverythingAsCodeDFS.ts";

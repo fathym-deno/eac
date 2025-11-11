@@ -5,5 +5,6 @@ export * from "./LocalDFSFileHandler.tests.ts";
 export * from "./NPMFetchDFSFileHandler.tests.ts";
 export * from "./RemoteFetchDFSFileHandler.tests.ts";
 export * from "./WorkerDFSFileHandler.tests.ts";
+export * from "./VirtualCompositeDFSHandler.tests.ts";
 
 export * from "./AzureBlobDFSFileHandler.tests.ts";

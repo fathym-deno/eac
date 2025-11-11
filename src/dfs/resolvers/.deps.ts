@@ -1,3 +1,4 @@
+export type { DistributedFileSystemOptions } from "../_/DistributedFileSystemOptions.ts";
 export * as path from "jsr:@std/path@1.0.8";
 
 export { getPackageLogger } from "jsr:@fathym/common@0.2.274/log";
@@ -5,8 +6,10 @@ export { getPackageLogger } from "jsr:@fathym/common@0.2.274/log";
 export { IoCContainer } from "jsr:@fathym/ioc@0.0.14";
 
 export {
+  type EaCDistributedFileSystemAsCode,
   type EaCDistributedFileSystemDetails,
   type EaCJSRDistributedFileSystemDetails,
+  type EaCVirtualCompositeDistributedFileSystemDetails,
   isEaCAzureBlobStorageDistributedFileSystemDetails,
   isEaCDenoKVDistributedFileSystemDetails,
   isEaCESMDistributedFileSystemDetails,
@@ -14,6 +17,7 @@ export {
   isEaCLocalDistributedFileSystemDetails,
   isEaCNPMDistributedFileSystemDetails,
   isEaCRemoteDistributedFileSystemDetails,
+  isEaCVirtualCompositeDistributedFileSystemDetails,
 } from "../_/.exports.ts";
 
 export {
@@ -27,5 +31,8 @@ export {
   JSRFetchDFSFileHandler,
   LocalDFSFileHandler,
   NPMFetchDFSFileHandler,
+  VirtualCompositeDFSHandler,
   WorkerDFSFileHandler,
 } from "../handlers/.exports.ts";
+
+export { getDFSDefinition, loadFileHandler } from "../utils/.exports.ts";

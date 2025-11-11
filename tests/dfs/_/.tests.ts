@@ -8,4 +8,5 @@ export * from "./EaCJSRDistributedFileSystemDetails.tests.ts";
 export * from "./EaCLocalDistributedFileSystemDetails.tests.ts";
 export * from "./EaCNPMDistributedFileSystemDetails.tests.ts";
 export * from "./EaCRemoteDistributedFileSystemDetails.tests.ts";
+export * from "./EaCVirtualCompositeDistributedFileSystemDetails.tests.ts";
 export * from "./EverythingAsCodeDFS.tests.ts";

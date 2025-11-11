@@ -6,5 +6,6 @@ export * from "./EaCJSRDistributedFileSystemHandlerResolver.ts";
 export * from "./EaCLocalDistributedFileSystemHandlerResolver.ts";
 export * from "./EaCNPMDistributedFileSystemHandlerResolver.ts";
 export * from "./EaCRemoteDistributedFileSystemHandlerResolver.ts";
+export * from "./EaCVirtualCompositeDistributedFileSystemHandlerResolver.ts";
 export * from "./EaCWorkerDistributedFileSystemHandlerResolver.ts";
 export * from "./UnknownEaCDistributedFileSystemHandlerResolver.ts";
