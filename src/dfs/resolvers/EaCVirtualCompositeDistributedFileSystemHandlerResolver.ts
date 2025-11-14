@@ -6,6 +6,7 @@ import {
   EaCVirtualCompositeDistributedFileSystemDetails,
   IoCContainer,
   isEaCVirtualCompositeDistributedFileSystemDetails,
+  loadDFSFileHandler,
   VirtualCompositeDFSHandler,
 } from "./.deps.ts";
 
@@ -33,27 +34,22 @@ export const EaCVirtualCompositeDistributedFileSystemHandlerResolver:
         );
       }
 
+      const resolverOptions = options;
+
+      if (!resolverOptions?.EaC?.DFSs) {
+        throw new Error(
+          `Missing DFS definitions while configuring virtual composite DFS '${dfsLookup}'.`,
+        );
+      }
+
       const baseHandlers = [];
 
       for (const baseLookup of baseLookups) {
-        const resolver = await ioc.Resolve<DFSFileHandlerResolver>(
-          ioc.Symbol("DFSFileHandler"),
-        );
-
-        const baseDFS = options?.EaC.DFSs?.[baseLookup];
-        const baseDetails = baseDFS?.Details;
-
-        if (!baseDetails) {
-          throw new Error(
-            `Missing DFS definition for base lookup '${baseLookup}' while configuring virtual composite DFS '${dfsLookup}'.`,
-          );
-        }
-
-        const handler = await resolver.Resolve(
+        const handler = await loadDFSFileHandler(
           ioc,
+          resolverOptions.EaC.DFSs,
+          resolverOptions,
           baseLookup,
-          baseDetails,
-          options ?? {} as DFSFileHandlerResolverOptions,
         );
 
         if (!handler) {

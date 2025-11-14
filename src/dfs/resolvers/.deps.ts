@@ -35,4 +35,4 @@ export {
   WorkerDFSFileHandler,
 } from "../handlers/.exports.ts";
 
-export { loadFileHandler } from "../utils/.exports.ts";
+export { loadDFSFileHandler, loadFileHandler } from "../utils/.exports.ts";
