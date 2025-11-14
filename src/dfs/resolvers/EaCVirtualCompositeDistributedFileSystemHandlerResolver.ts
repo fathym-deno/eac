@@ -61,6 +61,7 @@ export const EaCVirtualCompositeDistributedFileSystemHandlerResolver:
         baseHandlers.push(handler);
       }
 
+      debugger;
       return new VirtualCompositeDFSHandler(dfsLookup, virtual, baseHandlers);
     },
   };
