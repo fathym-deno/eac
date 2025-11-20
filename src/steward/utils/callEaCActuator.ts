@@ -1,18 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
 import { Logger } from "../_/.deps.ts";
-import {
-  EaCActuatorCheckRequest,
-  EaCActuatorErrorResponse,
-  EaCActuatorRequest,
-  EaCActuatorResponse,
-  EaCCommitRequest,
-  EaCMetadataBase,
-  EaCModuleActuator,
-  EverythingAsCode,
-  isEaCActuatorErrorResponse,
-  isEaCActuatorResponse,
-  merge,
-} from "./.deps.ts";
+import { EaCActuatorCheckRequest, EaCActuatorErrorResponse, EaCActuatorRequest, EaCActuatorResponse, EaCCommitRequest, EaCMetadataBase, EaCModuleActuator, EverythingAsCode, isEaCActuatorErrorResponse, isEaCActuatorResponse, merge } from "./.deps.ts";
 
 export async function callEaCActuator<T extends EaCMetadataBase>(
   logger: Logger,
@@ -34,9 +22,7 @@ export async function callEaCActuator<T extends EaCMetadataBase>(
     string,
     unknown
   >;
-  const parentEaC = currentEaC?.ParentEnterpriseLookup
-    ? await loadEac(currentEaC.ParentEnterpriseLookup)
-    : undefined;
+  const parentEaC = currentEaC?.ParentEnterpriseLookup ? await loadEac(currentEaC.ParentEnterpriseLookup) : undefined;
 
   if (!handler) {
     logger.debug(`[act ${commitId}] key=${key} no handler → passthrough`);
@@ -95,9 +81,7 @@ export async function callEaCActuator<T extends EaCMetadataBase>(
         // Non-JSON: treat as a minimal success (model passthrough)
         logger.warn(
           `[act ${commitId}] (#${idx}) ${key}/${diffLookup} non-JSON response; ` +
-            `assuming success (passthrough). parse="${
-              (parseErr as Error)?.message ?? parseErr
-            }"`,
+            `assuming success (passthrough). parse="${(parseErr as Error)?.message ?? parseErr}"`,
         );
         return {
           Lookup: diffLookup,

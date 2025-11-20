@@ -1,7 +1,4 @@
-import {
-  isEaCMetadataBase,
-  parseEaCMetadataBase,
-} from "../../src/eac/.exports.ts";
+import { isEaCMetadataBase, parseEaCMetadataBase } from "../../src/eac/.exports.ts";
 import { assertEquals, assertThrows } from "../test.deps.ts";
 
 Deno.test("EaCMetadataBase Tests", async (t) => {

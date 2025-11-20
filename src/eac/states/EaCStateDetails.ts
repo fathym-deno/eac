@@ -1,8 +1,5 @@
 import { z } from "../.deps.ts";
-import {
-  EaCVertexDetails,
-  EaCVertexDetailsSchema,
-} from "../../eac/EaCVertexDetails.ts";
+import { EaCVertexDetails, EaCVertexDetailsSchema } from "../../eac/EaCVertexDetails.ts";
 
 /**
  * Represents the details of a state in the Everything as Code (EaC) framework.

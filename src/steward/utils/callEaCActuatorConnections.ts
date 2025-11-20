@@ -1,9 +1,4 @@
-import {
-  EaCActuatorConnectionsRequest,
-  EaCActuatorConnectionsResponse,
-  EaCModuleActuator,
-  EverythingAsCode,
-} from "./.deps.ts";
+import { EaCActuatorConnectionsRequest, EaCActuatorConnectionsResponse, EaCModuleActuator, EverythingAsCode } from "./.deps.ts";
 
 /**
  * Executes a connection request for a specific EaC handler.
@@ -20,9 +15,7 @@ export async function callEaCActuatorConnections(
   jwt: string,
   req: EaCActuatorConnectionsRequest,
 ): Promise<EaCActuatorConnectionsResponse> {
-  req.ParentEaC = req.EaC?.ParentEnterpriseLookup
-    ? await loadEaC(req.EaC.ParentEnterpriseLookup)
-    : undefined;
+  req.ParentEaC = req.EaC?.ParentEnterpriseLookup ? await loadEaC(req.EaC.ParentEnterpriseLookup) : undefined;
 
   const result = await fetch(`${handler.APIPath}/connections`, {
     method: "post",

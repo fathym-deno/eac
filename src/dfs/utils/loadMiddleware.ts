@@ -1,10 +1,4 @@
-import {
-  DFSFileHandler,
-  EaCDistributedFileSystemDetails,
-  EaCRuntimeHandlerSet,
-  ESBuild,
-  Logger,
-} from "./.deps.ts";
+import { DFSFileHandler, EaCDistributedFileSystemDetails, EaCRuntimeHandlerSet, ESBuild, Logger } from "./.deps.ts";
 import { loadEaCRuntimeHandlers } from "./loadEaCRuntimeHandlers.ts";
 
 export async function loadMiddleware(

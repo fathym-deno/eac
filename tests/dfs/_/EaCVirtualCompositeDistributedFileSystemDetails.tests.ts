@@ -1,8 +1,4 @@
-import {
-  EaCVirtualCompositeDistributedFileSystemDetails,
-  isEaCVirtualCompositeDistributedFileSystemDetails,
-  parseEaCVirtualCompositeDistributedFileSystemDetails,
-} from "../../../src/dfs/_/EaCVirtualCompositeDistributedFileSystemDetails.ts";
+import { EaCVirtualCompositeDistributedFileSystemDetails, isEaCVirtualCompositeDistributedFileSystemDetails, parseEaCVirtualCompositeDistributedFileSystemDetails } from "../../../src/dfs/_/EaCVirtualCompositeDistributedFileSystemDetails.ts";
 import { assertEquals, assertThrows } from "../../test.deps.ts";
 
 const validVirtual: EaCVirtualCompositeDistributedFileSystemDetails = {
@@ -64,8 +60,7 @@ Deno.test(
       const parsedFull = parseEaCVirtualCompositeDistributedFileSystemDetails(
         validVirtual,
       );
-      const parsedMinimal =
-        parseEaCVirtualCompositeDistributedFileSystemDetails(minimalVirtual);
+      const parsedMinimal = parseEaCVirtualCompositeDistributedFileSystemDetails(minimalVirtual);
 
       assertEquals(parsedFull, structuredClone(validVirtual));
       assertEquals(parsedMinimal, structuredClone(minimalVirtual));

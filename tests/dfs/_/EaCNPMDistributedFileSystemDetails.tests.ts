@@ -1,8 +1,4 @@
-import {
-  EaCNPMDistributedFileSystemDetails,
-  isEaCNPMDistributedFileSystemDetails,
-  parseEaCNPMDistributedFileSystemDetails,
-} from "../../../src/dfs/_/EaCNPMDistributedFileSystemDetails.ts";
+import { EaCNPMDistributedFileSystemDetails, isEaCNPMDistributedFileSystemDetails, parseEaCNPMDistributedFileSystemDetails } from "../../../src/dfs/_/EaCNPMDistributedFileSystemDetails.ts";
 import { assertEquals, assertThrows } from "../../test.deps.ts";
 
 Deno.test("EaCNPMDistributedFileSystemDetails Tests", async (t) => {

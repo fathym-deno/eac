@@ -1,8 +1,5 @@
 import { z } from "./.deps.ts";
-import {
-  EaCVertexDetails,
-  EaCVertexDetailsSchema,
-} from "../../eac/EaCVertexDetails.ts";
+import { EaCVertexDetails, EaCVertexDetailsSchema } from "../../eac/EaCVertexDetails.ts";
 
 /**
  * Represents details for a Distributed File System (DFS) in Everything as Code (EaC).

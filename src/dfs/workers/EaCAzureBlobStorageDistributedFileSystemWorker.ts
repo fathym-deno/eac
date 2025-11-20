@@ -1,11 +1,7 @@
-import {
-  DFSFileHandlerResolver,
-  EaCAzureBlobStorageDistributedFileSystemHandlerResolver,
-} from "./.deps.ts";
+import { DFSFileHandlerResolver, EaCAzureBlobStorageDistributedFileSystemHandlerResolver } from "./.deps.ts";
 import { EaCDistributedFileSystemWorker } from "./EaCDistributedFileSystemWorker.ts";
 
-export class EaCAzureBlobStorageDistributedFileSystemWorker
-  extends EaCDistributedFileSystemWorker {
+export class EaCAzureBlobStorageDistributedFileSystemWorker extends EaCDistributedFileSystemWorker {
   protected loadDFSHandlerResolver(): DFSFileHandlerResolver {
     return EaCAzureBlobStorageDistributedFileSystemHandlerResolver;
   }

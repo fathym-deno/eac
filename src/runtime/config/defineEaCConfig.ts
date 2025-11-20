@@ -1,9 +1,4 @@
-import {
-  EaCLoggingProvider,
-  EaCRuntime,
-  LoggingProvider,
-  mergeWithArrays,
-} from "./.deps.ts";
+import { EaCLoggingProvider, EaCRuntime, LoggingProvider, mergeWithArrays } from "./.deps.ts";
 import { GenericEaCConfig } from "./GenericEaCConfig.ts";
 import { EaCRuntimeConfig } from "./EaCRuntimeConfig.ts";
 

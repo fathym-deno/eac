@@ -1,10 +1,4 @@
-import {
-  EaCProtocolGateway,
-  EaCRuntimeHandlerRoute,
-  EaCRuntimeHandlerRouteGroup,
-  EverythingAsCode,
-  IoCContainer,
-} from "./.deps.ts";
+import { EaCProtocolGateway, EaCRuntimeHandlerRoute, EaCRuntimeHandlerRouteGroup, EverythingAsCode, IoCContainer } from "./.deps.ts";
 
 export type EaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode> = {
   IoC: IoCContainer;

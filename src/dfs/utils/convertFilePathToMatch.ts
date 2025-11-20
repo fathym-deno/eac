@@ -1,8 +1,4 @@
-import {
-  EaCDistributedFileSystemDetails,
-  EaCRuntimeHandlerPipeline,
-  EaCRuntimeHandlerSet,
-} from "./.deps.ts";
+import { EaCDistributedFileSystemDetails, EaCRuntimeHandlerPipeline, EaCRuntimeHandlerSet } from "./.deps.ts";
 import { PathMatch } from "./PathMatch.ts";
 import { convertFilePathToPattern } from "./convertFilePathToPattern.ts";
 

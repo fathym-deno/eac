@@ -8,7 +8,4 @@ export type { EaCUserRecord, EverythingAsCode } from "../../eac/.exports.ts";
 
 export type { EaCCommitResponse } from "../_/.exports.ts";
 
-export {
-  type EaCStatus,
-  EaCStatusProcessingTypes,
-} from "../status/.exports.ts";
+export { type EaCStatus, EaCStatusProcessingTypes } from "../status/.exports.ts";

@@ -30,9 +30,7 @@ export class DenoServeProtocolGateway implements ProtocolGateway {
         }
 
         this.logger.info(
-          `Starting server on port ${server.port} (${
-            server.Lookup || "default"
-          })`,
+          `Starting server on port ${server.port} (${server.Lookup || "default"})`,
         );
 
         const startServer:

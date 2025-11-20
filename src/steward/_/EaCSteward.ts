@@ -58,9 +58,7 @@ export class EaCSteward {
             }
           } else {
             logger.Package.debug(
-              `The commit ${
-                (msg as { CommitID: string }).CommitID
-              } is already processing.`,
+              `The commit ${(msg as { CommitID: string }).CommitID} is already processing.`,
             );
           }
         } catch (error) {
@@ -72,9 +70,7 @@ export class EaCSteward {
           await commitKv.delete(trackingKey);
 
           logger.Package.debug(
-            `The commit ${
-              (msg as { CommitID: string }).CommitID
-            } completed processing.`,
+            `The commit ${(msg as { CommitID: string }).CommitID} completed processing.`,
           );
         }
       });

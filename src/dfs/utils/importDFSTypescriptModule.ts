@@ -30,8 +30,7 @@ export async function importDFSTypescriptModule(
         let fileContents = await toText(file!.Contents);
 
         if (loader === "tsx") {
-          fileContents =
-            `import { Fragment, h } from "preact";\n${fileContents}`;
+          fileContents = `import { Fragment, h } from "preact";\n${fileContents}`;
         }
 
         let apiUrl: string;

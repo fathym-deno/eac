@@ -1,8 +1,5 @@
 import { z } from "./.deps.ts";
-import {
-  EaCModuleActuator,
-  EaCModuleActuatorSchema,
-} from "./EaCModuleActuator.ts";
+import { EaCModuleActuator, EaCModuleActuatorSchema } from "./EaCModuleActuator.ts";
 
 /**
  * Represents a collection of EaC module actuators for use in EaC processing.

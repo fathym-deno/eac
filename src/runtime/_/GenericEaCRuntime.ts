@@ -1,34 +1,8 @@
-import {
-  buildURLMatch,
-  DenoServeEaCProtocolGateway,
-  EaCLoggingProvider,
-  EaCProtocolGateway,
-  EaCRuntimeConfig,
-  EaCRuntimeHandler,
-  EaCRuntimeHandlerPipeline,
-  EaCRuntimeHandlerRoute,
-  EaCRuntimeHandlerRouteGroup,
-  EaCRuntimeHandlers,
-  EaCRuntimeHandlerSet,
-  EaCRuntimePlugin,
-  EaCRuntimePluginConfig,
-  EaCRuntimePluginDef,
-  ESBuild,
-  EverythingAsCode,
-  generateDirectoryHash,
-  IoCContainer,
-  IS_BUILDING,
-  IS_DENO_DEPLOY,
-  Logger,
-  LoggingProvider,
-  merge,
-  STATUS_CODE,
-} from "./.deps.ts";
+import { buildURLMatch, DenoServeEaCProtocolGateway, EaCLoggingProvider, EaCProtocolGateway, EaCRuntimeConfig, EaCRuntimeHandler, EaCRuntimeHandlerPipeline, EaCRuntimeHandlerRoute, EaCRuntimeHandlerRouteGroup, EaCRuntimeHandlers, EaCRuntimeHandlerSet, EaCRuntimePlugin, EaCRuntimePluginConfig, EaCRuntimePluginDef, ESBuild, EverythingAsCode, generateDirectoryHash, IoCContainer, IS_BUILDING, IS_DENO_DEPLOY, Logger, LoggingProvider, merge, STATUS_CODE } from "./.deps.ts";
 import { EaCRuntime } from "./EaCRuntime.ts";
 import { EaCRuntimeContext } from "./EaCRuntimeContext.ts";
 
-export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
-  implements EaCRuntime<TEaC> {
+export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode> implements EaCRuntime<TEaC> {
   protected get logger(): Logger {
     return (this.config.LoggingProvider ?? new EaCLoggingProvider()).Package;
   }
@@ -292,9 +266,7 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
   ): Promise<void> {
     for (let pluginDef of plugins || []) {
       this.logger.debug(
-        `Configuring plugin: ${
-          Array.isArray(pluginDef) ? pluginDef[0] : pluginDef.constructor.name
-        }`,
+        `Configuring plugin: ${Array.isArray(pluginDef) ? pluginDef[0] : pluginDef.constructor.name}`,
       );
 
       const pluginKey = pluginDef as EaCRuntimePluginDef<TEaC>;
@@ -330,9 +302,7 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
 
       this.pluginDefs.set(pluginKey, pluginDef);
 
-      const pluginConfig = this.pluginConfigs.has(pluginKey)
-        ? this.pluginConfigs.get(pluginKey)
-        : await pluginDef.Setup(this.config);
+      const pluginConfig = this.pluginConfigs.has(pluginKey) ? this.pluginConfigs.get(pluginKey) : await pluginDef.Setup(this.config);
 
       this.pluginConfigs.set(pluginKey, pluginConfig);
 

@@ -1,7 +1,4 @@
-import {
-  isEverythingAsCode,
-  parseEverythingAsCode,
-} from "../../src/eac/.exports.ts";
+import { isEverythingAsCode, parseEverythingAsCode } from "../../src/eac/.exports.ts";
 import { assertEquals, assertThrows } from "../test.deps.ts";
 import { EverythingAsCode } from "../../src/eac/EverythingAsCode.ts";
 

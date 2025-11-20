@@ -1,17 +1,5 @@
 // deno-lint-ignore-file no-explicit-any
-import {
-  callEaCActuatorCheck,
-  EaCActuatorCheckRequest,
-  EaCActuatorErrorResponse,
-  EaCStatus,
-  EaCStatusProcessingTypes,
-  enqueueAtomicOperation,
-  EverythingAsCode,
-  listenQueueAtomic,
-  Logger,
-  markEaCProcessed,
-  merge,
-} from "./.deps.ts";
+import { callEaCActuatorCheck, EaCActuatorCheckRequest, EaCActuatorErrorResponse, EaCStatus, EaCStatusProcessingTypes, enqueueAtomicOperation, EverythingAsCode, listenQueueAtomic, Logger, markEaCProcessed, merge } from "./.deps.ts";
 import { EaCCommitCheckRequest } from "./reqres/EaCCommitCheckRequest.ts";
 import { EaCCommitRequest } from "./reqres/EaCCommitRequest.ts";
 
@@ -33,10 +21,7 @@ const summarizeMsgs = (m: Record<string, unknown> | undefined) =>
 const summarizeErrors = (errs: EaCActuatorErrorResponse[]) => {
   if (!errs?.length) return "none";
   const first = errs[0];
-  const firstMsg =
-    typeof first?.Messages?.Error === "string" && first.Messages.Error !== "{}"
-      ? first.Messages.Error
-      : summarizeMsgs(first?.Messages);
+  const firstMsg = typeof first?.Messages?.Error === "string" && first.Messages.Error !== "{}" ? first.Messages.Error : summarizeMsgs(first?.Messages);
   return `${errs.length} error(s); first=${firstMsg}`;
 };
 // --------------------------------
@@ -53,8 +38,7 @@ export async function handleEaCCommitCheckRequest(
     `[check ${commitId}] start checks=${commitCheckReq.Checks.length}`,
   );
 
-  const { EnterpriseLookup, ParentEnterpriseLookup, Actuators, Details } =
-    commitCheckReq.EaC;
+  const { EnterpriseLookup, ParentEnterpriseLookup, Actuators, Details } = commitCheckReq.EaC;
 
   const statusKey = ["EaC", "Status", EnterpriseLookup!, "ID", commitId];
 
@@ -110,11 +94,7 @@ export async function handleEaCCommitCheckRequest(
       if (checkResp.HasError) {
         errors.push({ HasError: true, Messages: checkResp.Messages });
         logger.error(
-          `[check ${commitId}] (#${idx}) ${label} ERROR: ${
-            typeof checkResp.Messages?.Error === "string"
-              ? checkResp.Messages.Error
-              : msgSummary
-          }`,
+          `[check ${commitId}] (#${idx}) ${label} ERROR: ${typeof checkResp.Messages?.Error === "string" ? checkResp.Messages.Error : msgSummary}`,
         );
       }
 
@@ -144,12 +124,8 @@ export async function handleEaCCommitCheckRequest(
   }
 
   logger.info(
-    `[check ${commitId}] result processing=${
-      EaCStatusProcessingTypes[status.value!.Processing]
-    } ` +
-      `pendingChecks=${allChecks.length} errors=${errors.length} durationMs=${
-        ms(t0)
-      }`,
+    `[check ${commitId}] result processing=${EaCStatusProcessingTypes[status.value!.Processing]} ` +
+      `pendingChecks=${allChecks.length} errors=${errors.length} durationMs=${ms(t0)}`,
   );
   logger.debug(
     () =>

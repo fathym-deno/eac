@@ -1,20 +1,6 @@
-import {
-  correlateResult,
-  DFSFileHandler,
-  DFSFileHandlerResolver,
-  FathymWorker,
-  IoCContainer,
-  toArrayBuffer,
-} from "./.deps.ts";
+import { correlateResult, DFSFileHandler, DFSFileHandlerResolver, FathymWorker, IoCContainer, toArrayBuffer } from "./.deps.ts";
 import { EaCDistributedFileSystemWorkerMessageTypes } from "./EaCDistributedFileSystemWorkerMessageTypes.ts";
-import {
-  EaCDistributedFileSystemWorkerConfig,
-  EaCDistributedFileSystemWorkerMessage,
-  EaCDistributedFileSystemWorkerMessageGetFileInfoPayload,
-  EaCDistributedFileSystemWorkerMessageLoadAllPathsPayload,
-  EaCDistributedFileSystemWorkerMessageRemoveFilePayload,
-  EaCDistributedFileSystemWorkerMessageWriteFilePayload,
-} from "./EaCDistributedFileSystemWorkerMessage.ts";
+import { EaCDistributedFileSystemWorkerConfig, EaCDistributedFileSystemWorkerMessage, EaCDistributedFileSystemWorkerMessageGetFileInfoPayload, EaCDistributedFileSystemWorkerMessageLoadAllPathsPayload, EaCDistributedFileSystemWorkerMessageRemoveFilePayload, EaCDistributedFileSystemWorkerMessageWriteFilePayload } from "./EaCDistributedFileSystemWorkerMessage.ts";
 
 export abstract class EaCDistributedFileSystemWorker extends FathymWorker<
   EaCDistributedFileSystemWorkerConfig,

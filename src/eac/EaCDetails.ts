@@ -1,8 +1,5 @@
 import { z } from "./.deps.ts";
-import {
-  EaCVertexDetails,
-  EaCVertexDetailsSchema,
-} from "./EaCVertexDetails.ts";
+import { EaCVertexDetails, EaCVertexDetailsSchema } from "./EaCVertexDetails.ts";
 import { EaCMetadataBase, EaCMetadataBaseSchema } from "./EaCMetadataBase.ts";
 
 /**

@@ -1,20 +1,7 @@
 import { DistributedFileSystemOptions } from "../_/DistributedFileSystemOptions.ts";
 import { EverythingAsCode } from "../handlers/.deps.ts";
 import { DFSFileHandlerResolverOptions } from "../handlers/DFSFileHandlerResolver.ts";
-import {
-  DFSFileHandler,
-  DFSFileHandlerResolver,
-  EaCDistributedFileSystemDetails,
-  IoCContainer,
-  isEaCAzureBlobStorageDistributedFileSystemDetails,
-  isEaCDenoKVDistributedFileSystemDetails,
-  isEaCESMDistributedFileSystemDetails,
-  isEaCJSRDistributedFileSystemDetails,
-  isEaCLocalDistributedFileSystemDetails,
-  isEaCNPMDistributedFileSystemDetails,
-  isEaCRemoteDistributedFileSystemDetails,
-  isEaCVirtualCompositeDistributedFileSystemDetails,
-} from "./.deps.ts";
+import { DFSFileHandler, DFSFileHandlerResolver, EaCDistributedFileSystemDetails, IoCContainer, isEaCAzureBlobStorageDistributedFileSystemDetails, isEaCDenoKVDistributedFileSystemDetails, isEaCESMDistributedFileSystemDetails, isEaCJSRDistributedFileSystemDetails, isEaCLocalDistributedFileSystemDetails, isEaCNPMDistributedFileSystemDetails, isEaCRemoteDistributedFileSystemDetails, isEaCVirtualCompositeDistributedFileSystemDetails } from "./.deps.ts";
 
 export class DefaultDFSFileHandlerResolver implements DFSFileHandlerResolver {
   public async Resolve(

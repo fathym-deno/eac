@@ -1,10 +1,4 @@
-import {
-  EaCRuntimeConfig,
-  EverythingAsCode,
-  IoCContainer,
-  LoggingProvider,
-  URLMatch,
-} from "./.deps.ts";
+import { EaCRuntimeConfig, EverythingAsCode, IoCContainer, LoggingProvider, URLMatch } from "./.deps.ts";
 
 export type EaCRuntimeContext<
   TState = Record<string, unknown>,

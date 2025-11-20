@@ -1,10 +1,4 @@
-import {
-  ConsoleHandler,
-  LevelName,
-  LogConfig,
-  LoggerConfig,
-  LoggingProvider,
-} from "./.deps.ts";
+import { ConsoleHandler, LevelName, LogConfig, LoggerConfig, LoggingProvider } from "./.deps.ts";
 
 export class EaCLoggingProvider extends LoggingProvider {
   constructor(loggingPackages?: string[], override?: boolean) {

@@ -1,8 +1,4 @@
-import {
-  EaCLocalDistributedFileSystemDetails,
-  isEaCLocalDistributedFileSystemDetails,
-  parseEaCLocalDistributedFileSystemDetails,
-} from "../../../src/dfs/_/EaCLocalDistributedFileSystemDetails.ts";
+import { EaCLocalDistributedFileSystemDetails, isEaCLocalDistributedFileSystemDetails, parseEaCLocalDistributedFileSystemDetails } from "../../../src/dfs/_/EaCLocalDistributedFileSystemDetails.ts";
 import { assertEquals, assertThrows } from "../../test.deps.ts";
 
 Deno.test("EaCLocalDistributedFileSystemDetails Tests", async (t) => {

@@ -1,8 +1,4 @@
-import {
-  DenoKVNonce,
-  EverythingAsCode,
-  NullableArrayOrObject,
-} from "../.deps.ts";
+import { DenoKVNonce, EverythingAsCode, NullableArrayOrObject } from "../.deps.ts";
 
 export type EaCDeleteRequest<TEaC = EverythingAsCode> = {
   Archive: boolean;

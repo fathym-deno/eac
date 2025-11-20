@@ -1,9 +1,4 @@
-import {
-  EaCRuntimeContext,
-  getPackageLoggerSync,
-  KnownMethod,
-  Logger,
-} from "./.deps.ts";
+import { EaCRuntimeContext, getPackageLoggerSync, KnownMethod, Logger } from "./.deps.ts";
 import { EaCRuntimeHandler } from "./EaCRuntimeHandler.ts";
 import { EaCRuntimeHandlerSet } from "./EaCRuntimeHandlerSet.ts";
 import { EaCRuntimeHandlers } from "./EaCRuntimeHandlers.ts";
@@ -56,8 +51,7 @@ export class EaCRuntimeHandlerPipeline {
       // );
 
       if (this.Pipeline.length > index) {
-        let handler: EaCRuntimeHandler | EaCRuntimeHandlers | undefined =
-          this.Pipeline[index];
+        let handler: EaCRuntimeHandler | EaCRuntimeHandlers | undefined = this.Pipeline[index];
 
         if (handler && typeof handler !== "function") {
           // this.logger.debug(

@@ -1,20 +1,11 @@
-import {
-  DenoKVFileStream,
-  DenoKVFileStreamData,
-  EaCDenoKVDistributedFileSystemDetails,
-  EaCDistributedFileSystemAsCode,
-  getFileCheckPathsToProcess,
-  IoCContainer,
-  withDFSCache,
-} from "./.deps.ts";
+import { DenoKVFileStream, DenoKVFileStreamData, EaCDenoKVDistributedFileSystemDetails, EaCDistributedFileSystemAsCode, getFileCheckPathsToProcess, IoCContainer, withDFSCache } from "./.deps.ts";
 import { DFSFileHandler } from "./DFSFileHandler.ts";
 import { DFSFileInfo } from "./DFSFileInfo.ts";
 
 /**
  * Implements `DFSFileHandler` for Deno KV-backed storage.
  */
-export class DenoKVDFSFileHandler
-  extends DFSFileHandler<EaCDenoKVDistributedFileSystemDetails> {
+export class DenoKVDFSFileHandler extends DFSFileHandler<EaCDenoKVDistributedFileSystemDetails> {
   private readonly fileStream: DenoKVFileStream;
   private readonly rootKey: Deno.KvKey;
   private readonly pathResolver?: (filePath: string) => string;
@@ -92,11 +83,7 @@ export class DenoKVDFSFileHandler
         }
 
         throw new Error(
-          `Unable to locate a DenoKV file at path ${filePath}${
-            defaultFileName
-              ? `, and no default file was found for ${defaultFileName}.`
-              : "."
-          }`,
+          `Unable to locate a DenoKV file at path ${filePath}${defaultFileName ? `, and no default file was found for ${defaultFileName}.` : "."}`,
         );
       },
       revision,

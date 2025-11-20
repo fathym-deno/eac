@@ -1,9 +1,5 @@
 import { fdatasyncSync } from "node:fs";
-import {
-  EaCDistributedFileSystemAsCode,
-  EaCDistributedFileSystemDetails,
-  EaCDistributedFileSystemWorkerClient,
-} from "./.deps.ts";
+import { EaCDistributedFileSystemAsCode, EaCDistributedFileSystemDetails, EaCDistributedFileSystemWorkerClient } from "./.deps.ts";
 import { DFSFileHandler } from "./DFSFileHandler.ts";
 import { DFSFileInfo } from "./DFSFileInfo.ts";
 

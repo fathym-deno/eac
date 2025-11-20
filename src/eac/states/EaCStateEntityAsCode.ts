@@ -1,14 +1,7 @@
 import { z } from "../.deps.ts";
 import { EaCDetails, EaCDetailsSchema } from "../../eac/EaCDetails.ts";
-import {
-  EaCStateEntityDetails,
-  EaCStateEntityDetailsSchema,
-  isEaCStateEntityDetails,
-} from "./EaCStateEntityDetails.ts";
-import {
-  EaCStateResolverConfiguration,
-  EaCStateResolverConfigurationSchema,
-} from "./EaCStateResolverConfiguration.ts";
+import { EaCStateEntityDetails, EaCStateEntityDetailsSchema, isEaCStateEntityDetails } from "./EaCStateEntityDetails.ts";
+import { EaCStateResolverConfiguration, EaCStateResolverConfigurationSchema } from "./EaCStateResolverConfiguration.ts";
 
 /**
  * Represents an EaC state entity as code.

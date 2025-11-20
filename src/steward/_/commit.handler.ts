@@ -1,21 +1,4 @@
-import {
-  AtomicOperationHandler,
-  callEaCActuator,
-  EaCActuatorCheckRequest,
-  EaCActuatorErrorResponse,
-  EaCMetadataBase,
-  EaCModuleActuator,
-  EaCStatus,
-  EaCStatusProcessingTypes,
-  EaCUserRecord,
-  enqueueAtomicOperation,
-  EverythingAsCode,
-  listenQueueAtomic,
-  Logger,
-  markEaCProcessed,
-  merge,
-  waitOnEaCProcessing,
-} from "./.deps.ts";
+import { AtomicOperationHandler, callEaCActuator, EaCActuatorCheckRequest, EaCActuatorErrorResponse, EaCMetadataBase, EaCModuleActuator, EaCStatus, EaCStatusProcessingTypes, EaCUserRecord, enqueueAtomicOperation, EverythingAsCode, listenQueueAtomic, Logger, markEaCProcessed, merge, waitOnEaCProcessing } from "./.deps.ts";
 import { EaCCommitCheckRequest } from "./reqres/EaCCommitCheckRequest.ts";
 import { EaCCommitRequest } from "./reqres/EaCCommitRequest.ts";
 
@@ -39,10 +22,7 @@ function safeErr(e: unknown) {
 function summarizeErrors(errors: EaCActuatorErrorResponse[]): string {
   if (!errors?.length) return "none";
   const first = errors[0];
-  const msg =
-    typeof first?.Messages?.Error === "string" && first.Messages.Error !== "{}"
-      ? first.Messages.Error
-      : Object.keys(first?.Messages ?? {}).join(", ") || "unknown";
+  const msg = typeof first?.Messages?.Error === "string" && first.Messages.Error !== "{}" ? first.Messages.Error : Object.keys(first?.Messages ?? {}).join(", ") || "unknown";
   return `${errors.length} error(s); first="${msg}"`;
 }
 function summarizeChecks(checks: EaCActuatorCheckRequest[]): string {
@@ -70,8 +50,7 @@ export async function handleEaCCommitRequest(
     commitReq.EaC.Details.Description = commitReq.EaC.Details.Name;
   }
 
-  const { EnterpriseLookup, ParentEnterpriseLookup, Details, ...eacDiff } =
-    commitReq.EaC;
+  const { EnterpriseLookup, ParentEnterpriseLookup, Details, ...eacDiff } = commitReq.EaC;
 
   const statusKey = [
     "EaC",
@@ -124,9 +103,7 @@ export async function handleEaCCommitRequest(
 
   const diffKeys = Object.keys(eacDiff);
   logger.info(
-    `[commit ${commitId}] diff keys: ${
-      diffKeys.length ? diffKeys.join(", ") : "∅"
-    }`,
+    `[commit ${commitId}] diff keys: ${diffKeys.length ? diffKeys.join(", ") : "∅"}`,
   );
 
   if (Details) {
@@ -179,9 +156,7 @@ export async function handleEaCCommitRequest(
   }
 
   logger.info(
-    `[commit ${commitId}] result checks=${allChecks.length} errors=${errors.length} durationMs=${
-      dt(start)
-    }`,
+    `[commit ${commitId}] result checks=${allChecks.length} errors=${errors.length} durationMs=${dt(start)}`,
   );
 
   await listenQueueAtomic(
@@ -272,9 +247,7 @@ function configureListenQueueOp(
       op = markEaCProcessed(entLookup, op);
 
       logger.error(
-        `[commit ${commitId}] processed with errors: ${
-          summarizeErrors(errors)
-        }`,
+        `[commit ${commitId}] processed with errors: ${summarizeErrors(errors)}`,
       );
       logger.debug(
         () => `[commit ${commitId}] errors detail: ${JSON.stringify(errors)}`,

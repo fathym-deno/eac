@@ -1,8 +1,5 @@
 import { EaCDistributedFileSystemAsCode } from "../../../src/dfs/_/EaCDistributedFileSystemAsCode.ts";
-import {
-  isEverythingAsCodeDFS,
-  parseEverythingAsCodeDFS,
-} from "../../../src/dfs/_/EverythingAsCodeDFS.ts";
+import { isEverythingAsCodeDFS, parseEverythingAsCodeDFS } from "../../../src/dfs/_/EverythingAsCodeDFS.ts";
 import { assertEquals, assertThrows } from "../../test.deps.ts";
 
 Deno.test("EverythingAsCodeDFS Tests", async (t) => {

@@ -1,18 +1,11 @@
-import {
-  denoGraph,
-  EaCDistributedFileSystemAsCode,
-  EaCESMDistributedFileSystemDetails,
-  loadDenoConfig,
-  path,
-} from "./.deps.ts";
+import { denoGraph, EaCDistributedFileSystemAsCode, EaCESMDistributedFileSystemDetails, loadDenoConfig, path } from "./.deps.ts";
 import { FetchDFSFileHandler } from "./FetchDFSFileHandler.ts";
 import { DFSFileInfo } from "./DFSFileInfo.ts";
 
 /**
  * Implements `DFSFileHandler` for ESM-based file systems.
  */
-export class ESMFetchDFSFileHandler
-  extends FetchDFSFileHandler<EaCESMDistributedFileSystemDetails> {
+export class ESMFetchDFSFileHandler extends FetchDFSFileHandler<EaCESMDistributedFileSystemDetails> {
   private initialize: Promise<void>;
   private modulePaths: string[] = [];
 
@@ -130,9 +123,7 @@ export class ESMFetchDFSFileHandler
     let resolvedRoot = await this.resolveRoot();
 
     // Resolve entry points relative to the root
-    const roots = this.details.EntryPoints.map((ep) =>
-      new URL(ep, resolvedRoot).href
-    );
+    const roots = this.details.EntryPoints.map((ep) => new URL(ep, resolvedRoot).href);
 
     // Generate dependency graph
     const graph = await denoGraph.createGraph(roots, {});

@@ -1,9 +1,4 @@
-import {
-  EaCDistributedFileSystemAsCode,
-  EaCDistributedFileSystemDetails,
-  getPackageLoggerSync,
-  Logger,
-} from "./.deps.ts";
+import { EaCDistributedFileSystemAsCode, EaCDistributedFileSystemDetails, getPackageLoggerSync, Logger } from "./.deps.ts";
 import { DFSFileInfo } from "./DFSFileInfo.ts";
 import { IDFSFileHandler } from "./IDFSFileHandler.ts";
 
@@ -12,8 +7,7 @@ import { IDFSFileHandler } from "./IDFSFileHandler.ts";
  * Concrete implementations must provide method implementations.
  */
 export abstract class DFSFileHandler<
-  TDetails extends EaCDistributedFileSystemDetails =
-    EaCDistributedFileSystemDetails,
+  TDetails extends EaCDistributedFileSystemDetails = EaCDistributedFileSystemDetails,
 > implements IDFSFileHandler {
   protected readonly logger: Logger;
 

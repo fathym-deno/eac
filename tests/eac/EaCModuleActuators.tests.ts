@@ -1,7 +1,4 @@
-import {
-  isEaCModuleActuators,
-  parseEaCModuleActuators,
-} from "../../src/eac/.exports.ts";
+import { isEaCModuleActuators, parseEaCModuleActuators } from "../../src/eac/.exports.ts";
 import { assertEquals, assertThrows } from "../test.deps.ts";
 import { EaCModuleActuators } from "../../src/eac/EaCModuleActuators.ts";
 

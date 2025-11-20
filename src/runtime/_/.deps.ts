@@ -15,28 +15,14 @@ export type { ESBuild } from "../../esbuild/.exports.ts";
 
 export type { EverythingAsCode } from "../../eac/.exports.ts";
 
-export {
-  type EaCRuntimeConfig,
-  type EaCRuntimePluginConfig,
-  IS_BUILDING,
-} from "../config/.exports.ts";
+export { type EaCRuntimeConfig, type EaCRuntimePluginConfig, IS_BUILDING } from "../config/.exports.ts";
 
-export {
-  DenoServeProtocolGateway as DenoServeEaCProtocolGateway,
-  type ProtocolGateway as EaCProtocolGateway,
-} from "../gateways/.exports.ts";
+export { DenoServeProtocolGateway as DenoServeEaCProtocolGateway, type ProtocolGateway as EaCProtocolGateway } from "../gateways/.exports.ts";
 
 export { EaCLoggingProvider } from "../logging/.exports.ts";
 
 export type { EaCRuntimePluginDef } from "../plugins/.exports.ts";
 
-export {
-  type EaCRuntimeHandler,
-  EaCRuntimeHandlerPipeline,
-  type EaCRuntimeHandlerRoute,
-  type EaCRuntimeHandlerRouteGroup,
-  type EaCRuntimeHandlers,
-  type EaCRuntimeHandlerSet,
-} from "../pipelines/.exports.ts";
+export { type EaCRuntimeHandler, EaCRuntimeHandlerPipeline, type EaCRuntimeHandlerRoute, type EaCRuntimeHandlerRouteGroup, type EaCRuntimeHandlers, type EaCRuntimeHandlerSet } from "../pipelines/.exports.ts";
 
 export type { EaCRuntimePlugin } from "../plugins/.exports.ts";

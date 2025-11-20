@@ -1,52 +1,51 @@
-# Everything as Code
+---
+FrontmatterVersion: 1
+DocumentType: Guide
+Title: Fathym Everything-as-Code Core
+Summary: Core Everything-as-Code data model, actuators, and metadata primitives.
+Created: 2025-11-20
+Updated: 2025-11-20
+Owners:
+  - fathym
+References:
+  - Label: EaC Sub-Area README
+    Path: ../README.md
+  - Label: EaC Sub-Area AGENTS
+    Path: ../AGENTS.md
+  - Label: EaC Sub-Area GUIDE
+    Path: ../GUIDE.md
+  - Label: Projects README
+    Path: ../../README.md
+  - Label: Projects AGENTS
+    Path: ../../AGENTS.md
+  - Label: Projects GUIDE
+    Path: ../../GUIDE.md
+  - Label: Workspace README
+    Path: ../../../README.md
+  - Label: Workspace AGENTS
+    Path: ../../../AGENTS.md
+  - Label: Workspace GUIDE
+    Path: ../../../WORKSPACE_GUIDE.md
+---
 
-Everything as Code is an API to use to manage an enterprise's products and code
-in a future-proof, cloud and code agnostic way. It allows for managing all
-aspects of DevOps as config with the ability to customize.
+# Fathym Everything-as-Code Core
 
-## Licensing
+Core Everything-as-Code (EaC) library providing shared types, metadata, and actuator hooks used by the rest of the EaC ecosystem.
 
-This project is licensed under our [MIT (Non-Commercial) License](./LICENSE.md)
-for individual and educational use. For commercial use, please refer to
-[COMMERCIAL_LICENSE.md](./COMMERCIAL_LICENSE.md) and contact us to obtain a
-commercial license.
+- **Goal:** define stable EaC primitives (details, diffing, module actuators, metadata, user records) that other EaC packages compose.
+- **Outputs:** shared TypeScript types/interfaces, actuators, and utilities exported via `src/eac/.exports.ts`.
+- **Code location:** this folder hosts the source.
 
-## Usage
+## Current Status
 
-This API provides a comprehensive solution for managing your enterprise's
-products and code. It is designed to be future-proof and cloud and code
-agnostic, meaning it can adapt to any changes in your tech stack or cloud
-provider.
+- Core types and actuators live under `src/eac/`.
+- Tasks: `deno task test`, `deno task build`, `deno task publish:check`, `deno task deploy`, `deno task version`.
+- Licensing: MIT (non-commercial) with commercial option; see `LICENSE`/`COMMERCIAL_LICENSE.md`.
 
-## Features
+## How to Work in This Pod
 
-- **Future-Proof:** The API is designed to adapt to changes in technology,
-  ensuring your enterprise is always ready for the future.
-- **Cloud and Code Agnostic:** It works with any tech stack or cloud provider,
-  giving you the flexibility to choose the best options for your enterprise.
-- **DevOps as Config:** Manage all aspects of DevOps as config, making it easier
-  to maintain and update your systems.
-- **Customizable:** The API can be customized to suit your enterprise's specific
-  needs.
-
-## Getting Started
-
-To start using Everything as Code, follow the steps below:
-
-1. Start by signing in or signing up for a Fathym account.
-2. Generate a new API security token.
-3. Configure the EaC modules you would like to use.
-4. Start managing your products and code.
-5. Create custom modules for your EaC or re-configure the existing modules to
-   meet your needs.
-
-For more detailed instructions, refer to the official documentation.
-
-## Support
-
-If you encounter any issues or have any questions, please contact our support
-team.
-
-## License
-
-Everything as Code is licensed under MIT.
+1. Read the parent EaC Instruction Docs plus this project’s forthcoming `AGENTS` and `GUIDE`.
+2. Declare intent before editing; summarize outcomes and open questions in this README or a short log.
+3. Capture provenance and release channels in `UPSTREAM.md` once publishing to jsr/npm or other registries.
+4. Keep links relative; reference implementation repos/branches if code moves.
+5. Record prompts/scripts used for design or automation in doc references.

@@ -1,8 +1,4 @@
-import {
-  EaCVertexDetails,
-  isEaCDetails,
-  parseEaCDetails,
-} from "../../src/eac/.exports.ts";
+import { EaCVertexDetails, isEaCDetails, parseEaCDetails } from "../../src/eac/.exports.ts";
 import { assertEquals, assertThrows } from "../test.deps.ts";
 import { EaCDetails } from "../../src/eac/EaCDetails.ts";
 

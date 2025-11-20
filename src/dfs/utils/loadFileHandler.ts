@@ -1,12 +1,6 @@
 import { EaCDistributedFileSystemAsCode } from "../_/.exports.ts";
 import { DFSFileHandlerResolverOptions } from "../handlers/DFSFileHandlerResolver.ts";
-import {
-  DFSFileHandler,
-  DFSFileHandlerResolver,
-  DistributedFileSystemOptions,
-  EaCDistributedFileSystemDetails,
-  IoCContainer,
-} from "./.deps.ts";
+import { DFSFileHandler, DFSFileHandlerResolver, DistributedFileSystemOptions, EaCDistributedFileSystemDetails, IoCContainer } from "./.deps.ts";
 
 export async function loadDFSFileHandler(
   ioc: IoCContainer,

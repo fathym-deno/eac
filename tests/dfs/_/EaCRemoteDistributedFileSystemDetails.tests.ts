@@ -1,8 +1,4 @@
-import {
-  EaCRemoteDistributedFileSystemDetails,
-  isEaCRemoteDistributedFileSystemDetails,
-  parseEaCRemoteDistributedFileSystemDetails,
-} from "../../../src/dfs/_/EaCRemoteDistributedFileSystemDetails.ts";
+import { EaCRemoteDistributedFileSystemDetails, isEaCRemoteDistributedFileSystemDetails, parseEaCRemoteDistributedFileSystemDetails } from "../../../src/dfs/_/EaCRemoteDistributedFileSystemDetails.ts";
 import { assertEquals, assertThrows } from "../../test.deps.ts";
 
 Deno.test("EaCRemoteDistributedFileSystemDetails Tests", async (t) => {

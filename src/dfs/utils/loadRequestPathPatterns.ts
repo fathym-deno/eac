@@ -1,10 +1,4 @@
-import {
-  DFSFileHandler,
-  EaCDistributedFileSystemDetails,
-  EaCRuntimeHandlerPipeline,
-  EaCRuntimeHandlerSet,
-  IS_BUILDING,
-} from "./.deps.ts";
+import { DFSFileHandler, EaCDistributedFileSystemDetails, EaCRuntimeHandlerPipeline, EaCRuntimeHandlerSet, IS_BUILDING } from "./.deps.ts";
 import { PathMatch } from "./PathMatch.ts";
 import { convertFilePathToMatch } from "./convertFilePathToMatch.ts";
 

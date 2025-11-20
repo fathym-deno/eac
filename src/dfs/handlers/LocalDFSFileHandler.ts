@@ -1,26 +1,15 @@
 // deno-lint-ignore-file no-empty
 import { delay } from "jsr:@std/async@1.0.10/delay";
-import {
-  EaCDistributedFileSystemAsCode,
-  EaCLocalDistributedFileSystemDetails,
-  existsSync,
-  getFileCheckPathsToProcess,
-  getFilesList,
-  path,
-  withDFSCache,
-} from "./.deps.ts";
+import { EaCDistributedFileSystemAsCode, EaCLocalDistributedFileSystemDetails, existsSync, getFileCheckPathsToProcess, getFilesList, path, withDFSCache } from "./.deps.ts";
 import { DFSFileHandler } from "./DFSFileHandler.ts";
 import { DFSFileInfo } from "./DFSFileInfo.ts";
 
 /**
  * Implements `DFSFileHandler` for local file system storage.
  */
-export class LocalDFSFileHandler
-  extends DFSFileHandler<EaCLocalDistributedFileSystemDetails> {
+export class LocalDFSFileHandler extends DFSFileHandler<EaCLocalDistributedFileSystemDetails> {
   public override get Root(): string {
-    return this.details?.FileRoot?.endsWith("/")
-      ? this.details.FileRoot
-      : `${this.details.FileRoot}/`;
+    return this.details?.FileRoot?.endsWith("/") ? this.details.FileRoot : `${this.details.FileRoot}/`;
   }
 
   constructor(
@@ -58,9 +47,7 @@ export class LocalDFSFileHandler
           if (!resolvedPath) continue;
 
           const fullFilePath = path.join(
-            this.Root.includes(":/") || this.Root.includes(":\\")
-              ? ""
-              : Deno.cwd(),
+            this.Root.includes(":/") || this.Root.includes(":\\") ? "" : Deno.cwd(),
             this.Root || "",
             resolvedPath,
           );
@@ -79,11 +66,7 @@ export class LocalDFSFileHandler
 
         if (!fileInfo) {
           console.log(
-            `Unable to locate a local file at path ${filePath}${
-              defaultFileName
-                ? `, and no default file was found for ${defaultFileName}.`
-                : "."
-            }`,
+            `Unable to locate a local file at path ${filePath}${defaultFileName ? `, and no default file was found for ${defaultFileName}.` : "."}`,
           );
         }
 
@@ -98,11 +81,7 @@ export class LocalDFSFileHandler
   public async LoadAllPaths(_revision: string): Promise<string[]> {
     const dir = await getFilesList({ Directory: this.Root });
 
-    return Array.from(dir).map((entry) =>
-      entry.startsWith(this.Root)
-        ? `./${entry.substring(this.Root.length)}`
-        : entry
-    );
+    return Array.from(dir).map((entry) => entry.startsWith(this.Root) ? `./${entry.substring(this.Root.length)}` : entry);
   }
 
   public async RemoveFile(

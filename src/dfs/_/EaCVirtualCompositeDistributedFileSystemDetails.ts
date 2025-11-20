@@ -1,8 +1,5 @@
 import { z } from "./.deps.ts";
-import {
-  EaCDistributedFileSystemDetails,
-  EaCDistributedFileSystemDetailsSchema,
-} from "./EaCDistributedFileSystemDetails.ts";
+import { EaCDistributedFileSystemDetails, EaCDistributedFileSystemDetailsSchema } from "./EaCDistributedFileSystemDetails.ts";
 
 export type EaCVirtualCompositeDistributedFileSystemDetails = {
   BaseDFSLookups: string[];

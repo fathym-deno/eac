@@ -1,7 +1,4 @@
-import {
-  isDistributedFileSystemOptions,
-  parseDistributedFileSystemOptions,
-} from "../../../src/dfs/_/DistributedFileSystemOptions.ts";
+import { isDistributedFileSystemOptions, parseDistributedFileSystemOptions } from "../../../src/dfs/_/DistributedFileSystemOptions.ts";
 import { assertEquals, assertThrows } from "../../test.deps.ts";
 
 Deno.test("DistributedFileSystemOptions Tests", async (t) => {
