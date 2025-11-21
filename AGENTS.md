@@ -30,20 +30,13 @@ Guardrails for work on the core Everything-as-Code types and actuators.
 
 ## Core Guardrails
 
-1. **Stay scoped.** Keep work under `projects/everything-as-code/eac/` unless
-   coordinating with another pod; link cross-pod dependencies.
-2. **Frontmatter required.** All docs include frontmatter and relative
-   references up to parent guides.
-3. **API stability.** Avoid breaking shared types/actuators silently; document
-   changes that affect downstream EaC packages and micro-frameworks.
-4. **Provenance.** Capture upstream sources, release channels, and version pins
-   in `UPSTREAM.md` when publishing; prefer upstream-first fixes before
-   diverging.
-5. **Security & hygiene.** Keep secrets out of tests/docs; ensure build/test
-   tasks remain reproducible.
+1. **Stay scoped.** Keep work under `projects/everything-as-code/eac/` unless coordinating with another pod; link cross-pod dependencies.
+2. **Frontmatter required.** All docs include frontmatter and relative references up to parent guides.
+3. **API stability.** Avoid breaking shared types/actuators silently; document changes that affect downstream EaC packages and micro-frameworks.
+4. **Provenance.** Capture upstream sources, release channels, and version pins in `UPSTREAM.md` when publishing; prefer upstream-first fixes before diverging.
+5. **Security & hygiene.** Keep secrets out of tests/docs; ensure build/test tasks remain reproducible.
 
 ## Communication
 
-- Declare intent before editing; summarize outcomes and next steps in the
-  project README or a short log.
+- Declare intent before editing; summarize outcomes and next steps in the project README or a short log.
 - Link consumer pods when behavior changes to keep dependencies aligned.
