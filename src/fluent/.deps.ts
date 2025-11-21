@@ -7,7 +7,7 @@ export type {
   IsUndefined,
   RemoveIndexSignatures,
   ValueType,
-} from "jsr:@fathym/common@0.2.287-integration/types";
+} from "jsr:@fathym/common@0.2.289-integration/types";
 // } from '../../../reference-architecture/src/common/types/.exports.ts';
 
 export {
@@ -18,10 +18,10 @@ export {
   type FluentBuilderMethodsHandlers,
   type FluentBuilderRoot,
   type SelectFluentMethods,
-} from "jsr:@fathym/runtime@0.0.6-integration/fluent";
+} from "jsr:@fathym/runtime@0.0.8-integration/fluent";
 // } from '../../../reference-architecture/src/fluent/.exports.ts';
 
-export * from "jsr:@fathym/ioc@0.0.14";
+export * from "jsr:@fathym/ioc@0.0.21";
 
 export type {
   EaCDetails,

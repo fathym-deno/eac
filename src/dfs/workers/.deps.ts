@@ -1,6 +1,6 @@
 export { toArrayBuffer } from "jsr:@std/streams@1.0.9";
 
-export { type DFSFileInfo } from "jsr:@fathym/dfs@0.0.9-integration";
+export { type DFSFileInfo } from "jsr:@fathym/dfs@0.0.11-integration";
 
 export {
   correlateResult,
@@ -9,6 +9,6 @@ export {
   type FathymWorkerConfig,
   type FathymWorkerMessage,
   FathymWorkerMessageTypes,
-} from "jsr:@fathym/runtime@0.0.6-integration/workers";
+} from "jsr:@fathym/runtime@0.0.8-integration/workers";
 
-export { IoCContainer } from "jsr:@fathym/ioc@0.0.14";
+export { IoCContainer } from "jsr:@fathym/ioc@0.0.21";

@@ -3,28 +3,28 @@ export * as denoGraph from "jsr:@deno/graph@0.88.0";
 export { Logger } from "jsr:@std/log@0.224.14/logger";
 export * as path from "jsr:@std/path@1.0.8";
 
-export { loadDenoConfig } from "jsr:@fathym/common@0.2.287-integration/build";
+export { loadDenoConfig } from "jsr:@fathym/common@0.2.289-integration/build";
 export {
   DFSFileHandler as BaseDFSFileHandler,
   type DFSFileInfo,
   type IDFSFileHandler as BaseIDFSFileHandler,
   LocalDFSFileHandler as BaseLocalDFSFileHandler,
-} from "jsr:@fathym/dfs@0.0.9-integration";
+} from "jsr:@fathym/dfs@0.0.11-integration";
 export {
   getPackageLogger,
   getPackageLoggerSync,
   LoggingProvider,
-} from "jsr:@fathym/common@0.2.287-integration/log";
+} from "jsr:@fathym/common@0.2.289-integration/log";
 export {
   telemetryForSync,
   type TelemetryLogger,
-} from "jsr:@fathym/common@0.2.287-integration/telemetry";
+} from "jsr:@fathym/common@0.2.289-integration/telemetry";
 export {
   existsSync,
   getFilesList,
-} from "jsr:@fathym/common@0.2.287-integration/path";
+} from "jsr:@fathym/common@0.2.289-integration/path";
 
-export { IoCContainer } from "jsr:@fathym/ioc@0.0.14";
+export { IoCContainer } from "jsr:@fathym/ioc@0.0.21";
 
 export {
   BlobSASPermissions,
