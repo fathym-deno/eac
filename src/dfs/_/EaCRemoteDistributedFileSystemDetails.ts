@@ -1,5 +1,8 @@
 import { z } from "./.deps.ts";
-import { EaCDistributedFileSystemDetails, EaCDistributedFileSystemDetailsSchema } from "./EaCDistributedFileSystemDetails.ts";
+import {
+  EaCDistributedFileSystemDetails,
+  EaCDistributedFileSystemDetailsSchema,
+} from "./EaCDistributedFileSystemDetails.ts";
 
 /**
  * Represents details for a Remote-backed Distributed File System (DFS) in Everything as Code (EaC).

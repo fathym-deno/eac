@@ -8,6 +8,7 @@ export const EaCDistributedFileSystemWorkerMessageTypes = {
   WriteFile: "write-file",
 };
 
-export type EaCDistributedFileSystemWorkerMessageTypes = (typeof EaCDistributedFileSystemWorkerMessageTypes)[
-  keyof typeof EaCDistributedFileSystemWorkerMessageTypes
-];
+export type EaCDistributedFileSystemWorkerMessageTypes =
+  (typeof EaCDistributedFileSystemWorkerMessageTypes)[
+    keyof typeof EaCDistributedFileSystemWorkerMessageTypes
+  ];

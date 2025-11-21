@@ -1,5 +1,7 @@
+import { IoCContainer } from "./.deps.ts";
+import { DistributedFileSystemOptions } from "../_/DistributedFileSystemOptions.ts";
+import { EaCDistributedFileSystemDetails } from "../_/EaCDistributedFileSystemDetails.ts";
 import { EverythingAsCodeDFS } from "../_/EverythingAsCodeDFS.ts";
-import { DistributedFileSystemOptions, EaCDistributedFileSystemDetails, EverythingAsCode, IoCContainer } from "./.deps.ts";
 import { DFSFileHandler } from "./DFSFileHandler.ts";
 
 export type DFSFileHandlerResolverOptions = DistributedFileSystemOptions & {

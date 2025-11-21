@@ -1,4 +1,7 @@
-import { isEaCEnterpriseDetails, parseEaCEnterpriseDetails } from "../../src/eac/.exports.ts";
+import {
+  isEaCEnterpriseDetails,
+  parseEaCEnterpriseDetails,
+} from "../../src/eac/.exports.ts";
 import { assertEquals, assertThrows } from "../test.deps.ts";
 import { EaCEnterpriseDetails } from "../../src/eac/EaCEnterpriseDetails.ts";
 

@@ -1,7 +1,9 @@
-import { DFSFileHandlerResolver, EaCLocalDistributedFileSystemHandlerResolver } from "./.deps.ts";
+import { DFSFileHandlerResolver } from "../handlers/DFSFileHandlerResolver.ts";
+import { EaCLocalDistributedFileSystemHandlerResolver } from "../resolvers/EaCLocalDistributedFileSystemHandlerResolver.ts";
 import { EaCDistributedFileSystemWorker } from "./EaCDistributedFileSystemWorker.ts";
 
-export class EaCLocalDistributedFileSystemWorker extends EaCDistributedFileSystemWorker {
+export class EaCLocalDistributedFileSystemWorker
+  extends EaCDistributedFileSystemWorker {
   protected loadDFSHandlerResolver(): DFSFileHandlerResolver {
     return EaCLocalDistributedFileSystemHandlerResolver;
   }

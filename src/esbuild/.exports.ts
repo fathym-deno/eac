@@ -1,7 +1,11 @@
 import * as esbuild from "npm:esbuild@0.24.2";
 export { esbuild };
 
-export { denoLoaderPlugin, denoPlugins, urlToEsbuildResolution } from "jsr:@luca/esbuild-deno-loader@0.10.3";
+export {
+  denoLoaderPlugin,
+  denoPlugins,
+  urlToEsbuildResolution,
+} from "jsr:@luca/esbuild-deno-loader@0.10.3";
 
 export type ESBuild = {
   context: typeof esbuild.context;
@@ -18,4 +22,15 @@ export type ESBuild = {
   version: typeof esbuild.version;
 };
 
-export type { BuildContext as ESBuildContext, BuildOptions as ESBuildOptions, BuildResult as ESBuildResult, Loader as ESBuildLoader, OnLoadArgs as ESBuildOnLoadArgs, OnLoadResult as ESBuildOnLoadResult, OnResolveArgs as ESBuildOnResolveArgs, OnResolveResult as ESBuildOnResolveResult, Plugin as ESBuildPlugin, PluginBuild as ESBuildPluginBuild } from "npm:esbuild@0.24.2";
+export type {
+  BuildContext as ESBuildContext,
+  BuildOptions as ESBuildOptions,
+  BuildResult as ESBuildResult,
+  Loader as ESBuildLoader,
+  OnLoadArgs as ESBuildOnLoadArgs,
+  OnLoadResult as ESBuildOnLoadResult,
+  OnResolveArgs as ESBuildOnResolveArgs,
+  OnResolveResult as ESBuildOnResolveResult,
+  Plugin as ESBuildPlugin,
+  PluginBuild as ESBuildPluginBuild,
+} from "npm:esbuild@0.24.2";

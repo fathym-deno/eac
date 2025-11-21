@@ -1,4 +1,4 @@
-import { DFSFileInfo } from "./DFSFileInfo.ts";
+import { DFSFileInfo } from "./.deps.ts";
 
 /**
  * Interface defining methods for a Distributed File System (DFS) File Handler.

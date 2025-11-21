@@ -1,4 +1,3 @@
-import { EaCESMDistributedFileSystemDetails } from "../../../src/dfs/handlers/.deps.ts";
 import { ESMFetchDFSFileHandler } from "../../../src/dfs/handlers/.exports.ts";
 import { assertEquals, assertRejects, assertThrows } from "../../test.deps.ts";
 

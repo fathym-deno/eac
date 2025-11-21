@@ -1,4 +1,6 @@
-import { EaCStatus, EaCStatusProcessingTypes, merge } from "./.deps.ts";
+import { merge } from "./.deps.ts";
+import { EaCStatus } from "../status/EaCStatus.ts";
+import { EaCStatusProcessingTypes } from "../status/EaCStatusProcessingTypes.ts";
 import { markEaCProcessed } from "./markEaCProcessed.ts";
 
 /**

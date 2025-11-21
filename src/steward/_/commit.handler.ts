@@ -1,6 +1,24 @@
-import { AtomicOperationHandler, callEaCActuator, EaCActuatorCheckRequest, EaCActuatorErrorResponse, EaCMetadataBase, EaCModuleActuator, EaCStatus, EaCStatusProcessingTypes, EaCUserRecord, enqueueAtomicOperation, EverythingAsCode, listenQueueAtomic, Logger, markEaCProcessed, merge, waitOnEaCProcessing } from "./.deps.ts";
+import {
+  AtomicOperationHandler,
+  enqueueAtomicOperation,
+  listenQueueAtomic,
+  Logger,
+  merge,
+  TelemetryLogger,
+} from "./.deps.ts";
+import { EaCMetadataBase } from "../../eac/EaCMetadataBase.ts";
+import { EaCModuleActuator } from "../../eac/EaCModuleActuator.ts";
+import { EaCUserRecord } from "../../eac/EaCUserRecord.ts";
+import { EverythingAsCode } from "../../eac/EverythingAsCode.ts";
+import { EaCActuatorCheckRequest } from "../actuators/reqres/EaCActuatorCheckRequest.ts";
+import { EaCActuatorErrorResponse } from "../actuators/reqres/EaCActuatorErrorResponse.ts";
+import { EaCStatus } from "../status/EaCStatus.ts";
+import { EaCStatusProcessingTypes } from "../status/EaCStatusProcessingTypes.ts";
+import { markEaCProcessed } from "../utils/markEaCProcessed.ts";
+import { waitOnEaCProcessing } from "../utils/waitOnEaCProcessing.ts";
 import { EaCCommitCheckRequest } from "./reqres/EaCCommitCheckRequest.ts";
 import { EaCCommitRequest } from "./reqres/EaCCommitRequest.ts";
+import { callEaCActuator } from "../utils/callEaCActuator.ts";
 
 // ---------- helpers ----------
 function t0() {
@@ -22,7 +40,10 @@ function safeErr(e: unknown) {
 function summarizeErrors(errors: EaCActuatorErrorResponse[]): string {
   if (!errors?.length) return "none";
   const first = errors[0];
-  const msg = typeof first?.Messages?.Error === "string" && first.Messages.Error !== "{}" ? first.Messages.Error : Object.keys(first?.Messages ?? {}).join(", ") || "unknown";
+  const msg =
+    typeof first?.Messages?.Error === "string" && first.Messages.Error !== "{}"
+      ? first.Messages.Error
+      : Object.keys(first?.Messages ?? {}).join(", ") || "unknown";
   return `${errors.length} error(s); first="${msg}"`;
 }
 function summarizeChecks(checks: EaCActuatorCheckRequest[]): string {
@@ -31,7 +52,7 @@ function summarizeChecks(checks: EaCActuatorCheckRequest[]): string {
 // --------------------------------
 
 export async function handleEaCCommitRequest(
-  logger: Logger,
+  logger: TelemetryLogger,
   eacKv: Deno.Kv,
   commitKv: Deno.Kv,
   commitReq: EaCCommitRequest,
@@ -50,7 +71,8 @@ export async function handleEaCCommitRequest(
     commitReq.EaC.Details.Description = commitReq.EaC.Details.Name;
   }
 
-  const { EnterpriseLookup, ParentEnterpriseLookup, Details, ...eacDiff } = commitReq.EaC;
+  const { EnterpriseLookup, ParentEnterpriseLookup, Details, ...eacDiff } =
+    commitReq.EaC;
 
   const statusKey = [
     "EaC",
@@ -103,7 +125,9 @@ export async function handleEaCCommitRequest(
 
   const diffKeys = Object.keys(eacDiff);
   logger.info(
-    `[commit ${commitId}] diff keys: ${diffKeys.length ? diffKeys.join(", ") : "∅"}`,
+    `[commit ${commitId}] diff keys: ${
+      diffKeys.length ? diffKeys.join(", ") : "∅"
+    }`,
   );
 
   if (Details) {
@@ -156,7 +180,9 @@ export async function handleEaCCommitRequest(
   }
 
   logger.info(
-    `[commit ${commitId}] result checks=${allChecks.length} errors=${errors.length} durationMs=${dt(start)}`,
+    `[commit ${commitId}] result checks=${allChecks.length} errors=${errors.length} durationMs=${
+      dt(start)
+    }`,
   );
 
   await listenQueueAtomic(
@@ -180,7 +206,7 @@ export async function handleEaCCommitRequest(
 }
 
 function configureListenQueueOp(
-  logger: Logger,
+  logger: TelemetryLogger,
   existingEaC: Deno.KvEntryMaybe<EverythingAsCode>,
   status: Deno.KvEntryMaybe<EaCStatus>,
   entLookup: string,
@@ -236,21 +262,22 @@ function configureListenQueueOp(
         } for follow-up`,
       );
       logger.debug(
-        () =>
-          `[commit ${commitId}] checks detail: ${
-            JSON.stringify(
-              allChecks.map((c) => ({ key: c.Key, type: c.Type })),
-            )
-          }`,
+        `[commit ${commitId}] checks detail: ${
+          JSON.stringify(
+            allChecks.map((c) => ({ key: c.Key, type: c.Type })),
+          )
+        }`,
       );
     } else if (errors.length > 0) {
       op = markEaCProcessed(entLookup, op);
 
       logger.error(
-        `[commit ${commitId}] processed with errors: ${summarizeErrors(errors)}`,
+        `[commit ${commitId}] processed with errors: ${
+          summarizeErrors(errors)
+        }`,
       );
       logger.debug(
-        () => `[commit ${commitId}] errors detail: ${JSON.stringify(errors)}`,
+        `[commit ${commitId}] errors detail: ${JSON.stringify(errors)}`,
       );
     } else {
       op = markEaCProcessed(entLookup, op).set(
@@ -266,7 +293,7 @@ function configureListenQueueOp(
 }
 
 async function processDiffCalls(
-  logger: Logger,
+  logger: TelemetryLogger,
   diffCalls: Record<number, (() => Promise<void>)[]>,
   allChecks: EaCActuatorCheckRequest[],
   errors: EaCActuatorErrorResponse[],
@@ -337,7 +364,7 @@ async function processDiffCalls(
 }
 
 function processDiffKey(
-  logger: Logger,
+  logger: TelemetryLogger,
   denoKv: Deno.Kv,
   eacDiff: EverythingAsCode,
   saveEaC: EverythingAsCode,
@@ -392,7 +419,7 @@ function processDiffKey(
 }
 
 function processEaCActuator(
-  logger: Logger,
+  logger: TelemetryLogger,
   denoKv: Deno.Kv,
   diff: unknown,
   actuator: EaCModuleActuator,
@@ -454,12 +481,11 @@ function processEaCActuator(
             }`,
           );
           logger.debug(
-            () =>
-              `[commit ${commitId}] key=${key} error detail: ${
-                JSON.stringify(
-                  handled.Errors,
-                )
-              }`,
+            `[commit ${commitId}] key=${key} error detail: ${
+              JSON.stringify(
+                handled.Errors,
+              )
+            }`,
           );
         }
 

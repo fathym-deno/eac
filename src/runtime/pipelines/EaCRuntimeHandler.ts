@@ -1,4 +1,4 @@
-import { EaCRuntimeContext } from "./.deps.ts";
+import { EaCRuntimeContext } from "../_/EaCRuntimeContext.ts";
 
 export type EaCRuntimeHandler<
   TState = Record<string, unknown>,

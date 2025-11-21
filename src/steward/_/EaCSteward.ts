@@ -1,11 +1,12 @@
 import { IoCContainer } from "jsr:@fathym/ioc@0.0.14";
-import { EaCRuntime, IS_BUILDING, Logger, LoggingProvider } from "./.deps.ts";
+import { LoggingProvider, TelemetryLogger } from "./.deps.ts";
 import { handleEaCCommitCheckRequest } from "./commit-check.handler.ts";
 import { handleEaCCommitRequest } from "./commit.handler.ts";
 import { handleEaCDeleteRequest } from "./delete.handler.ts";
 import { isEaCCommitCheckRequest } from "./reqres/EaCCommitCheckRequest.ts";
 import { isEaCCommitRequest } from "./reqres/EaCCommitRequest.ts";
 import { isEaCDeleteRequest } from "./reqres/EaCDeleteRequest.ts";
+import { IS_BUILDING } from "../../runtime/config/constants.ts";
 
 export class EaCSteward {
   constructor() {}
@@ -58,26 +59,30 @@ export class EaCSteward {
             }
           } else {
             logger.Package.debug(
-              `The commit ${(msg as { CommitID: string }).CommitID} is already processing.`,
+              `The commit ${
+                (msg as { CommitID: string }).CommitID
+              } is already processing.`,
             );
           }
         } catch (error) {
           logger.Package.error(
             "There was an error processing the steward event.",
+            { error },
           );
-          logger.Package.error(error);
         } finally {
           await commitKv.delete(trackingKey);
 
           logger.Package.debug(
-            `The commit ${(msg as { CommitID: string }).CommitID} completed processing.`,
+            `The commit ${
+              (msg as { CommitID: string }).CommitID
+            } completed processing.`,
           );
         }
       });
     }
   }
 
-  protected loadTrackingKey(logger: Logger, msg: unknown): Deno.KvKey {
+  protected loadTrackingKey(logger: TelemetryLogger, msg: unknown): Deno.KvKey {
     const trackingKey = ["Handlers", "Commits", "Processing"];
 
     if (isEaCCommitCheckRequest(msg)) {

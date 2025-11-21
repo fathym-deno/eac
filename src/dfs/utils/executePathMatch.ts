@@ -1,4 +1,5 @@
-import { EaCRuntimeContext, establishHeaders } from "./.deps.ts";
+import { establishHeaders } from "./.deps.ts";
+import { EaCRuntimeContext } from "../../runtime/_/EaCRuntimeContext.ts";
 import { PathMatch } from "./PathMatch.ts";
 
 export async function executePathMatch(

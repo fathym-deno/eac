@@ -1,4 +1,7 @@
-import { isEaCModuleActuator, parseEaCModuleActuator } from "../../src/eac/.exports.ts";
+import {
+  isEaCModuleActuator,
+  parseEaCModuleActuator,
+} from "../../src/eac/.exports.ts";
 import { assertEquals, assertThrows } from "../test.deps.ts";
 import { EaCModuleActuator } from "../../src/eac/EaCModuleActuator.ts";
 
@@ -36,6 +39,8 @@ Deno.test("EaCModuleActuator Tests", async (t) => {
     assertThrows(() => parseEaCModuleActuator(42));
     assertThrows(() => parseEaCModuleActuator(null));
     assertThrows(() => parseEaCModuleActuator("string"));
-    assertThrows(() => parseEaCModuleActuator({ APIPath: 123, Order: "first" }));
+    assertThrows(() =>
+      parseEaCModuleActuator({ APIPath: 123, Order: "first" })
+    );
   });
 });

@@ -1,2 +1,2 @@
-export type { EaCRuntime } from "../_/.exports.ts";
-export type { EaCRuntimeConfig } from "../config/.exports.ts";
+export * as colors from "jsr:@std/fmt@1.0.5/colors";
+export type { TelemetryLogger } from "jsr:@fathym/common@0.2.287-integration/telemetry";

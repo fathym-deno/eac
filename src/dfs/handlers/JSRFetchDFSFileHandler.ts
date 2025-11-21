@@ -1,12 +1,13 @@
-import { EaCDistributedFileSystemAsCode, EaCJSRDistributedFileSystemDetails, getPackageLogger, path } from "./.deps.ts";
-import { DFSFileInfo } from "./DFSFileInfo.ts";
+import { DFSFileInfo, getPackageLogger, path } from "./.deps.ts";
+import { EaCJSRDistributedFileSystemDetails } from "../_/EaCJSRDistributedFileSystemDetails.ts";
 import { FetchDFSFileHandler } from "./FetchDFSFileHandler.ts";
 
 /**
  * Specialized DFS handler for JSR-backed file systems.
  * Handles version resolution and file retrieval from jsr.io.
  */
-export class JSRFetchDFSFileHandler extends FetchDFSFileHandler<EaCJSRDistributedFileSystemDetails> {
+export class JSRFetchDFSFileHandler
+  extends FetchDFSFileHandler<EaCJSRDistributedFileSystemDetails> {
   private initialize: Promise<void>;
   private modulePaths: string[] = [];
 
@@ -159,8 +160,14 @@ export class JSRFetchDFSFileHandler extends FetchDFSFileHandler<EaCJSRDistribute
       };
 
       this.modulePaths = Object.keys(meta.manifest)
-        .filter((fp) => this.details.FileRoot ? fp.startsWith(this.details.FileRoot) : true)
-        .map((fp) => this.details.FileRoot ? fp.slice(this.details.FileRoot!.length - 1) : fp);
+        .filter((fp) =>
+          this.details.FileRoot ? fp.startsWith(this.details.FileRoot) : true
+        )
+        .map((fp) =>
+          this.details.FileRoot
+            ? fp.slice(this.details.FileRoot!.length - 1)
+            : fp
+        );
     } catch (err) {
       logger.error(`Error loading paths from ${metaPath}`);
       throw err;

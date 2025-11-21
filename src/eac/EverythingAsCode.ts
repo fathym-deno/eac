@@ -1,6 +1,12 @@
 import { z } from "./.deps.ts";
-import { EaCModuleActuators, EaCModuleActuatorsSchema } from "./EaCModuleActuators.ts";
-import { EaCEnterpriseDetails, EaCEnterpriseDetailsSchema } from "./EaCEnterpriseDetails.ts";
+import {
+  EaCModuleActuators,
+  EaCModuleActuatorsSchema,
+} from "./EaCModuleActuators.ts";
+import {
+  EaCEnterpriseDetails,
+  EaCEnterpriseDetailsSchema,
+} from "./EaCEnterpriseDetails.ts";
 import { EaCMetadataBase, EaCMetadataBaseSchema } from "./EaCMetadataBase.ts";
 
 /**

@@ -1,21 +1,28 @@
-import { EaCAzureBlobStorageDistributedFileSystemDetails, isEaCAzureBlobStorageDistributedFileSystemDetails, parseEaCAzureBlobStorageDistributedFileSystemDetails } from "../../../src/dfs/_/EaCAzureBlobStorageDistributedFileSystemDetails.ts";
+import {
+  EaCAzureBlobStorageDistributedFileSystemDetails,
+  isEaCAzureBlobStorageDistributedFileSystemDetails,
+  parseEaCAzureBlobStorageDistributedFileSystemDetails,
+} from "../../../src/dfs/_/EaCAzureBlobStorageDistributedFileSystemDetails.ts";
 import { assertEquals, assertThrows } from "../../test.deps.ts";
 
 Deno.test("EaCAzureBlobStorageDistributedFileSystemDetails Tests", async (t) => {
   const validAzureBlobDFS: EaCAzureBlobStorageDistributedFileSystemDetails = {
     Type: "AzureBlobStorage",
-    ConnectionString: "DefaultEndpointsProtocol=https;AccountName=xyz;AccountKey=abc123;",
+    ConnectionString:
+      "DefaultEndpointsProtocol=https;AccountName=xyz;AccountKey=abc123;",
     Container: "my-container",
     FileRoot: "/files",
     Name: "Azure Blob DFS",
     Description: "A DFS stored in Azure Blob Storage.",
   };
 
-  const validAzureBlobMinimal: EaCAzureBlobStorageDistributedFileSystemDetails = {
-    Type: "AzureBlobStorage",
-    ConnectionString: "DefaultEndpointsProtocol=https;AccountName=xyz;AccountKey=abc123;",
-    Container: "my-container",
-  };
+  const validAzureBlobMinimal: EaCAzureBlobStorageDistributedFileSystemDetails =
+    {
+      Type: "AzureBlobStorage",
+      ConnectionString:
+        "DefaultEndpointsProtocol=https;AccountName=xyz;AccountKey=abc123;",
+      Container: "my-container",
+    };
 
   const invalidAzureBlobDFSs = [
     42,
@@ -82,7 +89,9 @@ Deno.test("EaCAzureBlobStorageDistributedFileSystemDetails Tests", async (t) => 
     "parseEaCAzureBlobStorageDistributedFileSystemDetails should throw for invalid inputs",
     () => {
       for (const invalid of invalidAzureBlobDFSs) {
-        assertThrows(() => parseEaCAzureBlobStorageDistributedFileSystemDetails(invalid));
+        assertThrows(() =>
+          parseEaCAzureBlobStorageDistributedFileSystemDetails(invalid)
+        );
       }
     },
   );

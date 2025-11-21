@@ -1,4 +1,9 @@
-import { EaCCommitResponse, EaCStatus, EaCStatusProcessingTypes, EaCUserRecord, EverythingAsCode, Logger, NullableArrayOrObject } from "./.deps.ts";
+import { NullableArrayOrObject } from "./.deps.ts";
+import { EaCUserRecord } from "../../eac/EaCUserRecord.ts";
+import { EverythingAsCode } from "../../eac/EverythingAsCode.ts";
+import { EaCCommitResponse } from "../_/reqres/EaCCommitResponse.ts";
+import { EaCStatus } from "../status/EaCStatus.ts";
+import { EaCStatusProcessingTypes } from "../status/EaCStatusProcessingTypes.ts";
 import { EaCBaseClient } from "./EaCBaseClient.ts";
 
 export class EaCStewardClient extends EaCBaseClient {
@@ -99,7 +104,9 @@ export class EaCStewardClient extends EaCBaseClient {
     }> => {
       const response = await fetch(
         this.loadClientUrl(
-          `jwt?entLookup=${entLookup}&username=${username}&expTime=${expTime || ""}`,
+          `jwt?entLookup=${entLookup}&username=${username}&expTime=${
+            expTime || ""
+          }`,
         ),
         {
           headers: this.loadHeaders(),

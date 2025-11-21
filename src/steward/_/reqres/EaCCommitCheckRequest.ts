@@ -1,4 +1,4 @@
-import { EverythingAsCode } from "../.deps.ts";
+import { EverythingAsCode } from "../../../eac/EverythingAsCode.ts";
 import { EaCActuatorCheckRequest } from "../../actuators/reqres/EaCActuatorCheckRequest.ts";
 import { EaCCommitRequest } from "./EaCCommitRequest.ts";
 

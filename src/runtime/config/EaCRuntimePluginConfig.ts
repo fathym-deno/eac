@@ -1,5 +1,5 @@
-import { EaCRuntimeHandlerRouteGroup } from "../pipelines/.exports.ts";
-import { EaCRuntimeSetupConfig, EverythingAsCode } from "../plugins/.deps.ts";
+import { EverythingAsCode } from "../../eac/EverythingAsCode.ts";
+import { EaCRuntimeSetupConfig } from "./EaCRuntimeSetupConfig.ts";
 
 export type EaCRuntimePluginConfig<
   TEaC extends EverythingAsCode = EverythingAsCode,

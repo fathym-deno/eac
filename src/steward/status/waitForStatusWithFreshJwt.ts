@@ -1,4 +1,5 @@
-import { EaCStewardClient, loadEaCStewardSvc } from "./.deps.ts";
+import { EaCStewardClient } from "../clients/EaCStewardClient.ts";
+import { loadEaCStewardSvc } from "../clients/loadEaCStewardSvc.ts";
 import { EaCStatus } from "./EaCStatus.ts";
 import { EaCStatusProcessingTypes } from "./EaCStatusProcessingTypes.ts";
 import { withStatusCheck } from "./withStatusCheck.ts";

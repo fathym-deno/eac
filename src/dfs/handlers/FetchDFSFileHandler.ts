@@ -1,7 +1,9 @@
 // deno-lint-ignore-file no-empty
-import { EaCDistributedFileSystemDetails, EaCRemoteDistributedFileSystemDetails, getFileCheckPathsToProcess, Logger, withDFSCache } from "./.deps.ts";
+import { DFSFileInfo } from "./.deps.ts";
+import { EaCDistributedFileSystemDetails } from "../_/EaCDistributedFileSystemDetails.ts";
+import { getFileCheckPathsToProcess } from "../utils/getFileCheckPathsToProcess.ts";
+import { withDFSCache } from "../utils/withDFSCache.ts";
 import { DFSFileHandler } from "./DFSFileHandler.ts";
-import { DFSFileInfo } from "./DFSFileInfo.ts";
 
 /**
  * Implements `DFSFileHandler` using HTTP(S) and local file fetching.
@@ -41,12 +43,14 @@ export abstract class FetchDFSFileHandler<
           filePath.startsWith("https://") ||
           filePath.startsWith("file:///");
 
-        const fileCheckPaths = isDirectFetch ? [filePath] : getFileCheckPathsToProcess(
-          filePath,
-          defaultFileName,
-          extensions,
-          useCascading,
-        );
+        const fileCheckPaths = isDirectFetch
+          ? [filePath]
+          : getFileCheckPathsToProcess(
+            filePath,
+            defaultFileName,
+            extensions,
+            useCascading,
+          );
 
         let fileInfo: DFSFileInfo | undefined = undefined;
 
@@ -55,7 +59,9 @@ export abstract class FetchDFSFileHandler<
           if (!resolvedPath) continue;
 
           try {
-            const fullFilePath = isDirectFetch ? new URL(resolvedPath) : new URL(`.${resolvedPath}`, this.Root);
+            const fullFilePath = isDirectFetch
+              ? new URL(resolvedPath)
+              : new URL(`.${resolvedPath}`, this.Root);
 
             const response = await fetch(fullFilePath);
 
@@ -110,7 +116,11 @@ export abstract class FetchDFSFileHandler<
 
         if (!fileInfo) {
           this.logger.debug(
-            `Unable to locate a fetch file at path ${filePath}${defaultFileName ? `, and no default file was found for ${defaultFileName}.` : "."}`,
+            `Unable to locate a fetch file at path ${filePath}${
+              defaultFileName
+                ? `, and no default file was found for ${defaultFileName}.`
+                : "."
+            }`,
           );
         }
 

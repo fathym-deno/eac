@@ -1,10 +1,17 @@
 // deno-lint-ignore-file no-explicit-any
-
-import { callEaCActuatorDelete, EaCActuatorErrorResponse, EaCStatus, EaCStatusProcessingTypes, EaCUserRecord, EverythingAsCode, listenQueueAtomic, Logger, markEaCProcessed, waitOnEaCProcessing } from "./.deps.ts";
+import { listenQueueAtomic, TelemetryLogger } from "./.deps.ts";
+import { EaCUserRecord } from "../../eac/EaCUserRecord.ts";
+import { EverythingAsCode } from "../../eac/EverythingAsCode.ts";
+import { EaCStatus } from "../status/EaCStatus.ts";
+import { EaCStatusProcessingTypes } from "../status/EaCStatusProcessingTypes.ts";
+import { markEaCProcessed } from "../utils/markEaCProcessed.ts";
+import { waitOnEaCProcessing } from "../utils/waitOnEaCProcessing.ts";
 import { EaCDeleteRequest } from "./reqres/EaCDeleteRequest.ts";
+import { EaCActuatorErrorResponse } from "../actuators/reqres/EaCActuatorErrorResponse.ts";
+import { callEaCActuatorDelete } from "../utils/callEaCActuatorDelete.ts";
 
 export async function handleEaCDeleteRequest(
-  logger: Logger,
+  logger: TelemetryLogger,
   eacKv: Deno.Kv,
   commitKv: Deno.Kv,
   deleteReq: EaCDeleteRequest,
@@ -57,7 +64,9 @@ export async function handleEaCDeleteRequest(
   const diffKeys = Object.keys(deleteEaCDiff);
 
   logger.debug(
-    `[delete ${deleteReq.CommitID}] diff keys: ${diffKeys.length ? diffKeys.join(", ") : "none"}`,
+    `[delete ${deleteReq.CommitID}] diff keys: ${
+      diffKeys.length ? diffKeys.join(", ") : "none"
+    }`,
   );
 
   const currentEaC = eac.value!;
@@ -165,7 +174,9 @@ export async function handleEaCDeleteRequest(
   const hadErrors = deleteErrors.length > 0;
 
   status.value!.Messages = status.value!.Messages || {};
-  status.value!.Processing = hadErrors ? EaCStatusProcessingTypes.ERROR : EaCStatusProcessingTypes.COMPLETE;
+  status.value!.Processing = hadErrors
+    ? EaCStatusProcessingTypes.ERROR
+    : EaCStatusProcessingTypes.COMPLETE;
 
   if (hadErrors) {
     for (const err of deleteErrors) {

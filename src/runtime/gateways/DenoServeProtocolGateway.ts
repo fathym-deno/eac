@@ -1,11 +1,11 @@
-import { Logger } from "jsr:@std/log@0.224.14";
-import { EaCRuntime, EaCRuntimeConfig } from "./.deps.ts";
+import { colors, TelemetryLogger } from "./.deps.ts";
 import { ProtocolGateway } from "./ProtocolGateway.ts";
-import { colors } from "../config/.deps.ts";
 import { fathymGreen } from "../config/constants.ts";
+import { EaCRuntime } from "../_/EaCRuntime.ts";
+import { EaCRuntimeConfig } from "../config/EaCRuntimeConfig.ts";
 
 export class DenoServeProtocolGateway implements ProtocolGateway {
-  protected get logger(): Logger {
+  protected get logger(): TelemetryLogger {
     return this.config.LoggingProvider.Package;
   }
   constructor(
@@ -30,7 +30,9 @@ export class DenoServeProtocolGateway implements ProtocolGateway {
         }
 
         this.logger.info(
-          `Starting server on port ${server.port} (${server.Lookup || "default"})`,
+          `Starting server on port ${server.port} (${
+            server.Lookup || "default"
+          })`,
         );
 
         const startServer:

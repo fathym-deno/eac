@@ -1,5 +1,5 @@
-import { colors, EaCLoggingProvider, EaCRuntime, getPackageLoggerSync, LoggingProvider } from "./.deps.ts";
-import { fathymGreen } from "./constants.ts";
+import { LoggingProvider } from "./.deps.ts";
+import { EaCRuntime } from "../_/EaCRuntime.ts";
 import { EaCRuntimeConfig } from "./EaCRuntimeConfig.ts";
 
 export const GenericEaCConfig = (

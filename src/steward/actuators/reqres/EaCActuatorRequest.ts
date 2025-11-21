@@ -1,4 +1,5 @@
-import { EaCMetadataBase, EverythingAsCode } from "../.deps.ts";
+import { EaCMetadataBase } from "../../../eac/EaCMetadataBase.ts";
+import { EverythingAsCode } from "../../../eac/EverythingAsCode.ts";
 
 export type EaCActuatorRequest = {
   CommitID: string;

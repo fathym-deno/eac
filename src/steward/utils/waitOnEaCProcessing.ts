@@ -1,4 +1,4 @@
-import { waitOnProcessing } from "./.deps.ts";
+import { waitOnProcessing } from "../status/waitOnProcessing.ts";
 import { invalidateProcessing } from "./invalidateProcessing.ts";
 
 /**

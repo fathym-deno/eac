@@ -1,10 +1,18 @@
-import { Logger } from "../_/.deps.ts";
-import { EaCActuatorErrorResponse, EaCActuatorRequest, EaCDeleteRequest, EaCMetadataBase, EaCModuleActuator, EverythingAsCode, isEaCActuatorErrorResponse } from "./.deps.ts";
+import { EaCMetadataBase } from "../../eac/EaCMetadataBase.ts";
+import { EaCModuleActuator } from "../../eac/EaCModuleActuator.ts";
+import { EverythingAsCode } from "../../eac/EverythingAsCode.ts";
+import { EaCDeleteRequest } from "../_/reqres/EaCDeleteRequest.ts";
+import {
+  EaCActuatorErrorResponse,
+  isEaCActuatorErrorResponse,
+} from "../actuators/reqres/EaCActuatorErrorResponse.ts";
+import { EaCActuatorRequest } from "../actuators/reqres/EaCActuatorRequest.ts";
+import { TelemetryLogger } from "./.deps.ts";
 
 const SKIPPABLE_DELETE_STATUSES = new Set([404, 405, 500, 501]);
 
 export async function callEaCActuatorDelete<T extends EaCMetadataBase>(
-  logger: Logger,
+  logger: TelemetryLogger,
   loadEaC: (entLookup: string) => Promise<EverythingAsCode>,
   handler: EaCModuleActuator,
   deleteReq: EaCDeleteRequest,
@@ -17,7 +25,9 @@ export async function callEaCActuatorDelete<T extends EaCMetadataBase>(
   }
 
   const commitId = deleteReq.CommitID;
-  const parentEaC = currentEaC.ParentEnterpriseLookup ? await loadEaC(currentEaC.ParentEnterpriseLookup) : undefined;
+  const parentEaC = currentEaC.ParentEnterpriseLookup
+    ? await loadEaC(currentEaC.ParentEnterpriseLookup)
+    : undefined;
 
   const lookupModels = toDelete as Record<string, unknown>;
   const lookups = Object.keys(lookupModels);
@@ -62,7 +72,9 @@ export async function callEaCActuatorDelete<T extends EaCMetadataBase>(
         text = await response.text();
 
         logger.debug(
-          `[act-del ${commitId}] (#${idx}) POST ${url} lookup=${lookup} status=${response.status} ct=${contentType} durMs=${Date.now() - started}`,
+          `[act-del ${commitId}] (#${idx}) POST ${url} lookup=${lookup} status=${response.status} ct=${contentType} durMs=${
+            Date.now() - started
+          }`,
         );
 
         if (!response.ok) {
@@ -123,7 +135,9 @@ export async function callEaCActuatorDelete<T extends EaCMetadataBase>(
           `[act-del ${commitId}] key=${key} lookup=${lookup} deleted`,
         );
       } catch (err) {
-        const safe = err instanceof Error ? { name: err.name, message: err.message, stack: err.stack } : { message: String(err) };
+        const safe = err instanceof Error
+          ? { name: err.name, message: err.message, stack: err.stack }
+          : { message: String(err) };
 
         errors.push({
           HasError: true,

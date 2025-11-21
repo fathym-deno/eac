@@ -1,5 +1,8 @@
 import { z } from "./.deps.ts";
-import { EverythingAsCode, EverythingAsCodeSchema } from "./EverythingAsCode.ts";
+import {
+  EverythingAsCode,
+  EverythingAsCodeSchema,
+} from "./EverythingAsCode.ts";
 
 /**
  * EaC Diff represents the difference between two versions of the Everything as Code graph,

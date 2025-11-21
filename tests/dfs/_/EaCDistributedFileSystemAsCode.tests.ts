@@ -1,4 +1,7 @@
-import { isEaCDistributedFileSystemAsCode, parseEaCDistributedFileSystemAsCode } from "../../../src/dfs/_/EaCDistributedFileSystemAsCode.ts";
+import {
+  isEaCDistributedFileSystemAsCode,
+  parseEaCDistributedFileSystemAsCode,
+} from "../../../src/dfs/_/EaCDistributedFileSystemAsCode.ts";
 import { EaCDistributedFileSystemDetails } from "../../../src/dfs/_/EaCDistributedFileSystemDetails.ts";
 import { assertEquals, assertThrows } from "../../test.deps.ts";
 
@@ -47,7 +50,9 @@ Deno.test("EaCDistributedFileSystemAsCode Tests", async (t) => {
       assertThrows(() => parseEaCDistributedFileSystemAsCode(null));
       assertThrows(() => parseEaCDistributedFileSystemAsCode("string"));
       assertThrows(() => parseEaCDistributedFileSystemAsCode(invalidDFSAsCode));
-      assertThrows(() => parseEaCDistributedFileSystemAsCode(missingTypeDFSAsCode));
+      assertThrows(() =>
+        parseEaCDistributedFileSystemAsCode(missingTypeDFSAsCode)
+      );
     },
   );
 });

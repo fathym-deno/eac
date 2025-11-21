@@ -1,8 +1,5 @@
-import { toJson } from "jsr:@std/streams@1.0.9/to-json";
 import { NPMFetchDFSFileHandler } from "../../../src/dfs/handlers/.exports.ts";
-import { assertEquals, assertRejects, assertThrows } from "../../test.deps.ts";
-import { toText } from "jsr:@std/streams@1.0.9/to-text";
-import { EaCNPMDistributedFileSystemDetails } from "../../../src/dfs/handlers/.deps.ts";
+import { assertEquals, assertRejects } from "../../test.deps.ts";
 
 /**
  * Test Suite for NPMFetchDFSFileHandler

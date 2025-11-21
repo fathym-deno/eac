@@ -1,8 +1,11 @@
-import { DFSFileHandler, EaCDistributedFileSystemDetails, EaCRuntimeHandlerSet, ESBuild, Logger } from "./.deps.ts";
+import { TelemetryLogger } from "./.deps.ts";
+import { EaCRuntimeHandlerSet } from "../../runtime/pipelines/EaCRuntimeHandlerSet.ts";
+import { EaCDistributedFileSystemDetails } from "../_/EaCDistributedFileSystemDetails.ts";
+import { DFSFileHandler } from "../handlers/DFSFileHandler.ts";
 import { importDFSTypescriptModule } from "./importDFSTypescriptModule.ts";
 
 export async function loadEaCRuntimeHandlers(
-  logger: Logger,
+  logger: TelemetryLogger,
   fileHandler: DFSFileHandler,
   filePath: string,
   dfs: EaCDistributedFileSystemDetails,

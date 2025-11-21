@@ -1,5 +1,8 @@
 import { z } from "./.deps.ts";
-import { EaCDistributedFileSystemDetails, EaCDistributedFileSystemDetailsSchema } from "./EaCDistributedFileSystemDetails.ts";
+import {
+  EaCDistributedFileSystemDetails,
+  EaCDistributedFileSystemDetailsSchema,
+} from "./EaCDistributedFileSystemDetails.ts";
 
 /**
  * Represents details for a Local File System-backed Distributed File System (DFS) in Everything as Code (EaC).

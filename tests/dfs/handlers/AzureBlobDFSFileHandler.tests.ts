@@ -1,6 +1,5 @@
-import { EaCAzureBlobStorageDistributedFileSystemDetails } from "../../../src/dfs/handlers/.deps.ts";
 import { AzureBlobDFSFileHandler } from "../../../src/dfs/handlers/.exports.ts";
-import { assertEquals, assertRejects } from "../../test.deps.ts";
+import { assertEquals } from "../../test.deps.ts";
 
 /**
  * Test Suite for AzureBlobDFSFileHandler

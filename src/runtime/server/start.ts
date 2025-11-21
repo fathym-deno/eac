@@ -16,7 +16,9 @@ export async function start(
   }
 
   const resolvedPorts = await Promise.all(
-    config.Servers.map((server) => resolvePort(server.Lookup ? `PORT_${server.Lookup}` : "PORT", server)),
+    config.Servers.map((server) =>
+      resolvePort(server.Lookup ? `PORT_${server.Lookup}` : "PORT", server)
+    ),
   );
 
   // Assign resolved ports

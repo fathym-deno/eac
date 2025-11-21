@@ -1,13 +1,16 @@
-import { EaCVirtualCompositeDistributedFileSystemDetails, getFileCheckPathsToProcess, withDFSCache } from "./.deps.ts";
+import { DFSFileInfo } from "./.deps.ts";
+import { EaCVirtualCompositeDistributedFileSystemDetails } from "../_/EaCVirtualCompositeDistributedFileSystemDetails.ts";
+import { getFileCheckPathsToProcess } from "../utils/getFileCheckPathsToProcess.ts";
+import { withDFSCache } from "../utils/withDFSCache.ts";
 import { DFSFileHandler } from "./DFSFileHandler.ts";
-import { DFSFileInfo } from "./DFSFileInfo.ts";
 
 type OverlayEntry = {
   contents: Uint8Array;
   headers?: Record<string, string>;
 };
 
-export class VirtualCompositeDFSHandler extends DFSFileHandler<EaCVirtualCompositeDistributedFileSystemDetails> {
+export class VirtualCompositeDFSHandler
+  extends DFSFileHandler<EaCVirtualCompositeDistributedFileSystemDetails> {
   public override get Root(): string {
     return this.baseHandlers[0]?.Root ?? "";
   }

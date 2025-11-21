@@ -1,9 +1,34 @@
-import { buildURLMatch, DenoServeEaCProtocolGateway, EaCLoggingProvider, EaCProtocolGateway, EaCRuntimeConfig, EaCRuntimeHandler, EaCRuntimeHandlerPipeline, EaCRuntimeHandlerRoute, EaCRuntimeHandlerRouteGroup, EaCRuntimeHandlers, EaCRuntimeHandlerSet, EaCRuntimePlugin, EaCRuntimePluginConfig, EaCRuntimePluginDef, ESBuild, EverythingAsCode, generateDirectoryHash, IoCContainer, IS_BUILDING, IS_DENO_DEPLOY, Logger, LoggingProvider, merge, STATUS_CODE } from "./.deps.ts";
+import {
+  buildURLMatch,
+  generateDirectoryHash,
+  IoCContainer,
+  LoggingProvider,
+  merge,
+  STATUS_CODE,
+  TelemetryLogger,
+} from "./.deps.ts";
 import { EaCRuntime } from "./EaCRuntime.ts";
 import { EaCRuntimeContext } from "./EaCRuntimeContext.ts";
+import { EverythingAsCode } from "../../eac/EverythingAsCode.ts";
+import { IS_BUILDING, IS_DENO_DEPLOY } from "../config/constants.ts";
+import { EaCRuntimeConfig } from "../config/EaCRuntimeConfig.ts";
+import { EaCRuntimePluginConfig } from "../config/EaCRuntimePluginConfig.ts";
+import { EaCLoggingProvider } from "../logging/EaCLoggingProvider.ts";
+import { EaCRuntimeHandler } from "../pipelines/EaCRuntimeHandler.ts";
+import { EaCRuntimeHandlerPipeline } from "../pipelines/EaCRuntimeHandlerPipeline.ts";
+import { EaCRuntimeHandlerRoute } from "../pipelines/EaCRuntimeHandlerRoute.ts";
+import { EaCRuntimeHandlerRouteGroup } from "../pipelines/EaCRuntimeHandlerRouteGroup.ts";
+import { EaCRuntimeHandlers } from "../pipelines/EaCRuntimeHandlers.ts";
+import { EaCRuntimeHandlerSet } from "../pipelines/EaCRuntimeHandlerSet.ts";
+import { EaCRuntimePlugin } from "../plugins/EaCRuntimePlugin.ts";
+import { EaCRuntimePluginDef } from "../plugins/EaCRuntimePluginDef.ts";
+import { DenoServeProtocolGateway } from "../gateways/DenoServeProtocolGateway.ts";
+import { ProtocolGateway } from "../gateways/ProtocolGateway.ts";
+import { ESBuild } from "../../esbuild/.exports.ts";
 
-export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode> implements EaCRuntime<TEaC> {
-  protected get logger(): Logger {
+export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
+  implements EaCRuntime<TEaC> {
+  protected get logger(): TelemetryLogger {
     return (this.config.LoggingProvider ?? new EaCLoggingProvider()).Package;
   }
 
@@ -81,8 +106,8 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
     await this.configurationFinalization();
   }
 
-  public async Gateway(): Promise<EaCProtocolGateway> {
-    return new DenoServeEaCProtocolGateway(
+  public async Gateway(): Promise<ProtocolGateway> {
+    return new DenoServeProtocolGateway(
       this.config as EaCRuntimeConfig,
       this as EaCRuntime,
     );
@@ -236,8 +261,7 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
         await esbuild!.initialize({ worker });
         this.logger.info("Esbuild initialized successfully.");
       } catch (err) {
-        this.logger.error("There was an issue initializing esbuild");
-        this.logger.error(err);
+        this.logger.error("There was an issue initializing esbuild", { err });
       }
 
       this.logger.debug("Registering esbuild in IoC...");
@@ -266,7 +290,9 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
   ): Promise<void> {
     for (let pluginDef of plugins || []) {
       this.logger.debug(
-        `Configuring plugin: ${Array.isArray(pluginDef) ? pluginDef[0] : pluginDef.constructor.name}`,
+        `Configuring plugin: ${
+          Array.isArray(pluginDef) ? pluginDef[0] : pluginDef.constructor.name
+        }`,
       );
 
       const pluginKey = pluginDef as EaCRuntimePluginDef<TEaC>;
@@ -295,14 +321,16 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
           pluginDef = new Module.default(...args) as EaCRuntimePlugin<TEaC>;
           this.logger.debug(`Successfully constructed plugin from: ${plugin}`);
         } catch (error) {
-          this.logger.error(`Failed to load plugin "${plugin}":`, error);
+          this.logger.error(`Failed to load plugin "${plugin}":`, { error });
           throw error;
         }
       }
 
       this.pluginDefs.set(pluginKey, pluginDef);
 
-      const pluginConfig = this.pluginConfigs.has(pluginKey) ? this.pluginConfigs.get(pluginKey) : await pluginDef.Setup(this.config);
+      const pluginConfig = this.pluginConfigs.has(pluginKey)
+        ? this.pluginConfigs.get(pluginKey)
+        : await pluginDef.Setup(this.config);
 
       this.pluginConfigs.set(pluginKey, pluginConfig);
 

@@ -1,4 +1,3 @@
-import { EaCDenoKVDistributedFileSystemDetails } from "../../../src/dfs/handlers/.deps.ts";
 import { DenoKVDFSFileHandler } from "../../../src/dfs/handlers/.exports.ts";
 import { assertEquals, assertRejects } from "../../test.deps.ts";
 

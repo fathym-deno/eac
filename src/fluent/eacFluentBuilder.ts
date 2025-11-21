@@ -1,4 +1,11 @@
-import { EverythingAsCode, FluentBuilder, fluentBuilder, FluentBuilderMethodsHandlers, FluentBuilderRoot, SelectFluentMethods } from "./.deps.ts";
+import {
+  EverythingAsCode,
+  FluentBuilder,
+  fluentBuilder,
+  FluentBuilderMethodsHandlers,
+  FluentBuilderRoot,
+  SelectFluentMethods,
+} from "./.deps.ts";
 import { EverythingAsCodeTags } from "./EverythingAsCodeTags.ts";
 
 export function eacFluentBuilder<TEaC extends EverythingAsCode>(

@@ -1,5 +1,3 @@
-import { Logger } from "./.deps.ts";
-
 export class EaCBaseClient {
   /** */
   constructor(protected baseUrl: URL, protected apiToken: string) {}

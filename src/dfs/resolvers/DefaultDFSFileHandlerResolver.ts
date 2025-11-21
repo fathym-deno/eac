@@ -1,7 +1,18 @@
-import { DistributedFileSystemOptions } from "../_/DistributedFileSystemOptions.ts";
-import { EverythingAsCode } from "../handlers/.deps.ts";
-import { DFSFileHandlerResolverOptions } from "../handlers/DFSFileHandlerResolver.ts";
-import { DFSFileHandler, DFSFileHandlerResolver, EaCDistributedFileSystemDetails, IoCContainer, isEaCAzureBlobStorageDistributedFileSystemDetails, isEaCDenoKVDistributedFileSystemDetails, isEaCESMDistributedFileSystemDetails, isEaCJSRDistributedFileSystemDetails, isEaCLocalDistributedFileSystemDetails, isEaCNPMDistributedFileSystemDetails, isEaCRemoteDistributedFileSystemDetails, isEaCVirtualCompositeDistributedFileSystemDetails } from "./.deps.ts";
+import { IoCContainer } from "./.deps.ts";
+import { isEaCAzureBlobStorageDistributedFileSystemDetails } from "../_/EaCAzureBlobStorageDistributedFileSystemDetails.ts";
+import { isEaCDenoKVDistributedFileSystemDetails } from "../_/EaCDenoKVDistributedFileSystemDetails.ts";
+import { EaCDistributedFileSystemDetails } from "../_/EaCDistributedFileSystemDetails.ts";
+import { isEaCESMDistributedFileSystemDetails } from "../_/EaCESMDistributedFileSystemDetails.ts";
+import { isEaCJSRDistributedFileSystemDetails } from "../_/EaCJSRDistributedFileSystemDetails.ts";
+import { isEaCLocalDistributedFileSystemDetails } from "../_/EaCLocalDistributedFileSystemDetails.ts";
+import { isEaCNPMDistributedFileSystemDetails } from "../_/EaCNPMDistributedFileSystemDetails.ts";
+import { isEaCRemoteDistributedFileSystemDetails } from "../_/EaCRemoteDistributedFileSystemDetails.ts";
+import { isEaCVirtualCompositeDistributedFileSystemDetails } from "../_/EaCVirtualCompositeDistributedFileSystemDetails.ts";
+import { DFSFileHandler } from "../handlers/DFSFileHandler.ts";
+import {
+  DFSFileHandlerResolver,
+  DFSFileHandlerResolverOptions,
+} from "../handlers/DFSFileHandlerResolver.ts";
 
 export class DefaultDFSFileHandlerResolver implements DFSFileHandlerResolver {
   public async Resolve(

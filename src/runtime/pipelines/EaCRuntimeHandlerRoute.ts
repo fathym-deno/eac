@@ -1,4 +1,5 @@
-import { EaCRuntimeContext, EverythingAsCode } from "./.deps.ts";
+import { EverythingAsCode } from "../../eac/EverythingAsCode.ts";
+import { EaCRuntimeContext } from "../_/EaCRuntimeContext.ts";
 import { EaCRuntimeHandlerPipeline } from "./EaCRuntimeHandlerPipeline.ts";
 import { RouteResolverConfiguration } from "./RouteResolverConfiguration.ts";
 

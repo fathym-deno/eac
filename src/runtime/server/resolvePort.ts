@@ -19,7 +19,9 @@ export async function resolvePort(
   if (serverConfig?.port) {
     const startPort = serverConfig.port;
 
-    const endPort = serverConfig.PortRange ? startPort + serverConfig.PortRange : startPort;
+    const endPort = serverConfig.PortRange
+      ? startPort + serverConfig.PortRange
+      : startPort;
 
     return (await findAvailablePort(startPort, endPort)) ?? 0;
   }

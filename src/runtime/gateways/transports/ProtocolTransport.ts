@@ -1,4 +1,4 @@
-import { EaCRuntime } from "../.deps.ts";
+import { EaCRuntime } from "../../_/EaCRuntime.ts";
 import { ExecutionHandler } from "../../execution/handlers/.exports.ts";
 
 export abstract class ProtocolTransport {

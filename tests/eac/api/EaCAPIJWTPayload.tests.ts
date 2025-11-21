@@ -1,4 +1,7 @@
-import { isEaCAPIJWTPayload, parseEaCAPIJWTPayload } from "../../../src/eac/.exports.ts";
+import {
+  isEaCAPIJWTPayload,
+  parseEaCAPIJWTPayload,
+} from "../../../src/eac/.exports.ts";
 import { assertEquals, assertThrows } from "../../test.deps.ts";
 
 Deno.test("EaCAPIJWTPayload Tests", async (t) => {

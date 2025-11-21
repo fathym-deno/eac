@@ -1,15 +1,10 @@
 // deno-lint-ignore-file no-explicit-any
-import {
-  // base64,
-  DFSFileHandler,
-  EaCDistributedFileSystemDetails,
-  Logger,
-  path,
-  toText,
-} from "./.deps.ts";
+import { path, TelemetryLogger, toText } from "./.deps.ts";
+import { EaCDistributedFileSystemDetails } from "../_/EaCDistributedFileSystemDetails.ts";
+import { DFSFileHandler } from "../handlers/DFSFileHandler.ts";
 
 export async function importDFSTypescriptModule(
-  logger: Logger,
+  logger: TelemetryLogger,
   fileHandler: DFSFileHandler,
   filePath: string,
   dfs: EaCDistributedFileSystemDetails,
@@ -30,7 +25,8 @@ export async function importDFSTypescriptModule(
         let fileContents = await toText(file!.Contents);
 
         if (loader === "tsx") {
-          fileContents = `import { Fragment, h } from "preact";\n${fileContents}`;
+          fileContents =
+            `import { Fragment, h } from "preact";\n${fileContents}`;
         }
 
         let apiUrl: string;
@@ -79,8 +75,8 @@ export async function importDFSTypescriptModule(
   } catch (err) {
     logger.error(
       `There was an error importing the file '${filePath}' for DFS '${dfsLookup}'`,
+      { err },
     );
-    logger.error(err);
 
     throw err;
   }

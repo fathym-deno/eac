@@ -1,7 +1,7 @@
-import { fdatasyncSync } from "node:fs";
-import { EaCDistributedFileSystemAsCode, EaCDistributedFileSystemDetails, EaCDistributedFileSystemWorkerClient } from "./.deps.ts";
+import { DFSFileInfo } from "./.deps.ts";
+import { EaCDistributedFileSystemDetails } from "../_/EaCDistributedFileSystemDetails.ts";
+import { EaCDistributedFileSystemWorkerClient } from "../workers/EaCDistributedFileSystemWorkerClient.ts";
 import { DFSFileHandler } from "./DFSFileHandler.ts";
-import { DFSFileInfo } from "./DFSFileInfo.ts";
 
 /**
  * Implements `DFSFileHandler` for worker-based DFS execution.

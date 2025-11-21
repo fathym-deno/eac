@@ -1,4 +1,4 @@
-import { EaCStewardClient } from "./.deps.ts";
+import { EaCStewardClient } from "../clients/EaCStewardClient.ts";
 import { EaCStatus } from "./EaCStatus.ts";
 import { withStatusCheck } from "./withStatusCheck.ts";
 

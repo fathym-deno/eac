@@ -1,4 +1,4 @@
-import { EaCRuntimeHandlerPipeline } from "./.deps.ts";
+import { EaCRuntimeHandlerPipeline } from "../../runtime/pipelines/EaCRuntimeHandlerPipeline.ts";
 
 export type PathMatch = {
   Handlers: EaCRuntimeHandlerPipeline;

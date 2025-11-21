@@ -1,4 +1,4 @@
-import { EaCMetadataBase } from "../.deps.ts";
+import { EaCMetadataBase } from "../../../eac/EaCMetadataBase.ts";
 
 export type EaCActuatorConnectionsResponse = {
   Model: EaCMetadataBase;

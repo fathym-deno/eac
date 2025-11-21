@@ -1,6 +1,8 @@
-import { EaCLoggingProvider, EaCRuntime, LoggingProvider, mergeWithArrays } from "./.deps.ts";
+import { LoggingProvider, mergeWithArrays } from "./.deps.ts";
 import { GenericEaCConfig } from "./GenericEaCConfig.ts";
 import { EaCRuntimeConfig } from "./EaCRuntimeConfig.ts";
+import { EaCRuntime } from "../_/EaCRuntime.ts";
+import { EaCLoggingProvider } from "../logging/EaCLoggingProvider.ts";
 
 export async function defineEaCConfig(
   runtime: (cgg: EaCRuntimeConfig) => EaCRuntime,

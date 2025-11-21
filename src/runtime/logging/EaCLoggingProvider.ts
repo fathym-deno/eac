@@ -1,47 +1,31 @@
-import { ConsoleHandler, LevelName, LogConfig, LoggerConfig, LoggingProvider } from "./.deps.ts";
+import { LoggingProvider } from "./.deps.ts";
+import type { TelemetryConfig, TelemetryLogger } from "./.deps.ts";
 
 export class EaCLoggingProvider extends LoggingProvider {
-  constructor(loggingPackages?: string[], override?: boolean) {
+  constructor(
+    loggingPackages?: string[],
+    override?: boolean,
+    telemetry?: TelemetryConfig,
+  ) {
     const defaults = [
       "@fathym/default",
       "@fathym/common/build",
-      "@fathym/common/deno-kv",
+      "@fathym/runtime/deno-kv",
       "@fathym/common/path",
       "@fathym/eac",
       "@fathym/msal",
     ];
 
-    loggingPackages ??= [];
+    const packages = override
+      ? loggingPackages ?? []
+      : [...defaults, ...(loggingPackages ?? [])];
 
-    if (!override) {
-      loggingPackages = [...defaults, ...loggingPackages];
-    }
-
-    const setupConfig = {
-      handlers: {
-        console: new ConsoleHandler("DEBUG"),
+    super(import.meta, {
+      ...telemetry,
+      defaultAttributes: {
+        ...(telemetry?.defaultAttributes ?? {}),
+        loggingPackages: packages,
       },
-      loggers: {
-        default: {
-          level: (Deno.env.get("LOGGING_DEFAULT_LEVEL") as LevelName) ||
-            "DEBUG",
-          handlers: ["console"],
-        },
-
-        ...loggingPackages.reduce((acc, name) => {
-          const logLevelName = Deno.env.get("LOGGING_PACKAGE_LEVEL") ||
-            Deno.env.get("LOGGING_DEFAULT_LEVEL") ||
-            "DEBUG";
-
-          acc[name] = {
-            level: logLevelName as LevelName,
-            handlers: ["console"],
-          };
-          return acc;
-        }, {} as Record<string, LoggerConfig>),
-      },
-    } as LogConfig;
-
-    super(import.meta, setupConfig);
+    });
   }
 }

@@ -1,5 +1,5 @@
-import { EaCDistributedFileSystemAsCode, EaCDistributedFileSystemDetails, getPackageLoggerSync, Logger } from "./.deps.ts";
-import { DFSFileInfo } from "./DFSFileInfo.ts";
+import { DFSFileInfo, getPackageLoggerSync, TelemetryLogger } from "./.deps.ts";
+import { EaCDistributedFileSystemDetails } from "../_/EaCDistributedFileSystemDetails.ts";
 import { IDFSFileHandler } from "./IDFSFileHandler.ts";
 
 /**
@@ -7,9 +7,10 @@ import { IDFSFileHandler } from "./IDFSFileHandler.ts";
  * Concrete implementations must provide method implementations.
  */
 export abstract class DFSFileHandler<
-  TDetails extends EaCDistributedFileSystemDetails = EaCDistributedFileSystemDetails,
+  TDetails extends EaCDistributedFileSystemDetails =
+    EaCDistributedFileSystemDetails,
 > implements IDFSFileHandler {
-  protected readonly logger: Logger;
+  protected readonly logger: TelemetryLogger;
 
   /**
    * Creates an instance of `FetchDFSFileHandler`.
@@ -18,7 +19,7 @@ export abstract class DFSFileHandler<
   public constructor(
     protected dfsLookup: string,
     protected details: TDetails,
-    logger?: Logger,
+    logger?: TelemetryLogger,
   ) {
     this.logger = logger ?? getPackageLoggerSync(import.meta);
   }

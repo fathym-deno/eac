@@ -1,12 +1,13 @@
-import { EaCDistributedFileSystemAsCode, EaCNPMDistributedFileSystemDetails } from "./.deps.ts";
-import { DFSFileInfo } from "./DFSFileInfo.ts";
+import { DFSFileInfo } from "./.deps.ts";
+import { EaCNPMDistributedFileSystemDetails } from "../_/EaCNPMDistributedFileSystemDetails.ts";
 import { FetchDFSFileHandler } from "./FetchDFSFileHandler.ts";
 import { toText } from "jsr:@std/streams@1.0.9/to-text";
 
 /**
  * Implements `DFSFileHandler` for NPM-based file storage via Skypack CDN.
  */
-export class NPMFetchDFSFileHandler extends FetchDFSFileHandler<EaCNPMDistributedFileSystemDetails> {
+export class NPMFetchDFSFileHandler
+  extends FetchDFSFileHandler<EaCNPMDistributedFileSystemDetails> {
   public override get Root(): string {
     return this.details
       ? new URL(`${this.details.Package}/`, "https://cdn.skypack.dev/")

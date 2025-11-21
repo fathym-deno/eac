@@ -1,7 +1,14 @@
 import { z } from "../.deps.ts";
 import { EaCDetails, EaCDetailsSchema } from "../../eac/EaCDetails.ts";
-import { EaCStateDetails, EaCStateDetailsSchema, isEaCStateDetails } from "./EaCStateDetails.ts";
-import { EaCStateResolverConfiguration, EaCStateResolverConfigurationSchema } from "./EaCStateResolverConfiguration.ts";
+import {
+  EaCStateDetails,
+  EaCStateDetailsSchema,
+  isEaCStateDetails,
+} from "./EaCStateDetails.ts";
+import {
+  EaCStateResolverConfiguration,
+  EaCStateResolverConfigurationSchema,
+} from "./EaCStateResolverConfiguration.ts";
 
 /**
  * Represents the state configuration for Everything as Code (EaC), including resolver configurations

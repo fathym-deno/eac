@@ -1,4 +1,4 @@
-import { EaCMetadataBase } from "../.deps.ts";
+import { EaCMetadataBase } from "../../../eac/EaCMetadataBase.ts";
 import { EaCActuatorCheckRequest } from "./EaCActuatorCheckRequest.ts";
 
 export type EaCActuatorResponse = {

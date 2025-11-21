@@ -1,10 +1,11 @@
-import { EaCRuntimeContext, getPackageLoggerSync, KnownMethod, Logger } from "./.deps.ts";
+import { EaCRuntimeContext } from "../_/EaCRuntimeContext.ts";
+import { getPackageLoggerSync, KnownMethod, TelemetryLogger } from "./.deps.ts";
 import { EaCRuntimeHandler } from "./EaCRuntimeHandler.ts";
 import { EaCRuntimeHandlerSet } from "./EaCRuntimeHandlerSet.ts";
 import { EaCRuntimeHandlers } from "./EaCRuntimeHandlers.ts";
 
 export class EaCRuntimeHandlerPipeline {
-  protected logger: Logger;
+  protected logger: TelemetryLogger;
 
   public Pipeline: (EaCRuntimeHandler | EaCRuntimeHandlers)[];
 
@@ -51,7 +52,8 @@ export class EaCRuntimeHandlerPipeline {
       // );
 
       if (this.Pipeline.length > index) {
-        let handler: EaCRuntimeHandler | EaCRuntimeHandlers | undefined = this.Pipeline[index];
+        let handler: EaCRuntimeHandler | EaCRuntimeHandlers | undefined =
+          this.Pipeline[index];
 
         if (handler && typeof handler !== "function") {
           // this.logger.debug(
@@ -77,7 +79,10 @@ export class EaCRuntimeHandlerPipeline {
             `A Response must be returned from the pipeline for the request ${req.url}`,
           );
         } catch (err) {
-          this.logger.error(err);
+          this.logger.error(
+            `A Response must be returned from the pipeline for the request ${req.url}`,
+            { err },
+          );
         }
 
         return Response.json(

@@ -1,9 +1,12 @@
 // deno-lint-ignore-file no-explicit-any
-import { Logger } from "../_/.deps.ts";
-import { EaCActuatorCheckRequest, EaCActuatorCheckResponse, EaCModuleActuators, EverythingAsCode } from "./.deps.ts";
+import { TelemetryLogger } from "./.deps.ts";
+import { EaCModuleActuators } from "../../eac/EaCModuleActuators.ts";
+import { EverythingAsCode } from "../../eac/EverythingAsCode.ts";
+import { EaCActuatorCheckRequest } from "../actuators/reqres/EaCActuatorCheckRequest.ts";
+import { EaCActuatorCheckResponse } from "../actuators/reqres/EaCActuatorCheckResponse.ts";
 
 export async function callEaCActuatorCheck(
-  logger: Logger,
+  logger: TelemetryLogger,
   loadEaC: (entLookup: string) => Promise<EverythingAsCode>,
   actuators: EaCModuleActuators,
   jwt: string,
@@ -13,7 +16,9 @@ export async function callEaCActuatorCheck(
   const handler = actuators[type]!;
   const url = `${handler.APIPath.replace(/\/+$/, "")}/check`;
 
-  req.ParentEaC = req.EaC?.ParentEnterpriseLookup ? await loadEaC(req.EaC.ParentEnterpriseLookup) : undefined;
+  req.ParentEaC = req.EaC?.ParentEnterpriseLookup
+    ? await loadEaC(req.EaC.ParentEnterpriseLookup)
+    : undefined;
 
   const t0 = Date.now();
   let res: Response | undefined;
@@ -44,8 +49,10 @@ export async function callEaCActuatorCheck(
     try {
       const parsed = JSON.parse(text) as EaCActuatorCheckResponse;
       if (parsed.HasError) {
-        const msg = typeof (parsed as any).Messages?.Error === "string" ? (parsed as any).Messages.Error : Object.keys((parsed as any).Messages ?? {}).join(", ") ||
-          "unknown";
+        const msg = typeof (parsed as any).Messages?.Error === "string"
+          ? (parsed as any).Messages.Error
+          : Object.keys((parsed as any).Messages ?? {}).join(", ") ||
+            "unknown";
         logger.error(`[act-check] type=${type} ERROR: ${msg}`);
       } else {
         logger.info(
@@ -62,7 +69,9 @@ export async function callEaCActuatorCheck(
       return { Complete: true } as EaCActuatorCheckResponse;
     }
   } catch (err) {
-    const safe = err instanceof Error ? { name: err.name, message: err.message, stack: err.stack } : { message: String(err) };
+    const safe = err instanceof Error
+      ? { name: err.name, message: err.message, stack: err.stack }
+      : { message: String(err) };
     logger.error(`[act-check] type=${type} fetch error`, safe);
     return {
       Complete: true,

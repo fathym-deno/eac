@@ -1,7 +1,10 @@
-import { EaCDistributedFileSystemDetails, EaCVirtualCompositeDistributedFileSystemDetails } from "../../../src/dfs/_/.exports.ts";
-import { DFSFileHandler, DFSFileInfo } from "../../../src/dfs/handlers/.exports.ts";
+import { assertEquals, assertRejects, DFSFileInfo } from "../../test.deps.ts";
+import {
+  EaCDistributedFileSystemDetails,
+  EaCVirtualCompositeDistributedFileSystemDetails,
+} from "../../../src/dfs/_/.exports.ts";
+import { DFSFileHandler } from "../../../src/dfs/handlers/.exports.ts";
 import { VirtualCompositeDFSHandler } from "../../../src/dfs/handlers/VirtualCompositeDFSHandler.ts";
-import { assertEquals, assertRejects, assertThrows } from "../../test.deps.ts";
 
 type MockDetails = EaCDistributedFileSystemDetails<"Mock">;
 

@@ -2,7 +2,6 @@ export * from "./AzureBlobDFSFileHandler.ts";
 export * from "./DenoKVDFSFileHandler.ts";
 export * from "./DFSFileHandler.ts";
 export * from "./DFSFileHandlerResolver.ts";
-export * from "./DFSFileInfo.ts";
 export * from "./ESMFetchDFSFileHandler.ts";
 export * from "./FetchDFSFileHandler.ts";
 export * from "./IDFSFileHandler.ts";

@@ -1,4 +1,4 @@
-import { EverythingAsCode } from "./.deps.ts";
+import { EverythingAsCode } from "../../eac/EverythingAsCode.ts";
 import { EaCRuntimePlugin } from "./EaCRuntimePlugin.ts";
 
 export type EaCRuntimePluginDef<

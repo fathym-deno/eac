@@ -1,5 +1,8 @@
 import { z } from "./.deps.ts";
-import { EaCVertexDetails, EaCVertexDetailsSchema } from "./EaCVertexDetails.ts";
+import {
+  EaCVertexDetails,
+  EaCVertexDetailsSchema,
+} from "./EaCVertexDetails.ts";
 
 /**
  * EaC enterprise details.

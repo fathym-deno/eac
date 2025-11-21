@@ -1,6 +1,12 @@
 import { z } from "./.deps.ts";
-import { EaCDistributedFileSystemAsCode, EaCDistributedFileSystemAsCodeSchema } from "./EaCDistributedFileSystemAsCode.ts";
-import { DistributedFileSystemOptions, DistributedFileSystemOptionsSchema } from "./DistributedFileSystemOptions.ts";
+import {
+  EaCDistributedFileSystemAsCode,
+  EaCDistributedFileSystemAsCodeSchema,
+} from "./EaCDistributedFileSystemAsCode.ts";
+import {
+  DistributedFileSystemOptions,
+  DistributedFileSystemOptionsSchema,
+} from "./DistributedFileSystemOptions.ts";
 
 /**
  * Represents the Everything as Code (EaC) Distributed File System (DFS) structure.

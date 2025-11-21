@@ -1,6 +1,10 @@
 import { z } from "./.deps.ts";
-import { EaCDetails, EaCDetailsSchema } from "./.deps.ts";
-import { EaCDistributedFileSystemDetails, EaCDistributedFileSystemDetailsSchema, isEaCDistributedFileSystemDetails } from "./EaCDistributedFileSystemDetails.ts";
+import { EaCDetails, EaCDetailsSchema } from "../../eac/EaCDetails.ts";
+import {
+  EaCDistributedFileSystemDetails,
+  EaCDistributedFileSystemDetailsSchema,
+  isEaCDistributedFileSystemDetails,
+} from "./EaCDistributedFileSystemDetails.ts";
 
 /**
  * Represents an Everything as Code (EaC) Distributed File System (DFS).

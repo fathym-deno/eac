@@ -1,5 +1,12 @@
 import { DFSFileInfo, FathymWorkerClient } from "./.deps.ts";
-import { EaCDistributedFileSystemWorkerConfig, EaCDistributedFileSystemWorkerMessage, EaCDistributedFileSystemWorkerMessageGetFileInfoPayload, EaCDistributedFileSystemWorkerMessageLoadAllPathsPayload, EaCDistributedFileSystemWorkerMessageRemoveFilePayload, EaCDistributedFileSystemWorkerMessageWriteFilePayload } from "./EaCDistributedFileSystemWorkerMessage.ts";
+import {
+  EaCDistributedFileSystemWorkerConfig,
+  EaCDistributedFileSystemWorkerMessage,
+  EaCDistributedFileSystemWorkerMessageGetFileInfoPayload,
+  EaCDistributedFileSystemWorkerMessageLoadAllPathsPayload,
+  EaCDistributedFileSystemWorkerMessageRemoveFilePayload,
+  EaCDistributedFileSystemWorkerMessageWriteFilePayload,
+} from "./EaCDistributedFileSystemWorkerMessage.ts";
 import { EaCDistributedFileSystemWorkerMessageTypes } from "./EaCDistributedFileSystemWorkerMessageTypes.ts";
 
 export class EaCDistributedFileSystemWorkerClient extends FathymWorkerClient<

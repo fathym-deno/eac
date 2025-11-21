@@ -1,6 +1,5 @@
 import { JSRFetchDFSFileHandler } from "../../../src/dfs/handlers/.exports.ts";
-import { EaCJSRDistributedFileSystemDetails } from "../../../src/dfs/resolvers/.deps.ts";
-import { assertEquals, assertRejects, assertThrows } from "../../test.deps.ts";
+import { assertEquals, assertRejects } from "../../test.deps.ts";
 
 /**
  * Test Suite for JSRFetchDFSFileHandler

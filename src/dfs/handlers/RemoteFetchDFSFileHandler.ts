@@ -1,11 +1,12 @@
-import { denoGraph, EaCDistributedFileSystemAsCode, EaCESMDistributedFileSystemDetails, EaCRemoteDistributedFileSystemDetails, loadDenoConfig, path } from "./.deps.ts";
+import { DFSFileInfo } from "./.deps.ts";
+import { EaCRemoteDistributedFileSystemDetails } from "../_/EaCRemoteDistributedFileSystemDetails.ts";
 import { FetchDFSFileHandler } from "./FetchDFSFileHandler.ts";
-import { DFSFileInfo } from "./DFSFileInfo.ts";
 
 /**
  * Implements `DFSFileHandler` for ESM-based file systems.
  */
-export class RemoteFetchDFSFileHandler extends FetchDFSFileHandler<EaCRemoteDistributedFileSystemDetails> {
+export class RemoteFetchDFSFileHandler
+  extends FetchDFSFileHandler<EaCRemoteDistributedFileSystemDetails> {
   public get Root(): string {
     let fileRoot: string;
     try {

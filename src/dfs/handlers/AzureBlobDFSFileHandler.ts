@@ -1,12 +1,23 @@
 // deno-lint-ignore-file no-empty
-import { BlobSASPermissions, BlobServiceClient, Buffer, EaCAzureBlobStorageDistributedFileSystemDetails, EaCDistributedFileSystemAsCode, generateBlobSASQueryParameters, getFileCheckPathsToProcess, Readable, StorageSharedKeyCredential, withDFSCache } from "./.deps.ts";
+import {
+  BlobSASPermissions,
+  BlobServiceClient,
+  Buffer,
+  DFSFileInfo,
+  generateBlobSASQueryParameters,
+  Readable,
+  StorageSharedKeyCredential,
+} from "./.deps.ts";
+import { EaCAzureBlobStorageDistributedFileSystemDetails } from "../_/EaCAzureBlobStorageDistributedFileSystemDetails.ts";
+import { getFileCheckPathsToProcess } from "../utils/getFileCheckPathsToProcess.ts";
+import { withDFSCache } from "../utils/withDFSCache.ts";
 import { DFSFileHandler } from "./DFSFileHandler.ts";
-import { DFSFileInfo } from "./DFSFileInfo.ts";
 
 /**
  * Implements `DFSFileHandler` for Azure Blob Storage.
  */
-export class AzureBlobDFSFileHandler extends DFSFileHandler<EaCAzureBlobStorageDistributedFileSystemDetails> {
+export class AzureBlobDFSFileHandler
+  extends DFSFileHandler<EaCAzureBlobStorageDistributedFileSystemDetails> {
   protected blobPaths: string[] = [];
 
   protected readonly containerClient: ReturnType<
@@ -210,7 +221,11 @@ export class AzureBlobDFSFileHandler extends DFSFileHandler<EaCAzureBlobStorageD
       filePaths.push(`${blob.name.slice(this.Root.length)}`);
     }
 
-    this.blobPaths = filePaths.map((filePath) => this.Root && filePath.startsWith(this.Root) ? filePath.replace(this.Root, "") : filePath);
+    this.blobPaths = filePaths.map((filePath) =>
+      this.Root && filePath.startsWith(this.Root)
+        ? filePath.replace(this.Root, "")
+        : filePath
+    );
   }
 
   /**

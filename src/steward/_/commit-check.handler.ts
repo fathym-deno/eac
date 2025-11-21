@@ -1,7 +1,19 @@
 // deno-lint-ignore-file no-explicit-any
-import { callEaCActuatorCheck, EaCActuatorCheckRequest, EaCActuatorErrorResponse, EaCStatus, EaCStatusProcessingTypes, enqueueAtomicOperation, EverythingAsCode, listenQueueAtomic, Logger, markEaCProcessed, merge } from "./.deps.ts";
+import {
+  enqueueAtomicOperation,
+  listenQueueAtomic,
+  merge,
+  TelemetryLogger,
+} from "./.deps.ts";
+import { EverythingAsCode } from "../../eac/EverythingAsCode.ts";
+import { EaCActuatorCheckRequest } from "../actuators/reqres/EaCActuatorCheckRequest.ts";
 import { EaCCommitCheckRequest } from "./reqres/EaCCommitCheckRequest.ts";
 import { EaCCommitRequest } from "./reqres/EaCCommitRequest.ts";
+import { markEaCProcessed } from "../utils/markEaCProcessed.ts";
+import { EaCStatus } from "../status/EaCStatus.ts";
+import { EaCStatusProcessingTypes } from "../status/EaCStatusProcessingTypes.ts";
+import { EaCActuatorErrorResponse } from "../actuators/reqres/EaCActuatorErrorResponse.ts";
+import { callEaCActuatorCheck } from "../utils/callEaCActuatorCheck.ts";
 
 // ---------- helpers ----------
 const now = () => Date.now();
@@ -21,13 +33,16 @@ const summarizeMsgs = (m: Record<string, unknown> | undefined) =>
 const summarizeErrors = (errs: EaCActuatorErrorResponse[]) => {
   if (!errs?.length) return "none";
   const first = errs[0];
-  const firstMsg = typeof first?.Messages?.Error === "string" && first.Messages.Error !== "{}" ? first.Messages.Error : summarizeMsgs(first?.Messages);
+  const firstMsg =
+    typeof first?.Messages?.Error === "string" && first.Messages.Error !== "{}"
+      ? first.Messages.Error
+      : summarizeMsgs(first?.Messages);
   return `${errs.length} error(s); first=${firstMsg}`;
 };
 // --------------------------------
 
 export async function handleEaCCommitCheckRequest(
-  logger: Logger,
+  logger: TelemetryLogger,
   eacKv: Deno.Kv,
   commitKv: Deno.Kv,
   commitCheckReq: EaCCommitCheckRequest,
@@ -38,7 +53,8 @@ export async function handleEaCCommitCheckRequest(
     `[check ${commitId}] start checks=${commitCheckReq.Checks.length}`,
   );
 
-  const { EnterpriseLookup, ParentEnterpriseLookup, Actuators, Details } = commitCheckReq.EaC;
+  const { EnterpriseLookup, ParentEnterpriseLookup, Actuators, Details } =
+    commitCheckReq.EaC;
 
   const statusKey = ["EaC", "Status", EnterpriseLookup!, "ID", commitId];
 
@@ -94,7 +110,11 @@ export async function handleEaCCommitCheckRequest(
       if (checkResp.HasError) {
         errors.push({ HasError: true, Messages: checkResp.Messages });
         logger.error(
-          `[check ${commitId}] (#${idx}) ${label} ERROR: ${typeof checkResp.Messages?.Error === "string" ? checkResp.Messages.Error : msgSummary}`,
+          `[check ${commitId}] (#${idx}) ${label} ERROR: ${
+            typeof checkResp.Messages?.Error === "string"
+              ? checkResp.Messages.Error
+              : msgSummary
+          }`,
         );
       }
 
@@ -124,16 +144,19 @@ export async function handleEaCCommitCheckRequest(
   }
 
   logger.info(
-    `[check ${commitId}] result processing=${EaCStatusProcessingTypes[status.value!.Processing]} ` +
-      `pendingChecks=${allChecks.length} errors=${errors.length} durationMs=${ms(t0)}`,
+    `[check ${commitId}] result processing=${
+      EaCStatusProcessingTypes[status.value!.Processing]
+    } ` +
+      `pendingChecks=${allChecks.length} errors=${errors.length} durationMs=${
+        ms(t0)
+      }`,
   );
   logger.debug(
-    () =>
-      `[check ${commitId}] messages keys=[${
-        summarizeMsgs(
-          status.value!.Messages,
-        )
-      }]`,
+    `[check ${commitId}] messages keys=[${
+      summarizeMsgs(
+        status.value!.Messages,
+      )
+    }]`,
   );
 
   await listenQueueAtomic(
@@ -158,15 +181,14 @@ export async function handleEaCCommitCheckRequest(
           `[check ${commitId}] requeued ${allChecks.length} check(s) for 10s delay`,
         );
         logger.debug(
-          () =>
-            `[check ${commitId}] requeue detail: ${
-              safeJson(
-                allChecks.map((c) => ({
-                  key: (c as any).Key,
-                  type: (c as any).Type,
-                })),
-              )
-            }`,
+          `[check ${commitId}] requeue detail: ${
+            safeJson(
+              allChecks.map((c) => ({
+                key: (c as any).Key,
+                type: (c as any).Type,
+              })),
+            )
+          }`,
         );
       } else if (errors.length > 0) {
         op = markEaCProcessed(EnterpriseLookup!, op);
@@ -178,9 +200,7 @@ export async function handleEaCCommitCheckRequest(
             )
           }`,
         );
-        logger.debug(
-          () => `[check ${commitId}] errors detail: ${safeJson(errors)}`,
-        );
+        logger.debug(`[check ${commitId}] errors detail: ${safeJson(errors)}`);
       } else {
         let saveEaC = { ...commitCheckReq.EaC } as EverythingAsCode;
 

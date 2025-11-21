@@ -1,6 +1,11 @@
 // deno-lint-ignore-file no-explicit-any
 import { EaCDetails } from "../eac/EaCDetails.ts";
-import { $FluentTag, EaCVertexDetails, HasTypeCheck, IoCContainer, IsNativeType, IsObject, IsObjectNotNative } from "./.deps.ts";
+import {
+  $FluentTag,
+  EaCVertexDetails,
+  HasTypeCheck,
+  IsObjectNotNative,
+} from "./.deps.ts";
 
 /**
  * `EverythingAsCodeTags<T>` is a recursive type that applies tags to all properties of type `T`.
@@ -25,7 +30,8 @@ import { $FluentTag, EaCVertexDetails, HasTypeCheck, IoCContainer, IsNativeType,
  * type Tagged = EverythingAsCodeTags<Example>;
  * ```
  */
-export type EverythingAsCodeTags<T> = true extends IsObjectNotNative<T> ? EaCObjectTags<T>
+export type EverythingAsCodeTags<T> = true extends IsObjectNotNative<T>
+  ? EaCObjectTags<T>
   : T;
 
 type EaCObjectTags<T> =
@@ -56,7 +62,8 @@ type EaCAsCodeTags<T> = [
     [
       K in keyof T as K extends string ? K
         : never
-    ]: "Details" extends keyof T[K] ? EverythingAsCodeTags<T[K] & $FluentTag<"Methods", "Object">>
+    ]: "Details" extends keyof T[K]
+      ? EverythingAsCodeTags<T[K] & $FluentTag<"Methods", "Object">>
       : {};
   }
   : {};

@@ -1,6 +1,5 @@
-import { EaCRemoteDistributedFileSystemDetails } from "../../../src/dfs/handlers/.deps.ts";
-import { RemoteFetchDFSFileHandler } from "../../../src/dfs/handlers/RemoteFetchDFSFileHandler.ts";
 import { assertEquals, assertRejects } from "../../test.deps.ts";
+import { RemoteFetchDFSFileHandler } from "../../../src/dfs/handlers/RemoteFetchDFSFileHandler.ts";
 
 /**
  * Test Suite for FetchDFSFileHandler
