@@ -8,7 +8,6 @@ export type {
   RemoveIndexSignatures,
   ValueType,
 } from "jsr:@fathym/common@0.2.289-integration/types";
-// } from '../../../reference-architecture/src/common/types/.exports.ts';
 
 export {
   type $FluentTag,
@@ -19,7 +18,6 @@ export {
   type FluentBuilderRoot,
   type SelectFluentMethods,
 } from "jsr:@fathym/runtime@0.0.8-integration/fluent";
-// } from '../../../reference-architecture/src/fluent/.exports.ts';
 
 export * from "jsr:@fathym/ioc@0.0.21";
 
