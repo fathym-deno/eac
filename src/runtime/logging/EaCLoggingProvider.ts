@@ -15,7 +15,7 @@ export class EaCLoggingProvider extends LoggingProvider {
       "@fathym/eac",
       "@fathym/msal",
     ];
-    
+
     const packages = override
       ? loggingPackages ?? []
       : [...defaults, ...(loggingPackages ?? [])];

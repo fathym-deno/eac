@@ -27,13 +27,22 @@ export type EaCDenoKVDistributedFileSystemDetails = {
  * Schema for `EaCDenoKVDistributedFileSystemDetails`.
  * Ensures `Type` is explicitly `"DenoKV"` while extending `EaCDistributedFileSystemDetailsSchema`.
  */
-export const EaCDenoKVDistributedFileSystemDetailsSchema: z.ZodObject<{
-  Type: z.ZodLiteral<"DenoKV">;
-  DatabaseLookup: z.ZodString;
-  FileRoot: z.ZodString;
-  SegmentPath: z.ZodOptional<z.ZodString>;
-  RootKey: z.ZodArray<z.ZodUnion<[z.ZodString, z.ZodNumber]>>;
-}> = EaCDistributedFileSystemDetailsSchema.extend({
+export const EaCDenoKVDistributedFileSystemDetailsSchema: z.ZodObject<
+  {
+    CacheDBLookup: z.ZodOptional<z.ZodString>;
+    CacheSeconds: z.ZodOptional<z.ZodNumber>;
+    DefaultFile: z.ZodOptional<z.ZodString>;
+    Extensions: z.ZodOptional<z.ZodArray<z.ZodString>>;
+    UseCascading: z.ZodOptional<z.ZodBoolean>;
+    WorkerPath: z.ZodOptional<z.ZodString>;
+    Type: z.ZodLiteral<"DenoKV">;
+    DatabaseLookup: z.ZodString;
+    FileRoot: z.ZodString;
+    SegmentPath: z.ZodOptional<z.ZodString>;
+    RootKey: z.ZodArray<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>;
+  },
+  z.core.$strip
+> = EaCDistributedFileSystemDetailsSchema.extend({
   Type: z.literal("DenoKV").describe("The fixed type identifier for this DFS."),
   DatabaseLookup: z.string().describe("The lookup key for the database."),
   FileRoot: z.string().describe("The root path for file storage."),

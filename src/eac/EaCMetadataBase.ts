@@ -12,10 +12,7 @@ export type EaCMetadataBase = Record<string, unknown>;
  */
 export const EaCMetadataBaseSchema: z.ZodObject<
   {},
-  "strip",
-  z.ZodUnknown,
-  z.objectOutputType<{}, z.ZodUnknown, "strip">,
-  z.objectInputType<{}, z.ZodUnknown, "strip">
+  z.core.$catchall<z.ZodUnknown>
 > = z
   .object({})
   .catchall(z.unknown()) // Allows arbitrary key-value pairs for extensibility

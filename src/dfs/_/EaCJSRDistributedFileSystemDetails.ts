@@ -24,12 +24,21 @@ export type EaCJSRDistributedFileSystemDetails = {
  * Schema for `EaCJSRDistributedFileSystemDetails`.
  * Ensures `Type` is explicitly `"JSR"` while extending `EaCDistributedFileSystemDetailsSchema`.
  */
-export const EaCJSRDistributedFileSystemDetailsSchema: z.ZodObject<{
-  Type: z.ZodLiteral<"JSR">;
-  FileRoot: z.ZodOptional<z.ZodString>;
-  Package: z.ZodString;
-  Version: z.ZodOptional<z.ZodString>;
-}> = EaCDistributedFileSystemDetailsSchema.extend({
+export const EaCJSRDistributedFileSystemDetailsSchema: z.ZodObject<
+  {
+    CacheDBLookup: z.ZodOptional<z.ZodString>;
+    CacheSeconds: z.ZodOptional<z.ZodNumber>;
+    DefaultFile: z.ZodOptional<z.ZodString>;
+    Extensions: z.ZodOptional<z.ZodArray<z.ZodString>>;
+    UseCascading: z.ZodOptional<z.ZodBoolean>;
+    WorkerPath: z.ZodOptional<z.ZodString>;
+    Type: z.ZodLiteral<"JSR">;
+    FileRoot: z.ZodOptional<z.ZodString>;
+    Package: z.ZodString;
+    Version: z.ZodOptional<z.ZodString>;
+  },
+  z.core.$strip
+> = EaCDistributedFileSystemDetailsSchema.extend({
   Type: z.literal("JSR").describe("The fixed type identifier for this DFS."),
   FileRoot: z
     .string()

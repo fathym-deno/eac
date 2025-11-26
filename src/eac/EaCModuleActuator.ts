@@ -17,14 +17,8 @@ export type EaCModuleActuator = {
  * ensuring consistency for API paths and processing order.
  */
 export const EaCModuleActuatorSchema: z.ZodObject<
-  {
-    APIPath: z.ZodString;
-    Order: z.ZodNumber;
-  },
-  "strip",
-  z.ZodTypeAny,
-  EaCModuleActuator,
-  EaCModuleActuator
+  { APIPath: z.ZodString; Order: z.ZodNumber },
+  z.core.$strip
 > = z
   .object({
     APIPath: z
@@ -62,8 +56,6 @@ export function isEaCModuleActuator(
  * @throws If the object does not conform to the `EaCModuleActuator` schema.
  * @returns The parsed `EaCModuleActuator` object.
  */
-export function parseEaCModuleActuator(
-  actuator: unknown,
-): EaCModuleActuator {
+export function parseEaCModuleActuator(actuator: unknown): EaCModuleActuator {
   return EaCModuleActuatorSchema.parse(actuator);
 }

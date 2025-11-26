@@ -17,14 +17,8 @@ export type EaCVertexDetails = {
  * This schema validates the essential details of a vertex in the EaC graph.
  */
 export const EaCVertexDetailsSchema: z.ZodObject<
-  {
-    Description: z.ZodOptional<z.ZodString>;
-    Name: z.ZodOptional<z.ZodString>;
-  },
-  "strip",
-  z.ZodTypeAny,
-  EaCVertexDetails,
-  EaCVertexDetails
+  { Description: z.ZodOptional<z.ZodString>; Name: z.ZodOptional<z.ZodString> },
+  z.core.$strip
 > = EaCMetadataBaseSchema.merge(
   z.object({
     Description: z

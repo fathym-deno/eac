@@ -4,4 +4,4 @@ export type {
   IsUndefined,
   RemoveIndexSignatures,
   ValueType,
-} from "jsr:@fathym/common@0.2.297/types";
+} from "jsr:@fathym/common@0.2.298/types";

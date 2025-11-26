@@ -9,6 +9,6 @@ export {
   type FathymWorkerConfig,
   type FathymWorkerMessage,
   FathymWorkerMessageTypes,
-} from "jsr:@fathym/runtime@0.0.8-integration/workers";
+} from "jsr:@fathym/runtime@0.0.11/workers";
 
 export { IoCContainer } from "jsr:@fathym/ioc@0.0.21";

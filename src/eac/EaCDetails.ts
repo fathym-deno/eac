@@ -26,12 +26,17 @@ export type EaCDetails<TDetails extends EaCVertexDetails> = {
  */
 export const EaCDetailsSchema: z.ZodObject<
   {
-    Details: z.ZodOptional<typeof EaCVertexDetailsSchema>;
+    Details: z.ZodOptional<
+      z.ZodObject<
+        {
+          Description: z.ZodOptional<z.ZodString>;
+          Name: z.ZodOptional<z.ZodString>;
+        },
+        z.core.$strip
+      >
+    >;
   },
-  "strip",
-  z.ZodTypeAny,
-  EaCDetails<EaCVertexDetails>,
-  EaCDetails<EaCVertexDetails>
+  z.core.$catchall<z.ZodUnknown>
 > = EaCMetadataBaseSchema.merge(
   z
     .object({

@@ -15,13 +15,8 @@ export type DistributedFileSystemOptions = {
  * Ensures that DFS-specific options conform to expected types.
  */
 export const DistributedFileSystemOptionsSchema: z.ZodObject<
-  {
-    PreventWorkers: z.ZodOptional<z.ZodBoolean>;
-  },
-  "strip",
-  z.ZodTypeAny,
-  DistributedFileSystemOptions,
-  DistributedFileSystemOptions
+  { PreventWorkers: z.ZodOptional<z.ZodBoolean> },
+  z.core.$strip
 > = z
   .object({
     PreventWorkers: z

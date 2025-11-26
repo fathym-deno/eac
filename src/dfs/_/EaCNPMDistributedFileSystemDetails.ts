@@ -21,11 +21,20 @@ export type EaCNPMDistributedFileSystemDetails = {
  * Schema for `EaCNPMDistributedFileSystemDetails`.
  * Ensures `Type` is explicitly `"NPM"` while extending `EaCDistributedFileSystemDetailsSchema`.
  */
-export const EaCNPMDistributedFileSystemDetailsSchema: z.ZodObject<{
-  Type: z.ZodLiteral<"NPM">;
-  Package: z.ZodString;
-  Version: z.ZodString;
-}> = EaCDistributedFileSystemDetailsSchema.extend({
+export const EaCNPMDistributedFileSystemDetailsSchema: z.ZodObject<
+  {
+    CacheDBLookup: z.ZodOptional<z.ZodString>;
+    CacheSeconds: z.ZodOptional<z.ZodNumber>;
+    DefaultFile: z.ZodOptional<z.ZodString>;
+    Extensions: z.ZodOptional<z.ZodArray<z.ZodString>>;
+    UseCascading: z.ZodOptional<z.ZodBoolean>;
+    WorkerPath: z.ZodOptional<z.ZodString>;
+    Type: z.ZodLiteral<"NPM">;
+    Package: z.ZodString;
+    Version: z.ZodString;
+  },
+  z.core.$strip
+> = EaCDistributedFileSystemDetailsSchema.extend({
   Type: z.literal("NPM").describe("The fixed type identifier for this DFS."),
   Package: z.string().describe("The name of the NPM package."),
   Version: z.string().describe("The version of the NPM package to use."),

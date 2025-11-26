@@ -28,10 +28,7 @@ export const EaCAPIJWTPayloadSchema: z.ZodObject<
     JWT: z.ZodOptional<z.ZodString>;
     Username: z.ZodOptional<z.ZodString>;
   },
-  "strip",
-  z.ZodTypeAny,
-  EaCAPIJWTPayload,
-  EaCAPIJWTPayload
+  z.core.$catchall<z.ZodUnknown>
 > = z
   .object({
     EnterpriseLookup: z

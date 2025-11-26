@@ -32,10 +32,7 @@ export const EaCUserRecordSchema: z.ZodObject<
     ParentEnterpriseLookup: z.ZodString;
     Username: z.ZodString;
   },
-  "strip",
-  z.ZodTypeAny,
-  EaCUserRecord,
-  EaCUserRecord
+  z.core.$strip
 > = z
   .object({
     EnterpriseLookup: z

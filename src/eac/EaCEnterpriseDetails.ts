@@ -18,14 +18,8 @@ export type EaCEnterpriseDetails = EaCVertexDetails;
  * Validates the structure for enterprise details, inheriting all properties from `EaCVertexDetailsSchema`.
  */
 export const EaCEnterpriseDetailsSchema: z.ZodObject<
-  {
-    Description: z.ZodOptional<z.ZodString>;
-    Name: z.ZodOptional<z.ZodString>;
-  },
-  "strip",
-  z.ZodTypeAny,
-  EaCEnterpriseDetails,
-  EaCEnterpriseDetails
+  { Description: z.ZodOptional<z.ZodString>; Name: z.ZodOptional<z.ZodString> },
+  z.core.$strip
 > = EaCVertexDetailsSchema.describe(
   "Schema for EaC enterprise details, defining core properties like `Name` and `Description` for clear and consistent enterprise-level documentation and categorization within the Everything as Code framework.",
 );

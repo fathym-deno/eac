@@ -36,15 +36,30 @@ export type EverythingAsCode = {
  */
 export const EverythingAsCodeSchema: z.ZodObject<
   {
-    Actuators: z.ZodOptional<typeof EaCModuleActuatorsSchema>;
-    Details: z.ZodOptional<typeof EaCEnterpriseDetailsSchema>;
+    Actuators: z.ZodOptional<
+      z.ZodObject<
+        { $Force: z.ZodOptional<z.ZodBoolean> },
+        z.core.$catchall<
+          z.ZodObject<
+            { APIPath: z.ZodString; Order: z.ZodNumber },
+            z.core.$strip
+          >
+        >
+      >
+    >;
+    Details: z.ZodOptional<
+      z.ZodObject<
+        {
+          Description: z.ZodOptional<z.ZodString>;
+          Name: z.ZodOptional<z.ZodString>;
+        },
+        z.core.$strip
+      >
+    >;
     EnterpriseLookup: z.ZodOptional<z.ZodString>;
     ParentEnterpriseLookup: z.ZodOptional<z.ZodString>;
   },
-  "strip",
-  z.ZodTypeAny,
-  EverythingAsCode,
-  EverythingAsCode
+  z.core.$strip
 > = EaCMetadataBaseSchema.merge(
   z.object({
     Actuators: EaCModuleActuatorsSchema.optional().describe(

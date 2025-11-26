@@ -18,10 +18,19 @@ export type EaCLocalDistributedFileSystemDetails = {
  * Schema for `EaCLocalDistributedFileSystemDetails`.
  * Ensures `Type` is explicitly `"Local"` while extending `EaCDistributedFileSystemDetailsSchema`.
  */
-export const EaCLocalDistributedFileSystemDetailsSchema: z.ZodObject<{
-  Type: z.ZodLiteral<"Local">;
-  FileRoot: z.ZodString;
-}> = EaCDistributedFileSystemDetailsSchema.extend({
+export const EaCLocalDistributedFileSystemDetailsSchema: z.ZodObject<
+  {
+    CacheDBLookup: z.ZodOptional<z.ZodString>;
+    CacheSeconds: z.ZodOptional<z.ZodNumber>;
+    DefaultFile: z.ZodOptional<z.ZodString>;
+    Extensions: z.ZodOptional<z.ZodArray<z.ZodString>>;
+    UseCascading: z.ZodOptional<z.ZodBoolean>;
+    WorkerPath: z.ZodOptional<z.ZodString>;
+    Type: z.ZodLiteral<"Local">;
+    FileRoot: z.ZodString;
+  },
+  z.core.$strip
+> = EaCDistributedFileSystemDetailsSchema.extend({
   Type: z.literal("Local").describe("The fixed type identifier for this DFS."),
   FileRoot: z.string().describe("The root path in the local file system."),
 }).describe(

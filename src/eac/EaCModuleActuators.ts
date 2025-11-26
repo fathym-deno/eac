@@ -19,13 +19,10 @@ export type EaCModuleActuators = {
  * Validates a collection of EaC module actuators with a `$Force` flag and dynamic keys mapping to individual `EaCModuleActuator` configurations.
  */
 export const EaCModuleActuatorsSchema: z.ZodObject<
-  {
-    $Force: z.ZodOptional<z.ZodBoolean>;
-  },
-  "strip",
-  z.ZodTypeAny,
-  EaCModuleActuators,
-  EaCModuleActuators
+  { $Force: z.ZodOptional<z.ZodBoolean> },
+  z.core.$catchall<
+    z.ZodObject<{ APIPath: z.ZodString; Order: z.ZodNumber }, z.core.$strip>
+  >
 > = z
   .object({
     $Force: z

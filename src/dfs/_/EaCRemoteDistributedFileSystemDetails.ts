@@ -18,10 +18,19 @@ export type EaCRemoteDistributedFileSystemDetails = {
  * Schema for `EaCRemoteDistributedFileSystemDetails`.
  * Ensures `Type` is explicitly `"Remote"` while extending `EaCDistributedFileSystemDetailsSchema`.
  */
-export const EaCRemoteDistributedFileSystemDetailsSchema: z.ZodObject<{
-  Type: z.ZodLiteral<"Remote">;
-  RemoteRoot: z.ZodString;
-}> = EaCDistributedFileSystemDetailsSchema.extend({
+export const EaCRemoteDistributedFileSystemDetailsSchema: z.ZodObject<
+  {
+    CacheDBLookup: z.ZodOptional<z.ZodString>;
+    CacheSeconds: z.ZodOptional<z.ZodNumber>;
+    DefaultFile: z.ZodOptional<z.ZodString>;
+    Extensions: z.ZodOptional<z.ZodArray<z.ZodString>>;
+    UseCascading: z.ZodOptional<z.ZodBoolean>;
+    WorkerPath: z.ZodOptional<z.ZodString>;
+    Type: z.ZodLiteral<"Remote">;
+    RemoteRoot: z.ZodString;
+  },
+  z.core.$strip
+> = EaCDistributedFileSystemDetailsSchema.extend({
   Type: z.literal("Remote").describe("The fixed type identifier for this DFS."),
   RemoteRoot: z.string().describe("The root URL/path for the remote DFS."),
 }).describe(

@@ -10,7 +10,7 @@ export type AllAnyTypes = "All" | "Any";
  * Validates that the value is one of the `AllAnyTypes` union type values.
  */
 export const AllAnyTypesSchema: z.ZodUnion<
-  [z.ZodLiteral<"All">, z.ZodLiteral<"Any">]
+  readonly [z.ZodLiteral<"All">, z.ZodLiteral<"Any">]
 > = z
   .union([z.literal("All"), z.literal("Any")])
   .describe(

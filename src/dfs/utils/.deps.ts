@@ -1,9 +1,9 @@
 export * as path from "jsr:@std/path@1.0.8";
 export { toText } from "jsr:@std/streams@1.0.9";
 
-export { concatUint8Arrays } from "jsr:@fathym/common@0.2.297/iterables";
-export { establishHeaders } from "jsr:@fathym/common@0.2.297/http";
-export type { TelemetryLogger } from "jsr:@fathym/common@0.2.297/telemetry";
+export { concatUint8Arrays } from "jsr:@fathym/common@0.2.298/iterables";
+export { establishHeaders } from "jsr:@fathym/common@0.2.298/http";
+export type { TelemetryLogger } from "jsr:@fathym/common@0.2.298/telemetry";
 
 export { type DFSFileInfo } from "jsr:@fathym/dfs@0.0.14";
 

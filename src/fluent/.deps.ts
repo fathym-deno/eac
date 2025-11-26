@@ -7,7 +7,7 @@ export type {
   IsUndefined,
   RemoveIndexSignatures,
   ValueType,
-} from "jsr:@fathym/common@0.2.297/types";
+} from "jsr:@fathym/common@0.2.298/types";
 
 export {
   type $FluentTag,
@@ -17,7 +17,7 @@ export {
   type FluentBuilderMethodsHandlers,
   type FluentBuilderRoot,
   type SelectFluentMethods,
-} from "jsr:@fathym/runtime@0.0.8-integration/fluent";
+} from "jsr:@fathym/runtime@0.0.11/fluent";
 
 export * from "jsr:@fathym/ioc@0.0.21";
 
