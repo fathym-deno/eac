@@ -45,7 +45,7 @@
   },
   "imports": {
   "jsr:@fathym/common@0.2.292-integration/build": "../../ref-arch/reference-architecture/src/build/.exports.ts",
-  "jsr:@fathym/dfs@0.0.11-integration": "../../ref-arch/distributed-file-system/src/.exports.ts",
+  "jsr:@fathym/dfs@0.0.12": "../../ref-arch/distributed-file-system/src/.exports.ts",
   "jsr:@fathym/common@0.2.292-integration/log": "../../ref-arch/reference-architecture/src/log/.exports.ts",
   "jsr:@fathym/common@0.2.292-integration/telemetry": "../../ref-arch/reference-architecture/src/telemetry/.exports.ts",
   "jsr:@fathym/common@0.2.292-integration/path": "../../ref-arch/reference-architecture/src/path/.exports.ts",
