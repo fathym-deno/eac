@@ -7,7 +7,7 @@ export type {
   IsUndefined,
   RemoveIndexSignatures,
   ValueType,
-} from "jsr:@fathym/common@0.2.292-integration/types";
+} from "jsr:@fathym/common@0.2.297/types";
 
 export {
   type $FluentTag,
