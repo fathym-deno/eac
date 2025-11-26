@@ -1,4 +1,4 @@
-// import { RemoveIndexSignatures } from "jsr:@fathym/common@0.2.289-integration";
+// import { RemoveIndexSignatures } from "jsr:@fathym/common@0.2.292-integration";
 // import { EaCDistributedFileSystemDetails } from "../modules/dfs/EaCDistributedFileSystemDetails.ts";
 // import { IsRequiredProperty } from "./IsRequiredProperty.ts";
 // import { EaCDistributedFileSystemAsCode } from "../modules/dfs/EaCDistributedFileSystemAsCode.ts";

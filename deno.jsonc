@@ -43,7 +43,23 @@
     "test": "deno test -A tests/tests.ts --coverage=cov",
     "version": "deno run -A jsr:@fathym/common@0/build/version"
   },
-  "imports": {},
+  "imports": {
+  "jsr:@fathym/common@0.2.292-integration/build": "../../ref-arch/reference-architecture/src/build/.exports.ts",
+  "jsr:@fathym/dfs@0.0.11-integration": "../../ref-arch/distributed-file-system/src/.exports.ts",
+  "jsr:@fathym/common@0.2.292-integration/log": "../../ref-arch/reference-architecture/src/log/.exports.ts",
+  "jsr:@fathym/common@0.2.292-integration/telemetry": "../../ref-arch/reference-architecture/src/telemetry/.exports.ts",
+  "jsr:@fathym/common@0.2.292-integration/path": "../../ref-arch/reference-architecture/src/path/.exports.ts",
+  "jsr:@fathym/ioc@0.0.21": "../../ref-arch/ioc/mod.ts",
+  "jsr:@fathym/common@0.2.292-integration/iterables": "../../ref-arch/reference-architecture/src/iterables/.exports.ts",
+  "jsr:@fathym/common@0.2.292-integration/http": "../../ref-arch/reference-architecture/src/http/.exports.ts",
+  "jsr:@fathym/runtime@0.0.8-integration/workers": "../../ref-arch/reference-runtime/src/workers/.exports.ts",
+  "jsr:@fathym/common@0.2.292-integration/third-party/zod": "../../ref-arch/reference-architecture/src/third-party/zod/.exports.ts",
+  "jsr:@fathym/common@0.2.292-integration/types": "../../ref-arch/reference-architecture/src/types/.exports.ts",
+  "jsr:@fathym/runtime@0.0.8-integration/fluent": "../../ref-arch/reference-runtime/src/fluent/.exports.ts",
+  "jsr:@fathym/common@0.2.292-integration/merge": "../../ref-arch/reference-architecture/src/merge/.exports.ts",
+  "jsr:@fathym/common@0.2.292-integration/jwt": "../../ref-arch/reference-architecture/src/jwt/.exports.ts",
+  "jsr:@fathym/runtime@0.0.8-integration/deno-kv": "../../ref-arch/reference-runtime/src/deno-kv/.exports.ts",
+  },
   "lint": {
     "rules": {
       "tags": ["recommended"],
