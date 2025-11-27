@@ -9,7 +9,7 @@ export {
   type DFSFileInfo,
   type IDFSFileHandler as BaseIDFSFileHandler,
   LocalDFSFileHandler as BaseLocalDFSFileHandler,
-} from "jsr:@fathym/dfs@0.0.15-integration";
+} from "jsr:@fathym/dfs@0.0.16";
 export {
   getPackageLogger,
   getPackageLoggerSync,
