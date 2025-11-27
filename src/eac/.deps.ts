@@ -1,1 +1,1 @@
-export { z } from "jsr:@fathym/common@0.2.298/third-party/zod";
+export { z } from "npm:zod@4.1.13";
