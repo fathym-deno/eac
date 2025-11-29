@@ -3,7 +3,6 @@
   "version": "0.2.0",
   "exports": {
     ".": "./src/eac/.exports.ts",
-    "./esbuild": "./src/esbuild/.exports.ts",
     "./fluent": "./src/fluent/.exports.ts",
     "./runtime": "./src/runtime/_/.exports.ts",
     "./runtime/config": "./src/runtime/config/.exports.ts",
