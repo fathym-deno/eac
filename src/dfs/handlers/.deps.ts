@@ -8,8 +8,8 @@ export {
   DFSFileHandler as BaseDFSFileHandler,
   type DFSFileInfo,
   type IDFSFileHandler as BaseIDFSFileHandler,
-} from "jsr:@fathym/dfs@0.0.43";
-export { LocalDFSFileHandler as BaseLocalDFSFileHandler } from "jsr:@fathym/dfs@0.0.43/handlers";
+} from "jsr:@fathym/dfs@0.0.44";
+export { LocalDFSFileHandler as BaseLocalDFSFileHandler } from "jsr:@fathym/dfs@0.0.44/handlers";
 export {
   getPackageLogger,
   getPackageLoggerSync,

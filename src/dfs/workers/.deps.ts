@@ -1,6 +1,6 @@
 export { toArrayBuffer } from "jsr:@std/streams@1.0.9";
 
-export { type DFSFileInfo } from "jsr:@fathym/dfs@0.0.43";
+export { type DFSFileInfo } from "jsr:@fathym/dfs@0.0.44";
 
 export {
   correlateResult,

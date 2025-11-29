@@ -1,5 +1,6 @@
 import {
   buildURLMatch,
+  ESBuild,
   generateDirectoryHash,
   IoCContainer,
   LoggingProvider,
@@ -24,7 +25,6 @@ import { EaCRuntimePlugin } from "../plugins/EaCRuntimePlugin.ts";
 import { EaCRuntimePluginDef } from "../plugins/EaCRuntimePluginDef.ts";
 import { DenoServeProtocolGateway } from "../gateways/DenoServeProtocolGateway.ts";
 import { ProtocolGateway } from "../gateways/ProtocolGateway.ts";
-import { ESBuild } from "../../esbuild/.exports.ts";
 
 export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
   implements EaCRuntime<TEaC> {
