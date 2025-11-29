@@ -44,9 +44,9 @@
     "version": "deno run -A jsr:@fathym/common@0/build/version"
   },
   "imports": {
-    "jsr:@fathym/dfs@0.0.41": "../../ref-arch/distributed-file-system/src/_/.exports.ts",
-    "jsr:@fathym/dfs@0.0.41/handlers": "../../ref-arch/distributed-file-system/src/handlers/.exports.ts",
-    "jsr:@fathym/dfs@0.0.41/utils": "../../ref-arch/distributed-file-system/src/utils/.exports.ts",
+    "jsr:@fathym/dfs@0.0.43": "../../ref-arch/distributed-file-system/src/_/.exports.ts",
+    "jsr:@fathym/dfs@0.0.43/handlers": "../../ref-arch/distributed-file-system/src/handlers/.exports.ts",
+    "jsr:@fathym/dfs@0.0.43/utils": "../../ref-arch/distributed-file-system/src/utils/.exports.ts",
     "jsr:@fathym/eac-azure@0.0.0/dfs": "../../eac-app-runtime/eac-azure/src/dfs/.exports.ts",
     "jsr:@fathym/eac-deno-kv@0.0.0/dfs": "../eac-deno-kv/src/dfs/.exports.ts"
   },
