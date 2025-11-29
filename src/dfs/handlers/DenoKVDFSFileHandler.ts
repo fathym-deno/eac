@@ -1,9 +1,9 @@
-import { DFSFileInfo } from "./.deps.ts";
-import { EaCDenoKVDistributedFileSystemDetails } from "../_/EaCDenoKVDistributedFileSystemDetails.ts";
 import {
+  type DFSFileInfo,
   DenoKVFileStream,
-  DenoKVFileStreamData,
-} from "../utils/DenoKVFileStream.ts";
+  type DenoKVFileStreamData,
+} from "./.deps.ts";
+import { EaCDenoKVDistributedFileSystemDetails } from "../_/EaCDenoKVDistributedFileSystemDetails.ts";
 import { getFileCheckPathsToProcess } from "../utils/getFileCheckPathsToProcess.ts";
 import { withDFSCache } from "../utils/withDFSCache.ts";
 import { DFSFileHandler } from "./DFSFileHandler.ts";
@@ -80,7 +80,7 @@ export class DenoKVDFSFileHandler
         });
 
         const fileResps = await Promise.all(fileChecks);
-        const activeFileResp = fileResps.find((fileResp) => fileResp?.Contents);
+        const activeFileResp = fileResps.find((fileResp: Awaited<ReturnType<DenoKVFileStream['Read']>>) => fileResp?.Contents);
 
         if (activeFileResp) {
           return {

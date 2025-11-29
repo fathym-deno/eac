@@ -8,8 +8,8 @@ export {
   DFSFileHandler as BaseDFSFileHandler,
   type DFSFileInfo,
   type IDFSFileHandler as BaseIDFSFileHandler,
-  LocalDFSFileHandler as BaseLocalDFSFileHandler,
-} from "jsr:@fathym/dfs@0.0.16";
+} from "jsr:@fathym/dfs@0.0.39";
+export { LocalDFSFileHandler as BaseLocalDFSFileHandler } from "jsr:@fathym/dfs@0.0.39/handlers";
 export {
   getPackageLogger,
   getPackageLoggerSync,
@@ -23,12 +23,18 @@ export { existsSync, getFilesList } from "jsr:@fathym/common@0.2.299/path";
 
 export { IoCContainer } from "jsr:@fathym/ioc@0.0.21";
 
+// Azure handler re-export from eac-azure package
 export {
-  BlobSASPermissions,
-  BlobServiceClient,
-  generateBlobSASQueryParameters,
-  StorageSharedKeyCredential,
-} from "npm:@azure/storage-blob@12.26.0";
+  AzureBlobDFSFileHandler as BaseAzureBlobDFSFileHandler,
+} from "jsr:@fathym/eac-azure@0.0.0/dfs";
 
-export { Readable } from "node:stream";
-export { Buffer } from "node:buffer";
+// DenoKV handler re-export from eac-deno-kv package
+export {
+  DenoKVDFSFileHandler as BaseDenoKVDFSFileHandler,
+} from "jsr:@fathym/eac-deno-kv@0.0.0/dfs";
+
+// DenoKVFileStream stays in EaC utils (used for caching and revision management)
+export {
+  DenoKVFileStream,
+  type DenoKVFileStreamData,
+} from "../utils/DenoKVFileStream.ts";

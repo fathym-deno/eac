@@ -43,7 +43,13 @@
     "test": "deno test -A tests/tests.ts --coverage=cov",
     "version": "deno run -A jsr:@fathym/common@0/build/version"
   },
-  "imports": {},
+  "imports": {
+    "jsr:@fathym/dfs@0.0.39": "../../ref-arch/distributed-file-system/src/_/.exports.ts",
+    "jsr:@fathym/dfs@0.0.39/handlers": "../../ref-arch/distributed-file-system/src/handlers/.exports.ts",
+    "jsr:@fathym/dfs@0.0.39/utils": "../../ref-arch/distributed-file-system/src/utils/.exports.ts",
+    "jsr:@fathym/eac-azure@0.0.0/dfs": "../../eac-app-runtime/eac-azure/src/dfs/.exports.ts",
+    "jsr:@fathym/eac-deno-kv@0.0.0/dfs": "../eac-deno-kv/src/dfs/.exports.ts"
+  },
   "lint": {
     "rules": {
       "tags": ["recommended"],

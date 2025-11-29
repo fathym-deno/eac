@@ -5,6 +5,6 @@ export { concatUint8Arrays } from "jsr:@fathym/common@0.2.299/iterables";
 export { establishHeaders } from "jsr:@fathym/common@0.2.299/http";
 export type { TelemetryLogger } from "jsr:@fathym/common@0.2.299/telemetry";
 
-export { type DFSFileInfo } from "jsr:@fathym/dfs@0.0.16";
+export { type DFSFileInfo } from "jsr:@fathym/dfs@0.0.39";
 
 export { IoCContainer } from "jsr:@fathym/ioc@0.0.21";
