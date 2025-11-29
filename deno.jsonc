@@ -26,8 +26,6 @@
     "./dfs/resolvers": "./src/dfs/resolvers/.exports.ts",
     "./dfs/utils": "./src/dfs/utils/.exports.ts",
     "./dfs/workers": "./src/dfs/workers/.exports.ts",
-    "./dfs/workers/azureblobstorage": "./src/dfs/workers/EaCAzureBlobStorageDistributedFileSystemWorker.ts",
-    "./dfs/workers/denokv": "./src/dfs/workers/EaCDenoKVDistributedFileSystemWorker.ts",
     "./dfs/workers/esm": "./src/dfs/workers/EaCESMDistributedFileSystemWorker.ts",
     "./dfs/workers/jsr": "./src/dfs/workers/EaCJSRDistributedFileSystemWorker.ts",
     "./dfs/workers/local": "./src/dfs/workers/EaCLocalDistributedFileSystemWorker.ts",
@@ -43,13 +41,7 @@
     "test": "deno test -A tests/tests.ts --coverage=cov",
     "version": "deno run -A jsr:@fathym/common@0/build/version"
   },
-  "imports": {
-    "jsr:@fathym/dfs@0.0.43": "../../ref-arch/distributed-file-system/src/_/.exports.ts",
-    "jsr:@fathym/dfs@0.0.43/handlers": "../../ref-arch/distributed-file-system/src/handlers/.exports.ts",
-    "jsr:@fathym/dfs@0.0.43/utils": "../../ref-arch/distributed-file-system/src/utils/.exports.ts",
-    "jsr:@fathym/eac-azure@0.0.0/dfs": "../../eac-app-runtime/eac-azure/src/dfs/.exports.ts",
-    "jsr:@fathym/eac-deno-kv@0.0.0/dfs": "../eac-deno-kv/src/dfs/.exports.ts"
-  },
+  "imports": {},
   "lint": {
     "rules": {
       "tags": ["recommended"],

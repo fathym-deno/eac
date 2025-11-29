@@ -23,16 +23,6 @@ export { existsSync, getFilesList } from "jsr:@fathym/common@0.2.299/path";
 
 export { IoCContainer } from "jsr:@fathym/ioc@0.0.21";
 
-// Azure handler re-export from eac-azure package
-export {
-  AzureBlobDFSFileHandler as BaseAzureBlobDFSFileHandler,
-} from "jsr:@fathym/eac-azure@0.0.0/dfs";
-
-// DenoKV handler re-export from eac-deno-kv package
-export {
-  DenoKVDFSFileHandler as BaseDenoKVDFSFileHandler,
-} from "jsr:@fathym/eac-deno-kv@0.0.0/dfs";
-
 // DenoKVFileStream stays in EaC utils (used for caching and revision management)
 export {
   DenoKVFileStream,

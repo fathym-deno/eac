@@ -1,6 +1,4 @@
 import { IoCContainer } from "./.deps.ts";
-import { isEaCAzureBlobStorageDistributedFileSystemDetails } from "../_/EaCAzureBlobStorageDistributedFileSystemDetails.ts";
-import { isEaCDenoKVDistributedFileSystemDetails } from "../_/EaCDenoKVDistributedFileSystemDetails.ts";
 import { EaCDistributedFileSystemDetails } from "../_/EaCDistributedFileSystemDetails.ts";
 import { isEaCESMDistributedFileSystemDetails } from "../_/EaCESMDistributedFileSystemDetails.ts";
 import { isEaCJSRDistributedFileSystemDetails } from "../_/EaCJSRDistributedFileSystemDetails.ts";
@@ -14,6 +12,11 @@ import {
   DFSFileHandlerResolverOptions,
 } from "../handlers/DFSFileHandlerResolver.ts";
 
+/**
+ * Default DFS File Handler Resolver.
+ * Dispatches to the appropriate specific resolver based on the DFS type.
+ * Provider-specific handlers (Azure, DenoKV) are registered via their respective packages.
+ */
 export class DefaultDFSFileHandlerResolver implements DFSFileHandlerResolver {
   public async Resolve(
     ioc: IoCContainer,
@@ -25,10 +28,6 @@ export class DefaultDFSFileHandlerResolver implements DFSFileHandlerResolver {
 
     if (!options?.PreventWorkers && dfs.WorkerPath) {
       toResolveName = "EaCWorkerDistributedFileSystem";
-    } else if (isEaCAzureBlobStorageDistributedFileSystemDetails(dfs)) {
-      toResolveName = "EaCAzureBlobStorageDistributedFileSystem";
-    } else if (isEaCDenoKVDistributedFileSystemDetails(dfs)) {
-      toResolveName = "EaCDenoKVDistributedFileSystem";
     } else if (isEaCESMDistributedFileSystemDetails(dfs)) {
       toResolveName = "EaCESMDistributedFileSystem";
     } else if (isEaCJSRDistributedFileSystemDetails(dfs)) {
