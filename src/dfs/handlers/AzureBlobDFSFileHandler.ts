@@ -1,10 +1,7 @@
-import {
-  BaseAzureBlobDFSFileHandler,
-  type DFSFileInfo,
-} from './.deps.ts';
-import { EaCAzureBlobStorageDistributedFileSystemDetails } from '../_/EaCAzureBlobStorageDistributedFileSystemDetails.ts';
-import { withDFSCache } from '../utils/withDFSCache.ts';
-import { DFSFileHandler } from './DFSFileHandler.ts';
+import { BaseAzureBlobDFSFileHandler, type DFSFileInfo } from "./.deps.ts";
+import { EaCAzureBlobStorageDistributedFileSystemDetails } from "../_/EaCAzureBlobStorageDistributedFileSystemDetails.ts";
+import { withDFSCache } from "../utils/withDFSCache.ts";
+import { DFSFileHandler } from "./DFSFileHandler.ts";
 
 /**
  * EaC wrapper for Azure Blob Storage DFS handler.

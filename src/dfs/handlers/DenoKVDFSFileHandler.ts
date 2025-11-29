@@ -1,7 +1,7 @@
 import {
-  type DFSFileInfo,
   DenoKVFileStream,
   type DenoKVFileStreamData,
+  type DFSFileInfo,
 } from "./.deps.ts";
 import { EaCDenoKVDistributedFileSystemDetails } from "../_/EaCDenoKVDistributedFileSystemDetails.ts";
 import { getFileCheckPathsToProcess } from "../utils/getFileCheckPathsToProcess.ts";
@@ -80,7 +80,9 @@ export class DenoKVDFSFileHandler
         });
 
         const fileResps = await Promise.all(fileChecks);
-        const activeFileResp = fileResps.find((fileResp: Awaited<ReturnType<DenoKVFileStream['Read']>>) => fileResp?.Contents);
+        const activeFileResp = fileResps.find((
+          fileResp: Awaited<ReturnType<DenoKVFileStream["Read"]>>,
+        ) => fileResp?.Contents);
 
         if (activeFileResp) {
           return {
