@@ -1,4 +1,4 @@
-import { NPMFetchDFSFileHandler } from "../../../src/dfs/handlers/.exports.ts";
+import { EaCNPMFetchDFSFileHandler } from "../../../src/dfs/handlers/.exports.ts";
 import { assertEquals, assertRejects } from "../../test.deps.ts";
 
 /**
@@ -7,7 +7,7 @@ import { assertEquals, assertRejects } from "../../test.deps.ts";
 Deno.test("NPMFetchDFSFileHandler Tests", async (t) => {
   // ✅ Using a real NPM package from Skypack CDN
   const packageName = "lodash-es@4.17.21";
-  const handler = new NPMFetchDFSFileHandler("test", {
+  const handler = new EaCNPMFetchDFSFileHandler("test", {
     Type: "NPM",
     Package: packageName,
     Version: "latest",

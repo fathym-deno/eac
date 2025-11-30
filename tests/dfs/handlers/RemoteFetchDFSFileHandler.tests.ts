@@ -1,5 +1,5 @@
 import { assertEquals, assertRejects } from "../../test.deps.ts";
-import { RemoteFetchDFSFileHandler } from "../../../src/dfs/handlers/RemoteFetchDFSFileHandler.ts";
+import { EaCRemoteFetchDFSFileHandler } from "../../../src/dfs/handlers/.exports.ts";
 
 /**
  * Test Suite for FetchDFSFileHandler
@@ -13,7 +13,7 @@ Deno.test("FetchDFSFileHandler Tests", async (t) => {
   ];
   const missingFile = "/does-not-exist.txt"; // ❌ Should return 404
 
-  const dfsHandler = new RemoteFetchDFSFileHandler("test", {
+  const dfsHandler = new EaCRemoteFetchDFSFileHandler("test", {
     Type: "Remote",
     RemoteRoot: realRoot,
   });

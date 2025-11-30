@@ -1,4 +1,4 @@
-import { JSRFetchDFSFileHandler } from "../../../src/dfs/handlers/.exports.ts";
+import { EaCJSRFetchDFSFileHandler } from "../../../src/dfs/handlers/.exports.ts";
 import { assertEquals, assertRejects } from "../../test.deps.ts";
 
 /**
@@ -8,12 +8,12 @@ Deno.test("JSRFetchDFSFileHandler Tests", async (t) => {
   // ✅ Use a real JSR package example
   const packageName = "@fathym/atomic";
   const version = ""; // This should resolve to the latest version
-  const handler = new JSRFetchDFSFileHandler("test", {
+  const handler = new EaCJSRFetchDFSFileHandler("test", {
     Type: "JSR",
     Package: packageName,
     Version: version,
   });
-  const rootedHandler = new JSRFetchDFSFileHandler("test", {
+  const rootedHandler = new EaCJSRFetchDFSFileHandler("test", {
     Type: "JSR",
     Package: packageName,
     Version: version,
@@ -28,7 +28,7 @@ Deno.test("JSRFetchDFSFileHandler Tests", async (t) => {
       console.log("Resolved Paths:", paths);
       assertEquals(paths.length > 0, true, "Should retrieve module paths.");
       assertEquals(
-        paths.some((p) => p.startsWith("/")),
+        paths.some((p: string) => p.startsWith("/")),
         true,
         "Paths should start with '/'",
       );
@@ -43,7 +43,7 @@ Deno.test("JSRFetchDFSFileHandler Tests", async (t) => {
       console.log("Resolved Paths:", paths);
       assertEquals(paths.length > 0, true, "Should retrieve module paths.");
       assertEquals(
-        paths.some((p) => p.startsWith("/")),
+        paths.some((p: string) => p.startsWith("/")),
         true,
         "Paths should start with '/'",
       );
@@ -92,7 +92,7 @@ Deno.test("JSRFetchDFSFileHandler Tests", async (t) => {
   await t.step(
     "JSRFetchDFSFileHandler should throw an error for invalid package",
     async () => {
-      const invalidHandler = new JSRFetchDFSFileHandler("test", {
+      const invalidHandler = new EaCJSRFetchDFSFileHandler("test", {
         Type: "JSR",
         Package: "@invalid/package",
         Version: "",

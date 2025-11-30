@@ -1,4 +1,4 @@
-import { LocalDFSFileHandler } from "../../../src/dfs/handlers/.exports.ts";
+import { EaCLocalDFSFileHandler } from "../../../src/dfs/handlers/.exports.ts";
 import { assertEquals } from "../../test.deps.ts";
 
 /**
@@ -14,7 +14,7 @@ Deno.test("LocalDFSFileHandler Tests", async (t) => {
   await Deno.mkdir(testRoot, { recursive: true });
   await Deno.writeTextFile(`${testRoot}/${validFile}`, "Hello, Local DFS!");
 
-  const dfsHandler = new LocalDFSFileHandler("test", {
+  const dfsHandler = new EaCLocalDFSFileHandler("test", {
     Type: "Local",
     FileRoot: testRoot,
   });

@@ -3,31 +3,37 @@ import {
   EaCDistributedFileSystemDetails,
   EaCVirtualCompositeDistributedFileSystemDetails,
 } from "../../../src/dfs/_/.exports.ts";
-import { DFSFileHandler } from "../../../src/dfs/handlers/.exports.ts";
-import { VirtualCompositeDFSHandler } from "../../../src/dfs/handlers/VirtualCompositeDFSHandler.ts";
+import {
+  EaCVirtualCompositeDFSHandler,
+  IEaCDFSFileHandler,
+} from "../../../src/dfs/handlers/.exports.ts";
 
 type MockDetails = EaCDistributedFileSystemDetails<"Mock">;
 
 const encoder = new TextEncoder();
 
-class MockDFSFileHandler extends DFSFileHandler<MockDetails> {
+class MockDFSFileHandler implements IEaCDFSFileHandler {
   public removed: string[] = [];
 
   constructor(
-    dfsLookup: string,
-    details: MockDetails,
+    protected readonly dfsLookup: string,
+    protected readonly details: MockDetails,
     private readonly files: Map<string, string>,
     private readonly supportsRemove = true,
-  ) {
-    super(dfsLookup, details);
-  }
+  ) {}
 
-  public override get Root(): string {
+  public get Root(): string {
     return "./";
   }
 
-  public override async GetFileInfo(
+  public async GetFileInfo(
     filePath: string,
+    _revision: string,
+    _defaultFileName?: string,
+    _extensions?: string[],
+    _useCascading?: boolean,
+    _cacheDb?: Deno.Kv,
+    _cacheSeconds?: number,
   ): Promise<DFSFileInfo | undefined> {
     const normalized = this.normalize(filePath);
     const contents = this.files.get(normalized);
@@ -43,11 +49,15 @@ class MockDFSFileHandler extends DFSFileHandler<MockDetails> {
     };
   }
 
-  public override async LoadAllPaths(): Promise<string[]> {
+  public async LoadAllPaths(_revision: string): Promise<string[]> {
     return Array.from(this.files.keys()).map((key) => `./${key}`);
   }
 
-  public override async RemoveFile(filePath: string): Promise<void> {
+  public async RemoveFile(
+    filePath: string,
+    _revision: string,
+    _cacheDb?: Deno.Kv,
+  ): Promise<void> {
     const normalized = this.normalize(filePath);
 
     if (!this.files.has(normalized)) {
@@ -64,10 +74,14 @@ class MockDFSFileHandler extends DFSFileHandler<MockDetails> {
     this.files.delete(normalized);
   }
 
-  public override async WriteFile(
+  public async WriteFile(
     filePath: string,
     _revision: string,
     stream: ReadableStream<Uint8Array>,
+    _ttlSeconds?: number,
+    _headers?: Headers,
+    _maxChunkSize?: number,
+    _cacheDb?: Deno.Kv,
   ): Promise<void> {
     const normalized = this.normalize(filePath);
     const buffer = await new Response(stream).text();
@@ -124,7 +138,7 @@ Deno.test("VirtualCompositeDFSHandler overlays and fallbacks", async (t) => {
     },
   };
 
-  const handler = new VirtualCompositeDFSHandler(
+  const handler = new EaCVirtualCompositeDFSHandler(
     "virtual",
     details,
     [baseHandlerA, baseHandlerB],

@@ -1,4 +1,4 @@
-import { ESMFetchDFSFileHandler } from "../../../src/dfs/handlers/.exports.ts";
+import { EaCESMFetchDFSFileHandler } from "../../../src/dfs/handlers/.exports.ts";
 import { assertEquals, assertRejects, assertThrows } from "../../test.deps.ts";
 
 /**
@@ -9,13 +9,13 @@ Deno.test("ESMFetchDFSFileHandler Tests", async (t) => {
   const packageURL = "https://cdn.skypack.dev/lodash-es@4.17.21/";
   const entryPoints = ["lodash.js"]; // Lodash ES entry point
 
-  const handlerWithDeps = new ESMFetchDFSFileHandler("test", {
+  const handlerWithDeps = new EaCESMFetchDFSFileHandler("test", {
     Type: "ESM",
     EntryPoints: entryPoints,
     Root: packageURL,
     IncludeDependencies: true,
   });
-  const handlerWithoutDeps = new ESMFetchDFSFileHandler("test", {
+  const handlerWithoutDeps = new EaCESMFetchDFSFileHandler("test", {
     Type: "ESM",
     EntryPoints: entryPoints,
     Root: packageURL,
@@ -36,7 +36,7 @@ Deno.test("ESMFetchDFSFileHandler Tests", async (t) => {
   await t.step(
     "LoadAllPaths should correctly resolve import maps (if applicable)",
     async () => {
-      const handlerWithImportMaps = new ESMFetchDFSFileHandler("test", {
+      const handlerWithImportMaps = new EaCESMFetchDFSFileHandler("test", {
         Type: "ESM",
         EntryPoints: ["lodash-es@4.17.21/lodash.js"],
         Root: "https://cdn.skypack.dev/",
@@ -46,7 +46,7 @@ Deno.test("ESMFetchDFSFileHandler Tests", async (t) => {
 
       console.log("Resolved Paths with Import Maps:", paths);
       assertEquals(
-        paths.some((p) => p.includes("lodash")),
+        paths.some((p: string) => p.includes("lodash")),
         true,
       );
     },
@@ -55,7 +55,7 @@ Deno.test("ESMFetchDFSFileHandler Tests", async (t) => {
   await t.step(
     "LoadAllPaths should correctly resolve local file URLs",
     async () => {
-      const localHandler = new ESMFetchDFSFileHandler("test", {
+      const localHandler = new EaCESMFetchDFSFileHandler("test", {
         Type: "ESM",
         EntryPoints: ["mod.ts"],
         Root: "file:///",
@@ -74,7 +74,7 @@ Deno.test("ESMFetchDFSFileHandler Tests", async (t) => {
     async () => {
       await assertThrows(
         () =>
-          new ESMFetchDFSFileHandler("test", {
+          new EaCESMFetchDFSFileHandler("test", {
             Type: "ESM",
             EntryPoints: [],
             Root: packageURL,
