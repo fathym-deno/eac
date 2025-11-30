@@ -23,8 +23,8 @@ export type EaCStateAsCode = {
  * Schema for `EaCStateAsCode`.
  * Validates the structure, ensuring resolver configurations and state-specific details are properly defined.
  */
-export const EaCStateAsCodeSchema: z.ZodType<EaCStateAsCode> =
-  EaCDetailsSchema.extend({
+export const EaCStateAsCodeSchema: z.ZodType<EaCStateAsCode> = EaCDetailsSchema
+  .extend({
     ResolverConfigs: z
       .record(z.string(), EaCStateResolverConfigurationSchema)
       .describe(

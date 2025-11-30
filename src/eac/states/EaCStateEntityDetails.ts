@@ -20,14 +20,14 @@ export type EaCStateEntityDetails = {
  */
 export const EaCStateEntityDetailsSchema: z.ZodType<EaCStateEntityDetails> =
   EaCVertexDetailsSchema.extend({
-  DFSLookup: z
-    .string()
-    .describe(
-      "A unique identifier for the state entity in a depth-first search lookup.",
-    ),
-}).describe(
-  "Schema for EaCStateEntityDetails, defining additional properties like `DFSLookup` while extending `EaCVertexDetails`.",
-);
+    DFSLookup: z
+      .string()
+      .describe(
+        "A unique identifier for the state entity in a depth-first search lookup.",
+      ),
+  }).describe(
+    "Schema for EaCStateEntityDetails, defining additional properties like `DFSLookup` while extending `EaCVertexDetails`.",
+  );
 
 /**
  * Type guard for `EaCStateEntityDetails`.
