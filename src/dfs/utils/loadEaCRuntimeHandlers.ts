@@ -1,12 +1,11 @@
-import { TelemetryLogger } from "./.deps.ts";
+import { type IDFSFileHandler, TelemetryLogger } from "./.deps.ts";
 import { EaCRuntimeHandlerSet } from "../../runtime/pipelines/EaCRuntimeHandlerSet.ts";
 import { EaCDistributedFileSystemDetails } from "../_/EaCDistributedFileSystemDetails.ts";
-import { EaCDFSFileHandler } from "../handlers/EaCDFSFileHandler.ts";
 import { importDFSTypescriptModule } from "./importDFSTypescriptModule.ts";
 
 export async function loadEaCRuntimeHandlers(
   logger: TelemetryLogger,
-  fileHandler: EaCDFSFileHandler,
+  fileHandler: IDFSFileHandler,
   filePath: string,
   dfs: EaCDistributedFileSystemDetails,
   dfsLookup: string,

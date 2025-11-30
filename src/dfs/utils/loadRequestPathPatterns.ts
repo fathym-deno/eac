@@ -1,13 +1,14 @@
+import { type IDFSFileHandler } from "./.deps.ts";
 import { IS_BUILDING } from "../../runtime/config/constants.ts";
 import { EaCRuntimeHandlerPipeline } from "../../runtime/pipelines/EaCRuntimeHandlerPipeline.ts";
 import { EaCRuntimeHandlerSet } from "../../runtime/pipelines/EaCRuntimeHandlerSet.ts";
 import { EaCDistributedFileSystemDetails } from "../_/EaCDistributedFileSystemDetails.ts";
-import { EaCDFSFileHandler } from "../handlers/EaCDFSFileHandler.ts";
 import { PathMatch } from "./PathMatch.ts";
 import { convertFilePathToMatch } from "./convertFilePathToMatch.ts";
 
+// TODO: Re-implement revision/caching support using withDFSCache() pattern
 export async function loadRequestPathPatterns<TSetup>(
-  fileHandler: EaCDFSFileHandler,
+  fileHandler: IDFSFileHandler,
   dfs: EaCDistributedFileSystemDetails,
   setup: (allPaths: string[]) => Promise<TSetup>,
   loadHandlers: (
@@ -19,9 +20,8 @@ export async function loadRequestPathPatterns<TSetup>(
     pipeline: EaCRuntimeHandlerPipeline,
     details: TSetup,
   ) => void,
-  revision: string,
 ): Promise<PathMatch[]> {
-  const allPaths = await fileHandler.LoadAllPaths(revision);
+  const allPaths = await fileHandler.LoadAllPaths();
 
   if (!IS_BUILDING) {
     const details = await setup(allPaths);

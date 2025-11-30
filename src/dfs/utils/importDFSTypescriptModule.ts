@@ -1,11 +1,16 @@
 // deno-lint-ignore-file no-explicit-any
-import { path, TelemetryLogger, toText } from "./.deps.ts";
+import {
+  type IDFSFileHandler,
+  path,
+  TelemetryLogger,
+  toText,
+} from "./.deps.ts";
 import { EaCDistributedFileSystemDetails } from "../_/EaCDistributedFileSystemDetails.ts";
-import { EaCDFSFileHandler } from "../handlers/EaCDFSFileHandler.ts";
 
+// TODO: Re-implement revision/caching support using withDFSCache() pattern
 export async function importDFSTypescriptModule(
   logger: TelemetryLogger,
-  fileHandler: EaCDFSFileHandler,
+  fileHandler: IDFSFileHandler,
   filePath: string,
   dfs: EaCDistributedFileSystemDetails,
   dfsLookup: string,
@@ -14,7 +19,6 @@ export async function importDFSTypescriptModule(
   try {
     const file = await fileHandler.GetFileInfo(
       filePath,
-      Date.now().toString(),
       dfs.DefaultFile,
       dfs.Extensions,
       dfs.UseCascading,
