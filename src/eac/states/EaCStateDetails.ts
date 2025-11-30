@@ -24,19 +24,8 @@ export type EaCStateDetails = {
  * Schema for `EaCStateDetails`.
  * Validates the structure, ensuring the presence of `DFSLookup`, `EntitiesDFSLookup`, and `Priority`, while extending `EaCVertexDetails`.
  */
-export const EaCStateDetailsSchema: z.ZodObject<
-  {
-    DFSLookup: z.ZodString;
-    EntitiesDFSLookup: z.ZodString;
-    Priority: z.ZodNumber;
-    Name: z.ZodOptional<z.ZodString>;
-    Description: z.ZodOptional<z.ZodString>;
-  },
-  "strip",
-  z.ZodTypeAny,
-  EaCStateDetails,
-  EaCStateDetails
-> = EaCVertexDetailsSchema.extend({
+export const EaCStateDetailsSchema: z.ZodType<EaCStateDetails> =
+  EaCVertexDetailsSchema.extend({
   DFSLookup: z
     .string()
     .describe(

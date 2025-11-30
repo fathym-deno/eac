@@ -23,28 +23,17 @@ export type EaCStateAsCode = {
  * Schema for `EaCStateAsCode`.
  * Validates the structure, ensuring resolver configurations and state-specific details are properly defined.
  */
-export const EaCStateAsCodeSchema: z.ZodObject<
-  {
-    ResolverConfigs: z.ZodRecord<
-      z.ZodString,
-      typeof EaCStateResolverConfigurationSchema
-    >;
-    Details: z.ZodOptional<typeof EaCStateDetailsSchema>;
-  },
-  "strip",
-  z.ZodTypeAny,
-  EaCStateAsCode,
-  EaCStateAsCode
-> = EaCDetailsSchema.extend({
-  ResolverConfigs: z
-    .record(EaCStateResolverConfigurationSchema)
-    .describe(
-      "Resolver configurations mapped by unique identifiers, specifying logic for state-specific resolutions.",
-    ),
-  Details: EaCStateDetailsSchema.optional(),
-}).describe(
-  "Schema for EaCStateAsCode, combining resolver configurations and state-specific details.",
-);
+export const EaCStateAsCodeSchema: z.ZodType<EaCStateAsCode> =
+  EaCDetailsSchema.extend({
+    ResolverConfigs: z
+      .record(z.string(), EaCStateResolverConfigurationSchema)
+      .describe(
+        "Resolver configurations mapped by unique identifiers, specifying logic for state-specific resolutions.",
+      ),
+    Details: EaCStateDetailsSchema.optional(),
+  }).describe(
+    "Schema for EaCStateAsCode, combining resolver configurations and state-specific details.",
+  );
 
 /**
  * Type guard for `EaCStateAsCode`.

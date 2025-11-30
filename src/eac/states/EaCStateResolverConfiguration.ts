@@ -20,17 +20,8 @@ export type EaCStateResolverConfiguration = {
  * Schema for `EaCStateResolverConfiguration`.
  * Validates the resolver configuration, ensuring the presence of a `Hostname` and optional `Path` and `Port` fields.
  */
-export const EaCStateResolverConfigurationSchema: z.ZodObject<
-  {
-    Hostname: z.ZodString;
-    Path: z.ZodOptional<z.ZodString>;
-    Port: z.ZodOptional<z.ZodNumber>;
-  },
-  "strip",
-  z.ZodTypeAny,
-  EaCStateResolverConfiguration,
-  EaCStateResolverConfiguration
-> = z
+export const EaCStateResolverConfigurationSchema: z.ZodType<EaCStateResolverConfiguration> =
+  z
   .object({
     Hostname: z
       .string()

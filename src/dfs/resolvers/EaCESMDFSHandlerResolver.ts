@@ -21,7 +21,6 @@ export const EaCESMDFSHandlerResolver: DFSHandlerResolver = {
     return new ESMFetchDFSFileHandler({
       Root: dfs.Root,
       EntryPoints: dfs.EntryPoints,
-      IncludeDependencies: dfs.IncludeDependencies,
       DefaultFile: dfs.DefaultFile,
       Extensions: dfs.Extensions,
       UseCascading: dfs.UseCascading,

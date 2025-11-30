@@ -24,28 +24,18 @@ export type EaCStateEntityAsCode = {
  * Schema for `EaCStateEntityAsCode`.
  * Validates the structure, ensuring proper state entity details and optional modifier resolvers.
  */
-export const EaCStateEntityAsCodeSchema: z.ZodObject<
-  {
-    ModifierResolvers: z.ZodOptional<
-      z.ZodRecord<z.ZodString, typeof EaCStateResolverConfigurationSchema>
-    >;
-    Details: z.ZodOptional<typeof EaCStateEntityDetailsSchema>;
-  },
-  "strip",
-  z.ZodTypeAny,
-  EaCStateEntityAsCode,
-  EaCStateEntityAsCode
-> = EaCDetailsSchema.extend({
-  ModifierResolvers: z
-    .record(EaCStateResolverConfigurationSchema)
-    .optional()
-    .describe(
-      "Optional modifier resolvers mapped by unique identifiers, specifying additional state-specific logic.",
-    ),
-  Details: EaCStateEntityDetailsSchema.optional(),
-}).describe(
-  "Schema for EaCStateEntityAsCode, defining state-specific entity details and optional modifier resolvers.",
-);
+export const EaCStateEntityAsCodeSchema: z.ZodType<EaCStateEntityAsCode> =
+  EaCDetailsSchema.extend({
+    ModifierResolvers: z
+      .record(z.string(), EaCStateResolverConfigurationSchema)
+      .optional()
+      .describe(
+        "Optional modifier resolvers mapped by unique identifiers, specifying additional state-specific logic.",
+      ),
+    Details: EaCStateEntityDetailsSchema.optional(),
+  }).describe(
+    "Schema for EaCStateEntityAsCode, defining state-specific entity details and optional modifier resolvers.",
+  );
 
 /**
  * Type guard for `EaCStateEntityAsCode`.
