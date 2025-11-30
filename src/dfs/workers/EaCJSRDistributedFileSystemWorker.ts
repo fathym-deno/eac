@@ -1,11 +1,11 @@
-import { DFSFileHandlerResolver } from "../handlers/DFSFileHandlerResolver.ts";
-import { EaCJSRDistributedFileSystemHandlerResolver } from "../resolvers/EaCJSRDistributedFileSystemHandlerResolver.ts";
+import { EaCDFSFileHandlerResolver } from "../handlers/EaCDFSFileHandlerResolver.ts";
+import { EaCJSRDFSHandlerResolver } from "../resolvers/EaCJSRDFSHandlerResolver.ts";
 import { EaCDistributedFileSystemWorker } from "./EaCDistributedFileSystemWorker.ts";
 
 export class EaCJSRDistributedFileSystemWorker
   extends EaCDistributedFileSystemWorker {
-  protected loadDFSHandlerResolver(): DFSFileHandlerResolver {
-    return EaCJSRDistributedFileSystemHandlerResolver;
+  protected loadDFSHandlerResolver(): EaCDFSFileHandlerResolver {
+    return EaCJSRDFSHandlerResolver;
   }
 }
 

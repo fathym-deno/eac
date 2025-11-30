@@ -2,30 +2,27 @@ import { DFSFileInfo } from "./.deps.ts";
 import { EaCVirtualCompositeDistributedFileSystemDetails } from "../_/EaCVirtualCompositeDistributedFileSystemDetails.ts";
 import { getFileCheckPathsToProcess } from "../utils/getFileCheckPathsToProcess.ts";
 import { withDFSCache } from "../utils/withDFSCache.ts";
-import { DFSFileHandler } from "./DFSFileHandler.ts";
+import { IEaCDFSFileHandler } from "./IEaCDFSFileHandler.ts";
 
 type OverlayEntry = {
   contents: Uint8Array;
   headers?: Record<string, string>;
 };
 
-export class VirtualCompositeDFSHandler
-  extends DFSFileHandler<EaCVirtualCompositeDistributedFileSystemDetails> {
-  public override get Root(): string {
+export class EaCVirtualCompositeDFSHandler implements IEaCDFSFileHandler {
+  public get Root(): string {
     return this.baseHandlers[0]?.Root ?? "";
   }
 
   private readonly overlays = new Map<string, OverlayEntry>();
 
   constructor(
-    dfsLookup: string,
-    details: EaCVirtualCompositeDistributedFileSystemDetails,
-    private readonly baseHandlers: DFSFileHandler[],
-  ) {
-    super(dfsLookup, details);
-  }
+    protected readonly dfsLookup: string,
+    protected readonly details: EaCVirtualCompositeDistributedFileSystemDetails,
+    private readonly baseHandlers: IEaCDFSFileHandler[],
+  ) {}
 
-  public override async GetFileInfo(
+  public async GetFileInfo(
     filePath: string,
     revision: string,
     defaultFileName?: string,
@@ -82,7 +79,7 @@ export class VirtualCompositeDFSHandler
     );
   }
 
-  public override async LoadAllPaths(revision: string): Promise<string[]> {
+  public async LoadAllPaths(revision: string): Promise<string[]> {
     const overlayPaths = Array
       .from(this.overlays.keys())
       .map((path) => this.decoratePath(path));
@@ -100,7 +97,7 @@ export class VirtualCompositeDFSHandler
     return Array.from(merged);
   }
 
-  public override async RemoveFile(
+  public async RemoveFile(
     filePath: string,
     revision: string,
     cacheDb?: Deno.Kv,
@@ -132,7 +129,7 @@ export class VirtualCompositeDFSHandler
     );
   }
 
-  public override async WriteFile(
+  public async WriteFile(
     filePath: string,
     _revision: string,
     stream: ReadableStream<Uint8Array>,

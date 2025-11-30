@@ -1,18 +1,18 @@
 import { IoCContainer } from "./.deps.ts";
-import { DFSFileHandler } from "../handlers/DFSFileHandler.ts";
+import { IEaCDFSFileHandler } from "../handlers/IEaCDFSFileHandler.ts";
 import {
-  DFSFileHandlerResolver,
-  DFSFileHandlerResolverOptions,
-} from "../handlers/DFSFileHandlerResolver.ts";
+  EaCDFSFileHandlerResolver,
+  EaCDFSFileHandlerResolverOptions,
+} from "../handlers/EaCDFSFileHandlerResolver.ts";
 import { EaCDistributedFileSystemAsCode } from "../_/EaCDistributedFileSystemAsCode.ts";
 import { EaCDistributedFileSystemDetails } from "../_/EaCDistributedFileSystemDetails.ts";
 
 export async function loadDFSFileHandler(
   ioc: IoCContainer,
   dfss: Record<string, EaCDistributedFileSystemAsCode>,
-  options: DFSFileHandlerResolverOptions,
+  options: EaCDFSFileHandlerResolverOptions,
   dfsLookup: string,
-): Promise<DFSFileHandler | undefined> {
+): Promise<IEaCDFSFileHandler | undefined> {
   const dfs = dfss[dfsLookup]?.Details;
 
   if (!dfs) {
@@ -26,11 +26,11 @@ export async function loadFileHandler(
   ioc: IoCContainer,
   dfsLookup: string,
   dfs: EaCDistributedFileSystemDetails,
-  options: DFSFileHandlerResolverOptions,
-): Promise<DFSFileHandler | undefined> {
+  options: EaCDFSFileHandlerResolverOptions,
+): Promise<IEaCDFSFileHandler | undefined> {
   const defaultDFSFileHandlerResolver = await ioc.Resolve<
-    DFSFileHandlerResolver
-  >(ioc.Symbol("DFSFileHandler"));
+    EaCDFSFileHandlerResolver
+  >(ioc.Symbol("EaCDFSFileHandler"));
 
   const fileHandler = await defaultDFSFileHandlerResolver.Resolve(
     ioc,

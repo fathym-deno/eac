@@ -6,46 +6,46 @@ import { isEaCLocalDistributedFileSystemDetails } from "../_/EaCLocalDistributed
 import { isEaCNPMDistributedFileSystemDetails } from "../_/EaCNPMDistributedFileSystemDetails.ts";
 import { isEaCRemoteDistributedFileSystemDetails } from "../_/EaCRemoteDistributedFileSystemDetails.ts";
 import { isEaCVirtualCompositeDistributedFileSystemDetails } from "../_/EaCVirtualCompositeDistributedFileSystemDetails.ts";
-import { DFSFileHandler } from "../handlers/DFSFileHandler.ts";
+import { IEaCDFSFileHandler } from "../handlers/IEaCDFSFileHandler.ts";
 import {
-  DFSFileHandlerResolver,
-  DFSFileHandlerResolverOptions,
-} from "../handlers/DFSFileHandlerResolver.ts";
+  EaCDFSFileHandlerResolver,
+  EaCDFSFileHandlerResolverOptions,
+} from "../handlers/EaCDFSFileHandlerResolver.ts";
 
 /**
  * Default DFS File Handler Resolver.
  * Dispatches to the appropriate specific resolver based on the DFS type.
  * Provider-specific handlers (Azure, DenoKV) are registered via their respective packages.
  */
-export class DefaultDFSFileHandlerResolver implements DFSFileHandlerResolver {
+export class DefaultEaCDFSHandlerResolver implements EaCDFSFileHandlerResolver {
   public async Resolve(
     ioc: IoCContainer,
     dfsLookup: string,
     dfs: EaCDistributedFileSystemDetails,
-    options?: DFSFileHandlerResolverOptions,
-  ): Promise<DFSFileHandler | undefined> {
+    options?: EaCDFSFileHandlerResolverOptions,
+  ): Promise<IEaCDFSFileHandler | undefined> {
     let toResolveName: string = "";
 
     if (!options?.PreventWorkers && dfs.WorkerPath) {
-      toResolveName = "EaCWorkerDistributedFileSystem";
+      toResolveName = "EaCWorkerDFS";
     } else if (isEaCESMDistributedFileSystemDetails(dfs)) {
-      toResolveName = "EaCESMDistributedFileSystem";
+      toResolveName = "EaCESMDFS";
     } else if (isEaCJSRDistributedFileSystemDetails(dfs)) {
-      toResolveName = "EaCJSRDistributedFileSystem";
+      toResolveName = "EaCJSRDFS";
     } else if (isEaCLocalDistributedFileSystemDetails(dfs)) {
-      toResolveName = "EaCLocalDistributedFileSystem";
+      toResolveName = "EaCLocalDFS";
     } else if (isEaCNPMDistributedFileSystemDetails(dfs)) {
-      toResolveName = "EaCNPMDistributedFileSystem";
+      toResolveName = "EaCNPMDFS";
     } else if (isEaCRemoteDistributedFileSystemDetails(dfs)) {
-      toResolveName = "EaCRemoteDistributedFileSystem";
+      toResolveName = "EaCRemoteDFS";
     } else if (isEaCVirtualCompositeDistributedFileSystemDetails(dfs)) {
-      toResolveName = "EaCVirtualCompositeDistributedFileSystem";
+      toResolveName = "EaCVirtualCompositeDFS";
     } else {
-      toResolveName = "UnknownEaCDistributedFileSystem";
+      toResolveName = "UnknownEaCDFS";
     }
 
-    const resolver = await ioc.Resolve<DFSFileHandlerResolver>(
-      ioc.Symbol("DFSFileHandler"),
+    const resolver = await ioc.Resolve<EaCDFSFileHandlerResolver>(
+      ioc.Symbol("EaCDFSFileHandler"),
       toResolveName,
     );
 

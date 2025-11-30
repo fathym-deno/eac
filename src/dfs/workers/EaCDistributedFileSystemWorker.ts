@@ -13,8 +13,8 @@ import {
   EaCDistributedFileSystemWorkerMessageRemoveFilePayload,
   EaCDistributedFileSystemWorkerMessageWriteFilePayload,
 } from "./EaCDistributedFileSystemWorkerMessage.ts";
-import { DFSFileHandler } from "../handlers/DFSFileHandler.ts";
-import { DFSFileHandlerResolver } from "../handlers/DFSFileHandlerResolver.ts";
+import { IEaCDFSFileHandler } from "../handlers/IEaCDFSFileHandler.ts";
+import { EaCDFSFileHandlerResolver } from "../handlers/EaCDFSFileHandlerResolver.ts";
 
 export abstract class EaCDistributedFileSystemWorker extends FathymWorker<
   EaCDistributedFileSystemWorkerConfig,
@@ -23,7 +23,7 @@ export abstract class EaCDistributedFileSystemWorker extends FathymWorker<
 > {
   protected loadAllPaths?: Promise<string[]>;
 
-  protected dfsHandler?: DFSFileHandler;
+  protected dfsHandler?: IEaCDFSFileHandler;
 
   protected fileGetters?: Record<
     string,
@@ -175,7 +175,7 @@ export abstract class EaCDistributedFileSystemWorker extends FathymWorker<
     correlateResult(this.worker, msg.CorrelationID);
   }
 
-  protected abstract loadDFSHandlerResolver(): DFSFileHandlerResolver;
+  protected abstract loadDFSHandlerResolver(): EaCDFSFileHandlerResolver;
 
   protected override loadWorkerMessageHandlers(): typeof this.workerMessageHandlers {
     return {

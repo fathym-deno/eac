@@ -1,10 +1,10 @@
 import { DFSFileInfo } from "./.deps.ts";
 
 /**
- * Interface defining methods for a Distributed File System (DFS) File Handler.
+ * Interface defining methods for an EaC Distributed File System (DFS) File Handler.
+ * Extends the base DFS handler interface with revision and caching support.
  */
-
-export interface IDFSFileHandler {
+export interface IEaCDFSFileHandler {
   /**
    * Retrieves file information for a given path and revision.
    *

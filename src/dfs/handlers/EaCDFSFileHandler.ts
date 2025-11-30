@@ -1,20 +1,23 @@
 import { DFSFileInfo, getPackageLoggerSync, TelemetryLogger } from "./.deps.ts";
 import { EaCDistributedFileSystemDetails } from "../_/EaCDistributedFileSystemDetails.ts";
-import { IDFSFileHandler } from "./IDFSFileHandler.ts";
+import { IEaCDFSFileHandler } from "./IEaCDFSFileHandler.ts";
 
 /**
- * Abstract base class implementing `IDFSFileHandler`.
+ * Abstract base class implementing `IEaCDFSFileHandler`.
  * Concrete implementations must provide method implementations.
+ * Adds revision and caching support on top of base DFS handlers.
  */
-export abstract class DFSFileHandler<
+export abstract class EaCDFSFileHandler<
   TDetails extends EaCDistributedFileSystemDetails =
     EaCDistributedFileSystemDetails,
-> implements IDFSFileHandler {
+> implements IEaCDFSFileHandler {
   protected readonly logger: TelemetryLogger;
 
   /**
-   * Creates an instance of `FetchDFSFileHandler`.
-   * @param logger -The logger to use.
+   * Creates an instance of `EaCDFSFileHandler`.
+   * @param dfsLookup - The DFS lookup key.
+   * @param details - The DFS details.
+   * @param logger - The logger to use.
    */
   public constructor(
     protected dfsLookup: string,

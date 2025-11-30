@@ -4,25 +4,25 @@ import {
   EaCVirtualCompositeDistributedFileSystemDetails,
   isEaCVirtualCompositeDistributedFileSystemDetails,
 } from "../_/EaCVirtualCompositeDistributedFileSystemDetails.ts";
-import { DFSFileHandler } from "../handlers/DFSFileHandler.ts";
+import { IEaCDFSFileHandler } from "../handlers/IEaCDFSFileHandler.ts";
 import {
-  DFSFileHandlerResolver,
-  DFSFileHandlerResolverOptions,
-} from "../handlers/DFSFileHandlerResolver.ts";
-import { VirtualCompositeDFSHandler } from "../handlers/VirtualCompositeDFSHandler.ts";
+  EaCDFSFileHandlerResolver,
+  EaCDFSFileHandlerResolverOptions,
+} from "../handlers/EaCDFSFileHandlerResolver.ts";
+import { EaCVirtualCompositeDFSHandler } from "../handlers/EaCVirtualCompositeDFSHandler.ts";
 import { loadDFSFileHandler } from "../utils/loadFileHandler.ts";
 
-export const EaCVirtualCompositeDistributedFileSystemHandlerResolver:
-  DFSFileHandlerResolver = {
+export const EaCVirtualCompositeDFSHandlerResolver: EaCDFSFileHandlerResolver =
+  {
     async Resolve(
       ioc: IoCContainer,
       dfsLookup: string,
       dfs: EaCDistributedFileSystemDetails,
-      options?: DFSFileHandlerResolverOptions,
-    ): Promise<DFSFileHandler | undefined> {
+      options?: EaCDFSFileHandlerResolverOptions,
+    ): Promise<IEaCDFSFileHandler | undefined> {
       if (!isEaCVirtualCompositeDistributedFileSystemDetails(dfs)) {
         throw new Deno.errors.NotSupported(
-          "The provided dfs is not supported for the EaCVirtualCompositeDistributedFileSystemHandlerResolver.",
+          "The provided dfs is not supported for the EaCVirtualCompositeDFSHandlerResolver.",
         );
       }
 
@@ -63,6 +63,10 @@ export const EaCVirtualCompositeDistributedFileSystemHandlerResolver:
         baseHandlers.push(handler);
       }
 
-      return new VirtualCompositeDFSHandler(dfsLookup, virtual, baseHandlers);
+      return new EaCVirtualCompositeDFSHandler(
+        dfsLookup,
+        virtual,
+        baseHandlers,
+      );
     },
   };

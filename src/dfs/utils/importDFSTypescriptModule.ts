@@ -1,11 +1,11 @@
 // deno-lint-ignore-file no-explicit-any
 import { path, TelemetryLogger, toText } from "./.deps.ts";
 import { EaCDistributedFileSystemDetails } from "../_/EaCDistributedFileSystemDetails.ts";
-import { DFSFileHandler } from "../handlers/DFSFileHandler.ts";
+import { EaCDFSFileHandler } from "../handlers/EaCDFSFileHandler.ts";
 
 export async function importDFSTypescriptModule(
   logger: TelemetryLogger,
-  fileHandler: DFSFileHandler,
+  fileHandler: EaCDFSFileHandler,
   filePath: string,
   dfs: EaCDistributedFileSystemDetails,
   dfsLookup: string,

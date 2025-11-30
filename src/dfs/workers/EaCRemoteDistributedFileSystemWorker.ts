@@ -1,11 +1,11 @@
-import { DFSFileHandlerResolver } from "../handlers/DFSFileHandlerResolver.ts";
-import { EaCRemoteDistributedFileSystemHandlerResolver } from "../resolvers/EaCRemoteDistributedFileSystemHandlerResolver.ts";
+import { EaCDFSFileHandlerResolver } from "../handlers/EaCDFSFileHandlerResolver.ts";
+import { EaCRemoteDFSHandlerResolver } from "../resolvers/EaCRemoteDFSHandlerResolver.ts";
 import { EaCDistributedFileSystemWorker } from "./EaCDistributedFileSystemWorker.ts";
 
 export class EaCRemoteDistributedFileSystemWorker
   extends EaCDistributedFileSystemWorker {
-  protected loadDFSHandlerResolver(): DFSFileHandlerResolver {
-    return EaCRemoteDistributedFileSystemHandlerResolver;
+  protected loadDFSHandlerResolver(): EaCDFSFileHandlerResolver {
+    return EaCRemoteDFSHandlerResolver;
   }
 }
 

@@ -2,17 +2,17 @@ import { IoCContainer } from "./.deps.ts";
 import { DistributedFileSystemOptions } from "../_/DistributedFileSystemOptions.ts";
 import { EaCDistributedFileSystemDetails } from "../_/EaCDistributedFileSystemDetails.ts";
 import { EverythingAsCodeDFS } from "../_/EverythingAsCodeDFS.ts";
-import { DFSFileHandler } from "./DFSFileHandler.ts";
+import { IEaCDFSFileHandler } from "./IEaCDFSFileHandler.ts";
 
-export type DFSFileHandlerResolverOptions = DistributedFileSystemOptions & {
+export type EaCDFSFileHandlerResolverOptions = DistributedFileSystemOptions & {
   EaC: EverythingAsCodeDFS;
 };
 
-export type DFSFileHandlerResolver = {
+export type EaCDFSFileHandlerResolver = {
   Resolve: (
     ioc: IoCContainer,
     dfsLookup: string,
     dfs: EaCDistributedFileSystemDetails,
-    options?: DFSFileHandlerResolverOptions,
-  ) => Promise<DFSFileHandler | undefined>;
+    options?: EaCDFSFileHandlerResolverOptions,
+  ) => Promise<IEaCDFSFileHandler | undefined>;
 };

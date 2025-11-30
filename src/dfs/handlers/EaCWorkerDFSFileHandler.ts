@@ -1,12 +1,12 @@
 import { DFSFileInfo } from "./.deps.ts";
 import { EaCDistributedFileSystemDetails } from "../_/EaCDistributedFileSystemDetails.ts";
 import { EaCDistributedFileSystemWorkerClient } from "../workers/EaCDistributedFileSystemWorkerClient.ts";
-import { DFSFileHandler } from "./DFSFileHandler.ts";
+import { EaCDFSFileHandler } from "./EaCDFSFileHandler.ts";
 
 /**
- * Implements `DFSFileHandler` for worker-based DFS execution.
+ * Implements `EaCDFSFileHandler` for worker-based DFS execution.
  */
-export class WorkerDFSFileHandler extends DFSFileHandler {
+export class EaCWorkerDFSFileHandler extends EaCDFSFileHandler {
   private readonly dfsWorkerClient: EaCDistributedFileSystemWorkerClient;
 
   public override get Root(): string {
