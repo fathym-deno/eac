@@ -1,3 +1,4 @@
+export * from "./DFSHandlerResolver.ts";
 export * from "./DefaultEaCDFSHandlerResolver.ts";
 export * from "./EaCESMDFSHandlerResolver.ts";
 export * from "./EaCJSRDFSHandlerResolver.ts";

@@ -1,5 +1,5 @@
-import { EaCDistributedFileSystemDetails } from "../_/EaCDistributedFileSystemDetails.ts";
 import { FathymWorkerConfig, FathymWorkerMessage } from "./.deps.ts";
+import { EaCDistributedFileSystemDetails } from "../_/EaCDistributedFileSystemDetails.ts";
 
 export type EaCDistributedFileSystemWorkerConfig = {
   DFS: EaCDistributedFileSystemDetails;

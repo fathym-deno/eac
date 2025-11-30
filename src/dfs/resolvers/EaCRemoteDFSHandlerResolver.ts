@@ -1,13 +1,13 @@
 import { isEaCRemoteDistributedFileSystemDetails } from "../_/EaCRemoteDistributedFileSystemDetails.ts";
-import { IEaCDFSFileHandler } from "../handlers/IEaCDFSFileHandler.ts";
-import { EaCDFSFileHandlerResolver } from "../handlers/EaCDFSFileHandlerResolver.ts";
-import { EaCRemoteFetchDFSFileHandler } from "../handlers/EaCRemoteFetchDFSFileHandler.ts";
+import { type IDFSFileHandler, RemoteFetchDFSFileHandler } from "./.deps.ts";
+import { DFSHandlerResolver } from "./DFSHandlerResolver.ts";
 
 /**
  * Resolver for Remote Distributed File Systems (DFS).
+ * Returns base RemoteFetchDFSFileHandler from @fathym/dfs.
  */
-export const EaCRemoteDFSHandlerResolver: EaCDFSFileHandlerResolver = {
-  async Resolve(_ioc, dfsLookup, dfs): Promise<IEaCDFSFileHandler | undefined> {
+export const EaCRemoteDFSHandlerResolver: DFSHandlerResolver = {
+  async Resolve(_ioc, _dfsLookup, dfs): Promise<IDFSFileHandler | undefined> {
     if (!isEaCRemoteDistributedFileSystemDetails(dfs)) {
       throw new Deno.errors.NotSupported(
         "The provided dfs is not supported for the EaCRemoteDFSHandlerResolver.",
@@ -20,6 +20,11 @@ export const EaCRemoteDFSHandlerResolver: EaCDFSFileHandlerResolver = {
       );
     }
 
-    return new EaCRemoteFetchDFSFileHandler(dfsLookup, dfs);
+    return new RemoteFetchDFSFileHandler({
+      RemoteRoot: dfs.RemoteRoot,
+      DefaultFile: dfs.DefaultFile,
+      Extensions: dfs.Extensions,
+      UseCascading: dfs.UseCascading,
+    });
   },
 };

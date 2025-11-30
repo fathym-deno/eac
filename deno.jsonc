@@ -21,7 +21,6 @@
     "./steward/utils": "./src/steward/utils/.exports.ts",
     "./types": "./src/types/.exports.ts",
     "./dfs": "./src/dfs/_/.exports.ts",
-    "./dfs/handlers": "./src/dfs/handlers/.exports.ts",
     "./dfs/resolvers": "./src/dfs/resolvers/.exports.ts",
     "./dfs/utils": "./src/dfs/utils/.exports.ts",
     "./dfs/workers": "./src/dfs/workers/.exports.ts",

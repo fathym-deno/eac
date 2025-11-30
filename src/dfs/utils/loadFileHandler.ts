@@ -1,18 +1,21 @@
-import { IoCContainer } from "./.deps.ts";
-import { IEaCDFSFileHandler } from "../handlers/IEaCDFSFileHandler.ts";
+import { type IDFSFileHandler, IoCContainer } from "./.deps.ts";
 import {
-  EaCDFSFileHandlerResolver,
-  EaCDFSFileHandlerResolverOptions,
-} from "../handlers/EaCDFSFileHandlerResolver.ts";
+  DFSHandlerResolver,
+  DFSHandlerResolverOptions,
+} from "../resolvers/DFSHandlerResolver.ts";
 import { EaCDistributedFileSystemAsCode } from "../_/EaCDistributedFileSystemAsCode.ts";
 import { EaCDistributedFileSystemDetails } from "../_/EaCDistributedFileSystemDetails.ts";
 
+/**
+ * Load a DFS file handler by lookup name.
+ * Returns base IDFSFileHandler from @fathym/dfs.
+ */
 export async function loadDFSFileHandler(
   ioc: IoCContainer,
   dfss: Record<string, EaCDistributedFileSystemAsCode>,
-  options: EaCDFSFileHandlerResolverOptions,
+  options: DFSHandlerResolverOptions,
   dfsLookup: string,
-): Promise<IEaCDFSFileHandler | undefined> {
+): Promise<IDFSFileHandler | undefined> {
   const dfs = dfss[dfsLookup]?.Details;
 
   if (!dfs) {
@@ -22,15 +25,19 @@ export async function loadDFSFileHandler(
   return loadFileHandler(ioc, dfsLookup, dfs, options);
 }
 
+/**
+ * Load a DFS file handler from DFS details.
+ * Returns base IDFSFileHandler from @fathym/dfs.
+ */
 export async function loadFileHandler(
   ioc: IoCContainer,
   dfsLookup: string,
   dfs: EaCDistributedFileSystemDetails,
-  options: EaCDFSFileHandlerResolverOptions,
-): Promise<IEaCDFSFileHandler | undefined> {
+  options: DFSHandlerResolverOptions,
+): Promise<IDFSFileHandler | undefined> {
   const defaultDFSFileHandlerResolver = await ioc.Resolve<
-    EaCDFSFileHandlerResolver
-  >(ioc.Symbol("EaCDFSFileHandler"));
+    DFSHandlerResolver
+  >(ioc.Symbol("DFSFileHandler"));
 
   const fileHandler = await defaultDFSFileHandlerResolver.Resolve(
     ioc,

@@ -1,19 +1,30 @@
 import { isEaCESMDistributedFileSystemDetails } from "../_/EaCESMDistributedFileSystemDetails.ts";
-import { IEaCDFSFileHandler } from "../handlers/IEaCDFSFileHandler.ts";
-import { EaCDFSFileHandlerResolver } from "../handlers/EaCDFSFileHandlerResolver.ts";
-import { EaCESMFetchDFSFileHandler } from "../handlers/EaCESMFetchDFSFileHandler.ts";
+import { ESMFetchDFSFileHandler, type IDFSFileHandler } from "./.deps.ts";
+import { DFSHandlerResolver } from "./DFSHandlerResolver.ts";
 
 /**
  * Resolver for ESM-based Distributed File Systems (DFS).
+ * Returns base ESMFetchDFSFileHandler from @fathym/dfs.
  */
-export const EaCESMDFSHandlerResolver: EaCDFSFileHandlerResolver = {
-  async Resolve(_ioc, dfsLookup, dfs): Promise<IEaCDFSFileHandler | undefined> {
+export const EaCESMDFSHandlerResolver: DFSHandlerResolver = {
+  async Resolve(_ioc, _dfsLookup, dfs): Promise<IDFSFileHandler | undefined> {
     if (!isEaCESMDistributedFileSystemDetails(dfs)) {
       throw new Deno.errors.NotSupported(
         "The provided dfs is not supported for the EaCESMDFSHandlerResolver.",
       );
     }
 
-    return new EaCESMFetchDFSFileHandler(dfsLookup, dfs);
+    if (!dfs.Root) {
+      throw new Error("Root must be provided for ESM DFS resolution.");
+    }
+
+    return new ESMFetchDFSFileHandler({
+      Root: dfs.Root,
+      EntryPoints: dfs.EntryPoints,
+      IncludeDependencies: dfs.IncludeDependencies,
+      DefaultFile: dfs.DefaultFile,
+      Extensions: dfs.Extensions,
+      UseCascading: dfs.UseCascading,
+    });
   },
 };

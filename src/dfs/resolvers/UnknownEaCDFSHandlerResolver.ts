@@ -1,12 +1,14 @@
-import { IEaCDFSFileHandler } from "../handlers/IEaCDFSFileHandler.ts";
-import { EaCDFSFileHandlerResolver } from "../handlers/EaCDFSFileHandlerResolver.ts";
-import { EaCLocalDFSFileHandler } from "../handlers/EaCLocalDFSFileHandler.ts";
+import { type IDFSFileHandler, LocalDFSFileHandler } from "./.deps.ts";
+import { DFSHandlerResolver } from "./DFSHandlerResolver.ts";
 
-export const UnknownEaCDFSHandlerResolver: EaCDFSFileHandlerResolver = {
-  Resolve(_ioc, dfsLookup, _dfs): Promise<IEaCDFSFileHandler | undefined> {
+/**
+ * Fallback resolver for unknown DFS types.
+ * Returns a base LocalDFSFileHandler with current directory as root.
+ */
+export const UnknownEaCDFSHandlerResolver: DFSHandlerResolver = {
+  Resolve(_ioc, _dfsLookup, _dfs): Promise<IDFSFileHandler | undefined> {
     return Promise.resolve(
-      new EaCLocalDFSFileHandler(dfsLookup, {
-        Type: "Local",
+      new LocalDFSFileHandler({
         FileRoot: ".",
       }),
     );
