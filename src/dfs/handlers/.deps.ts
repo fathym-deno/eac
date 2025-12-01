@@ -8,12 +8,12 @@ export {
   DFSFileHandler as BaseDFSFileHandler,
   type DFSFileInfo,
   type IDFSFileHandler as BaseIDFSFileHandler,
-} from "jsr:@fathym/dfs@0.0.48";
+} from "jsr:@fathym/dfs@0.0.51";
 export {
   CompositeDFSFileHandler as BaseCompositeDFSFileHandler,
   LocalDFSFileHandler as BaseLocalDFSFileHandler,
   type LocalDFSFileHandlerDetails as BaseLocalDFSFileHandlerDetails,
-} from "jsr:@fathym/dfs@0.0.48/handlers";
+} from "jsr:@fathym/dfs@0.0.51/handlers";
 export {
   ESMFetchDFSFileHandler as BaseESMFetchDFSFileHandler,
   type ESMFetchDFSFileHandlerDetails as BaseESMFetchDFSFileHandlerDetails,
@@ -25,8 +25,8 @@ export {
   type NPMFetchDFSFileHandlerDetails as BaseNPMFetchDFSFileHandlerDetails,
   RemoteFetchDFSFileHandler as BaseRemoteFetchDFSFileHandler,
   type RemoteFetchDFSFileHandlerDetails as BaseRemoteFetchDFSFileHandlerDetails,
-} from "jsr:@fathym/dfs@0.0.48/handlers/fetch";
-export { getFileCheckPathsToProcess } from "jsr:@fathym/dfs@0.0.48/utils";
+} from "jsr:@fathym/dfs@0.0.51/handlers/fetch";
+export { getFileCheckPathsToProcess } from "jsr:@fathym/dfs@0.0.51/utils";
 export {
   getPackageLogger,
   getPackageLoggerSync,
