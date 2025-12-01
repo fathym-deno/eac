@@ -1,5 +1,5 @@
 export * from "./DFSHandlerResolver.ts";
-export * from "./DefaultEaCDFSHandlerResolver.ts";
+// DefaultEaCDFSHandlerResolver moved to @fathym/eac-apps-pack to avoid circular dependencies
 export * from "./EaCESMDFSHandlerResolver.ts";
 export * from "./EaCJSRDFSHandlerResolver.ts";
 export * from "./EaCLocalDFSHandlerResolver.ts";
