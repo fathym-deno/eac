@@ -1,61 +1,61 @@
-import { FathymWorkerConfig, FathymWorkerMessage } from "./.deps.ts";
-import { EaCDistributedFileSystemDetails } from "../_/EaCDistributedFileSystemDetails.ts";
+// import { FathymWorkerConfig, FathymWorkerMessage } from "./.deps.ts";
+// import { EaCDistributedFileSystemDetails } from "../_/EaCDistributedFileSystemDetails.ts";
 
-export type EaCDistributedFileSystemWorkerConfig = {
-  DFS: EaCDistributedFileSystemDetails;
+// export type EaCDistributedFileSystemWorkerConfig = {
+//   DFS: EaCDistributedFileSystemDetails;
 
-  DFSLookup: string;
-} & FathymWorkerConfig;
+//   DFSLookup: string;
+// } & FathymWorkerConfig;
 
-export type EaCDistributedFileSystemWorkerMessageGetFileInfoPayload = {
-  CacheDB?: Deno.Kv;
+// export type EaCDistributedFileSystemWorkerMessageGetFileInfoPayload = {
+//   CacheDB?: Deno.Kv;
 
-  CacheSeconds?: number;
+//   CacheSeconds?: number;
 
-  DefaultFileName?: string;
+//   DefaultFileName?: string;
 
-  Extensions?: string[];
+//   Extensions?: string[];
 
-  FilePath: string;
+//   FilePath: string;
 
-  Revision: string;
+//   Revision: string;
 
-  UseCascading?: boolean;
-};
+//   UseCascading?: boolean;
+// };
 
-export type EaCDistributedFileSystemWorkerMessageLoadAllPathsPayload = {
-  Revision?: string;
-};
+// export type EaCDistributedFileSystemWorkerMessageLoadAllPathsPayload = {
+//   Revision?: string;
+// };
 
-export type EaCDistributedFileSystemWorkerMessageRemoveFilePayload = {
-  CacheDB?: Deno.Kv;
+// export type EaCDistributedFileSystemWorkerMessageRemoveFilePayload = {
+//   CacheDB?: Deno.Kv;
 
-  FilePath: string;
+//   FilePath: string;
 
-  Revision: string;
-};
+//   Revision: string;
+// };
 
-export type EaCDistributedFileSystemWorkerMessageWriteFilePayload = {
-  CacheDB?: Deno.Kv;
+// export type EaCDistributedFileSystemWorkerMessageWriteFilePayload = {
+//   CacheDB?: Deno.Kv;
 
-  FilePath: string;
+//   FilePath: string;
 
-  Headers?: Record<string, string>;
+//   Headers?: Record<string, string>;
 
-  MaxChunkSize?: number;
+//   MaxChunkSize?: number;
 
-  Revision: string;
+//   Revision: string;
 
-  Stream: ReadableStream<Uint8Array>;
+//   Stream: ReadableStream<Uint8Array>;
 
-  TTLSeconds?: number;
-};
+//   TTLSeconds?: number;
+// };
 
-export type EaCDistributedFileSystemWorkerMessage<
-  TPayload extends
-    | undefined
-    | EaCDistributedFileSystemWorkerMessageGetFileInfoPayload
-    | EaCDistributedFileSystemWorkerMessageLoadAllPathsPayload
-    | EaCDistributedFileSystemWorkerMessageRemoveFilePayload
-    | EaCDistributedFileSystemWorkerMessageWriteFilePayload = undefined,
-> = FathymWorkerMessage<TPayload>;
+// export type EaCDistributedFileSystemWorkerMessage<
+//   TPayload extends
+//     | undefined
+//     | EaCDistributedFileSystemWorkerMessageGetFileInfoPayload
+//     | EaCDistributedFileSystemWorkerMessageLoadAllPathsPayload
+//     | EaCDistributedFileSystemWorkerMessageRemoveFilePayload
+//     | EaCDistributedFileSystemWorkerMessageWriteFilePayload = undefined,
+// > = FathymWorkerMessage<TPayload>;
