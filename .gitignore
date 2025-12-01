@@ -8,4 +8,6 @@ denoKv/
 # Fresh build directory
 node_modules/
 cov/
+
+.logs/runtime-*.jsonl
 .logs/
