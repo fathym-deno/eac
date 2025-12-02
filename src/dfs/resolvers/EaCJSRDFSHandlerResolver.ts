@@ -39,6 +39,7 @@ export const EaCJSRDFSHandlerResolver: DFSHandlerResolver = {
       DefaultFile: jsrDFS.DefaultFile,
       Extensions: jsrDFS.Extensions,
       UseCascading: jsrDFS.UseCascading,
+      FileRoot: jsrDFS.FileRoot,
     });
   },
 };
