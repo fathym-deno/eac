@@ -82,6 +82,15 @@ export async function executePathMatch(
     logger?.warn(
       `[pattern-match] No pattern matched for path: ${requestPath}`,
     );
+    logger?.warn(
+      `[pattern-match] Available patterns (${matches.length} total):`,
+    );
+    matches.slice(0, 20).forEach((m) => {
+      logger?.warn(`[pattern-match]   ${m.PatternText}`);
+    });
+    if (matches.length > 20) {
+      logger?.warn(`[pattern-match]   ... and ${matches.length - 20} more`);
+    }
 
     throw new Deno.errors.NotFound(
       `The requested path '${requestPath}' could not be found.`,
