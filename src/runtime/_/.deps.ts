@@ -11,4 +11,4 @@ export { type TelemetryLogger } from "jsr:@fathym/common@0.2.299/telemetry";
 
 export { IoCContainer } from "jsr:@fathym/ioc@0.0.21";
 
-export { type ESBuild } from "jsr:@fathym/dfs@0.0.51/build";
+export { type ESBuild } from "jsr:@fathym/dfs@0.0.54-integration/build";
