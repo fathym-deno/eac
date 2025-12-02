@@ -39,7 +39,29 @@
     "test": "deno test -A tests/tests.ts --coverage=cov",
     "version": "deno run -A jsr:@fathym/common@0/build/version"
   },
-  "imports": {},
+  "imports": {
+    "jsr:@fathym/common@0.2.299/log": "../../ref-arch/reference-architecture/src/log/.exports.ts",
+    "jsr:@fathym/ioc@0.0.21": "../../ref-arch/ioc/mod.ts",
+    "jsr:@fathym/dfs@0.0.55-integration": "../../ref-arch/distributed-file-system/src/_/.exports.ts",
+    "jsr:@fathym/dfs@0.0.55-integration/handlers": "../../ref-arch/distributed-file-system/src/handlers/.exports.ts",
+    "jsr:@fathym/dfs@0.0.55-integration/handlers/fetch": "../../ref-arch/distributed-file-system/src/handlers/fetch/.exports.ts",
+    "jsr:@fathym/common@0.2.299/iterables": "../../ref-arch/reference-architecture/src/iterables/.exports.ts",
+    "jsr:@fathym/common@0.2.299/http": "../../ref-arch/reference-architecture/src/http/.exports.ts",
+    "jsr:@fathym/common@0.2.299/telemetry": "../../ref-arch/reference-architecture/src/telemetry/.exports.ts",
+    "jsr:@fathym/runtime@0.0.11/workers": "../../ref-arch/reference-runtime/src/workers/.exports.ts",
+    "jsr:@fathym/common@0.2.299/types": "../../ref-arch/reference-architecture/src/types/.exports.ts",
+    "jsr:@fathym/runtime@0.0.11/fluent": "../../ref-arch/reference-runtime/src/fluent/.exports.ts",
+    "jsr:@fathym/common@0.2.299/merge": "../../ref-arch/reference-architecture/src/merge/.exports.ts",
+    "jsr:@fathym/common@0.2.299/path": "../../ref-arch/reference-architecture/src/path/.exports.ts",
+    "jsr:@fathym/dfs@0.0.55-integration/build": "../../ref-arch/distributed-file-system/src/build/.exports.ts",
+    "jsr:@fathym/common@0.2.299/jwt": "../../ref-arch/reference-architecture/src/jwt/.exports.ts",
+    "jsr:@fathym/runtime@0.0.11/deno-kv": "../../ref-arch/reference-runtime/src/deno-kv/.exports.ts"
+  },
+/**
+// @sync-imports BEGIN ORIGINAL IMPORTS
+//   "imports": {},
+// @sync-imports END ORIGINAL IMPORTS
+*/
   "lint": {
     "rules": {
       "tags": ["recommended"],
