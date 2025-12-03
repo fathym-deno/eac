@@ -11,7 +11,11 @@ import {
 import { EaCRuntime } from "./EaCRuntime.ts";
 import { EaCRuntimeContext } from "./EaCRuntimeContext.ts";
 import { EverythingAsCode } from "../../eac/EverythingAsCode.ts";
-import { IS_BUILDING, IS_DENO_DEPLOY } from "../config/constants.ts";
+import {
+  FAST_REVISION,
+  IS_BUILDING,
+  IS_DENO_DEPLOY,
+} from "../config/constants.ts";
 import { EaCRuntimeConfig } from "../config/EaCRuntimeConfig.ts";
 import { EaCRuntimePluginConfig } from "../config/EaCRuntimePluginConfig.ts";
 import { EaCLoggingProvider } from "../logging/EaCLoggingProvider.ts";
@@ -433,8 +437,21 @@ export class GenericEaCRuntime<TEaC extends EverythingAsCode = EverythingAsCode>
   protected async resetRuntime(): Promise<void> {
     this.logger.debug("Resetting runtime state...");
 
-    this.Revision = await generateDirectoryHash(Deno.cwd());
-    this.logger.info(`Generated runtime revision: ${this.Revision}`);
+    // Support fast revision mode for testing and development
+    const fastRevision = FAST_REVISION();
+    if (fastRevision === "timestamp") {
+      // Use timestamp-based revision (fast, still invalidates on restart)
+      this.Revision = `ts-${Date.now()}`;
+      this.logger.info(`Using timestamp-based revision: ${this.Revision}`);
+    } else if (fastRevision) {
+      // Use custom fixed revision (fastest, for tests)
+      this.Revision = fastRevision;
+      this.logger.info(`Using fixed revision: ${this.Revision}`);
+    } else {
+      // Default: Full directory hash (slow but accurate)
+      this.Revision = await generateDirectoryHash(Deno.cwd());
+      this.logger.info(`Generated runtime revision: ${this.Revision}`);
+    }
 
     this.pluginConfigs = new Map();
     this.pluginDefs = new Map();

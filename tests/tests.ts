@@ -3,3 +3,4 @@ import "./eac/.tests.ts";
 import "./log/.tests.ts";
 
 import "./dfs/.tests.ts";
+import "./runtime/.tests.ts";
