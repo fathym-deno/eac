@@ -3,6 +3,7 @@ export { toText } from "jsr:@std/streams@1.0.9";
 
 export { concatUint8Arrays } from "jsr:@fathym/common@0.2.299/iterables";
 export { establishHeaders } from "jsr:@fathym/common@0.2.299/http";
+export { getPackageLogger } from "jsr:@fathym/common@0.2.299/log";
 export type { TelemetryLogger } from "jsr:@fathym/common@0.2.299/telemetry";
 
 export {

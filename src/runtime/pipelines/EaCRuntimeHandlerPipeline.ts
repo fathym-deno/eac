@@ -11,29 +11,16 @@ export class EaCRuntimeHandlerPipeline {
 
   constructor() {
     this.Pipeline = [];
-
     this.logger = getPackageLoggerSync(import.meta);
-    this.logger.debug(
-      "Initialized EaCRuntimeHandlerPipeline with empty pipeline.",
-    );
   }
 
   public Append(...handlers: (EaCRuntimeHandlerSet | undefined)[]): void {
     if (handlers) {
-      const count = handlers.filter((h) => h).length;
-      this.logger.info(`Appending ${count} handler sets to pipeline.`);
+      const filtered = handlers
+        .filter((h) => h)
+        .flatMap((h) => (Array.isArray(h) ? h! : [h!]));
 
-      this.Pipeline.push(
-        ...handlers
-          .filter((h) => h)
-          .flatMap((h) => {
-            return Array.isArray(h) ? h! : [h!];
-          }),
-      );
-
-      this.logger.debug(
-        `Pipeline now contains ${this.Pipeline.length} handlers after append.`,
-      );
+      this.Pipeline.push(...filtered);
     }
   }
 
@@ -42,48 +29,48 @@ export class EaCRuntimeHandlerPipeline {
     ctx: EaCRuntimeContext,
     index = -1,
   ): Response | Promise<Response> {
+    const url = new URL(request.url);
+    const startTime = index === -1 ? Date.now() : undefined;
+
+    // Log pipeline start only at first call (index === -1)
+    if (index === -1) {
+      this.logger.debug(
+        `[pipeline] request method=${request.method} path=${url.pathname} handlers=${this.Pipeline.length}`,
+      );
+    }
+
     ctx.Next = async (req) => {
       req ??= request;
 
       ++index;
-
-      // this.logger.debug(
-      //   `Pipeline execution at index ${index} for ${req.method} ${req.url}`,
-      // );
 
       if (this.Pipeline.length > index) {
         let handler: EaCRuntimeHandler | EaCRuntimeHandlers | undefined =
           this.Pipeline[index];
 
         if (handler && typeof handler !== "function") {
-          // this.logger.debug(
-          //   `Resolving method handler for ${req.method} at index ${index}`,
-          // );
           handler = handler[req.method.toUpperCase() as KnownMethod];
         }
 
         const response = await handler?.(req, ctx);
 
         if (response) {
-          // this.logger.info(`Handler at index ${index} returned a response.`);
+          // Log response with timing if we're the originating pipeline
+          if (startTime !== undefined) {
+            const durMs = Date.now() - startTime;
+            this.logger.debug(
+              `[pipeline] response status=${response.status} path=${url.pathname} durMs=${durMs}`,
+            );
+          }
           return response;
         } else {
-          // this.logger.debug(
-          //   `Handler at index ${index} returned no response, continuing pipeline.`,
-          // );
           return this.Execute(req, ctx, index);
         }
       } else {
-        try {
-          throw new Error(
-            `A Response must be returned from the pipeline for the request ${req.url}`,
-          );
-        } catch (err) {
-          this.logger.error(
-            `A Response must be returned from the pipeline for the request ${req.url}`,
-            { err },
-          );
-        }
+        this.logger.error(
+          `[pipeline] no-response handlers=${this.Pipeline.length} path=${url.pathname} method=${req.method}`,
+          { err: new Error("No response from pipeline") },
+        );
 
         return Response.json(
           {
@@ -97,28 +84,16 @@ export class EaCRuntimeHandlerPipeline {
       }
     };
 
-    // this.logger.debug(
-    //   `Beginning pipeline execution for ${request.method} ${request.url}`,
-    // );
     return ctx.Next(request);
   }
 
   public Prepend(...handlers: (EaCRuntimeHandlerSet | undefined)[]): void {
     if (handlers) {
-      const count = handlers.filter((h) => h).length;
-      this.logger.info(`Prepending ${count} handler sets to pipeline.`);
+      const filtered = handlers
+        .filter((h) => h)
+        .flatMap((h) => (Array.isArray(h) ? h! : [h!]));
 
-      this.Pipeline.unshift(
-        ...handlers
-          .filter((h) => h)
-          .flatMap((h) => {
-            return Array.isArray(h) ? h! : [h!];
-          }),
-      );
-
-      this.logger.debug(
-        `Pipeline now contains ${this.Pipeline.length} handlers after prepend.`,
-      );
+      this.Pipeline.unshift(...filtered);
     }
   }
 }

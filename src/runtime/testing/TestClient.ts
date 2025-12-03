@@ -1,3 +1,5 @@
+import { getPackageLoggerSync, type TelemetryLogger } from "./.deps.ts";
+
 /**
  * Options for configuring a TestClient
  */
@@ -30,10 +32,14 @@ export interface TestClientOptions {
  * ```
  */
 export class TestClient {
+  protected logger: TelemetryLogger;
+
   constructor(
     protected baseUrl: string,
     protected options: TestClientOptions = {},
-  ) {}
+  ) {
+    this.logger = getPackageLoggerSync(import.meta);
+  }
 
   /**
    * Make a GET request
@@ -145,10 +151,11 @@ export class TestClient {
       ? setTimeout(() => controller.abort(), timeout)
       : undefined;
 
-    try {
-      const url = path.startsWith("http") ? path : `${this.baseUrl}${path}`;
+    const url = path.startsWith("http") ? path : `${this.baseUrl}${path}`;
+    this.logger.debug(`[test-client] ${options.method} ${url}`);
 
-      return await fetch(url, {
+    try {
+      const response = await fetch(url, {
         ...options,
         headers: {
           ...this.options.headers,
@@ -156,6 +163,14 @@ export class TestClient {
         },
         signal: controller.signal,
       });
+
+      this.logger.debug(
+        `[test-client] response status=${response.status} url=${url}`,
+      );
+      return response;
+    } catch (err) {
+      this.logger.error(`[test-client] fetch failed url=${url}`, { err });
+      throw err;
     } finally {
       if (timeoutId) clearTimeout(timeoutId);
     }

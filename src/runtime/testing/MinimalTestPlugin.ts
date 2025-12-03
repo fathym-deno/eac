@@ -1,4 +1,8 @@
-import { IoCContainer } from "./.deps.ts";
+import {
+  getPackageLoggerSync,
+  IoCContainer,
+  type TelemetryLogger,
+} from "./.deps.ts";
 import type { EverythingAsCode } from "../../eac/EverythingAsCode.ts";
 import type { EaCRuntimeConfig } from "../config/EaCRuntimeConfig.ts";
 import type { EaCRuntimePluginConfig } from "../config/EaCRuntimePluginConfig.ts";
@@ -35,11 +39,17 @@ export type TestRouteHandler = (req: Request) => Response | Promise<Response>;
  */
 export class MinimalTestPlugin implements EaCRuntimePlugin {
   private routes: Map<string, TestRouteHandler> = new Map();
+  private logger: TelemetryLogger;
+
+  constructor() {
+    this.logger = getPackageLoggerSync(import.meta);
+  }
 
   /**
    * Add a custom route handler
    */
   addRoute(path: string, handler: TestRouteHandler): this {
+    this.logger.debug(`[minimal-test-plugin] adding route path=${path}`);
     this.routes.set(path, handler);
     return this;
   }
@@ -95,6 +105,7 @@ export class MinimalTestPlugin implements EaCRuntimePlugin {
   async Setup(
     _config: EaCRuntimeConfig,
   ): Promise<EaCRuntimePluginConfig> {
+    this.logger.debug(`[minimal-test-plugin] setup routes=${this.routes.size}`);
     return {
       Name: "MinimalTestPlugin",
       EaC: {} as EverythingAsCode,
@@ -109,15 +120,31 @@ export class MinimalTestPlugin implements EaCRuntimePlugin {
     _ioc: IoCContainer,
     _config: EaCRuntimeConfig,
   ): Promise<EaCRuntimeHandlerRouteGroup[]> {
+    this.logger.debug(
+      `[minimal-test-plugin] afterEaCResolved routes=${this.routes.size}`,
+    );
+
     // Create a single route group with all our routes
     let priority = 1000; // Start high priority for specific routes
+    const logger = this.logger;
     const routes = Array.from(this.routes.entries()).map(([path, handler]) => {
       const pipeline = new EaCRuntimeHandlerPipeline();
 
       const wrappedHandler: EaCRuntimeHandler = async (req, ctx) => {
+        const url = new URL(req.url);
+        logger.debug(
+          `[minimal-test-plugin] handling path=${path} url=${url.pathname}`,
+        );
         try {
-          return await handler(req);
+          const response = await handler(req);
+          logger.debug(
+            `[minimal-test-plugin] response status=${response.status} path=${path}`,
+          );
+          return response;
         } catch (error) {
+          logger.error(`[minimal-test-plugin] handler error path=${path}`, {
+            err: error,
+          });
           return new Response(`Error: ${error}`, { status: 500 });
         }
       };
@@ -136,7 +163,11 @@ export class MinimalTestPlugin implements EaCRuntimePlugin {
 
     // Create catch-all 404 handler in a SEPARATE, lower-priority route group
     const notFoundPipeline = new EaCRuntimeHandlerPipeline();
-    notFoundPipeline.Append(() => new Response("Not Found", { status: 404 }));
+    notFoundPipeline.Append((req) => {
+      const url = new URL(req.url);
+      logger.debug(`[minimal-test-plugin] 404 path=${url.pathname}`);
+      return new Response("Not Found", { status: 404 });
+    });
 
     const notFoundRoute = {
       Name: "test-route:404",
@@ -148,6 +179,10 @@ export class MinimalTestPlugin implements EaCRuntimePlugin {
         Priority: 0,
       },
     };
+
+    this.logger.info(
+      `[minimal-test-plugin] registered routeGroups=2 routes=${routes.length}`,
+    );
 
     return [
       // Higher priority group for specific routes
