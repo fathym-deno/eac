@@ -1,4 +1,5 @@
-import { EaCRuntime, EaCRuntimeConfig } from "./.deps.ts";
+import type { EaCRuntime } from "../_/EaCRuntime.ts";
+import type { EaCRuntimeConfig } from "../config/EaCRuntimeConfig.ts";
 import { resolvePort } from "./resolvePort.ts";
 import { startServer } from "./startServer.ts";
 

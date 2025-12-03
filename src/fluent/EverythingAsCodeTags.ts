@@ -1,11 +1,7 @@
 // deno-lint-ignore-file no-explicit-any
 import { EaCDetails } from "../eac/EaCDetails.ts";
-import {
-  $FluentTag,
-  EaCVertexDetails,
-  HasTypeCheck,
-  IsObjectNotNative,
-} from "./.deps.ts";
+import type { EaCVertexDetails } from "../eac/EaCVertexDetails.ts";
+import { $FluentTag, HasTypeCheck, IsObjectNotNative } from "./.deps.ts";
 
 /**
  * `EverythingAsCodeTags<T>` is a recursive type that applies tags to all properties of type `T`.

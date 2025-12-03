@@ -1,3 +1,4 @@
+// Fluent dependencies - EXTERNAL ONLY
 export type {
   HasTypeCheck,
   IsNativeType,
@@ -19,11 +20,4 @@ export {
   type SelectFluentMethods,
 } from "jsr:@fathym/runtime@0.0.11/fluent";
 
-export * from "jsr:@fathym/ioc@0.0.21";
-
-export type {
-  EaCDetails,
-  EaCModuleActuators,
-  EaCVertexDetails,
-  EverythingAsCode,
-} from "../eac/.exports.ts";
+export * from "jsr:@fathym/ioc@0.0.25";

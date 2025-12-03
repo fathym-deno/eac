@@ -1,4 +1,4 @@
-import { IoCContainer } from "jsr:@fathym/ioc@0.0.21";
+import { IoCContainer } from "jsr:@fathym/ioc@0.0.25";
 import { LoggingProvider, TelemetryLogger } from "./.deps.ts";
 import { handleEaCCommitCheckRequest } from "./commit-check.handler.ts";
 import { handleEaCCommitRequest } from "./commit.handler.ts";

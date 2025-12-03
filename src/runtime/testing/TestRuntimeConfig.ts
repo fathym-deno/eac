@@ -1,4 +1,5 @@
-import type { EaCRuntimePlugin, EverythingAsCode } from "./.deps.ts";
+import type { EverythingAsCode } from "../../eac/EverythingAsCode.ts";
+import type { EaCRuntimePlugin } from "../plugins/EaCRuntimePlugin.ts";
 
 /**
  * Configuration options for TestRuntime

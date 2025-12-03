@@ -1,11 +1,9 @@
-import {
-  type EaCRuntime,
-  EaCRuntimeConfig,
-  EverythingAsCode,
-  findAvailablePort,
-  GenericEaCRuntime,
-  IoCContainer,
-} from "./.deps.ts";
+import { IoCContainer } from "./.deps.ts";
+import type { EverythingAsCode } from "../../eac/EverythingAsCode.ts";
+import type { EaCRuntime } from "../_/EaCRuntime.ts";
+import type { EaCRuntimeConfig } from "../config/EaCRuntimeConfig.ts";
+import { GenericEaCRuntime } from "../_/GenericEaCRuntime.ts";
+import { findAvailablePort } from "../server/findAvailablePort.ts";
 import { TestRuntimeOptions } from "./TestRuntimeConfig.ts";
 import { TestClient } from "./TestClient.ts";
 
@@ -99,8 +97,8 @@ export class TestRuntime<TEaC extends EverythingAsCode = EverythingAsCode> {
   async stop(): Promise<void> {
     if (this.server) {
       await this.server.shutdown();
-      // Give OS time to release the port
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      // Give OS time to release the port (Windows needs longer)
+      await new Promise((resolve) => setTimeout(resolve, 100));
     }
     this.server = undefined;
     this.runtime = undefined;

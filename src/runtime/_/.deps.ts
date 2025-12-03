@@ -9,6 +9,6 @@ export { merge } from "jsr:@fathym/common@0.2.299/merge";
 export { generateDirectoryHash } from "jsr:@fathym/common@0.2.299/path";
 export { type TelemetryLogger } from "jsr:@fathym/common@0.2.299/telemetry";
 
-export { IoCContainer } from "jsr:@fathym/ioc@0.0.21";
+export { IoCContainer } from "jsr:@fathym/ioc@0.0.25";
 
 export { type ESBuild } from "jsr:@fathym/dfs@0.0.57-integration/build";

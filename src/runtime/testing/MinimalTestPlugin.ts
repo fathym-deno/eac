@@ -1,13 +1,11 @@
-import {
-  EaCRuntimeConfig,
-  EaCRuntimeHandler,
-  EaCRuntimeHandlerRouteGroup,
-  EaCRuntimePlugin,
-  EaCRuntimePluginConfig,
-  EverythingAsCode,
-  IoCContainer,
-} from "./.deps.ts";
+import { IoCContainer } from "./.deps.ts";
+import type { EverythingAsCode } from "../../eac/EverythingAsCode.ts";
+import type { EaCRuntimeConfig } from "../config/EaCRuntimeConfig.ts";
+import type { EaCRuntimePluginConfig } from "../config/EaCRuntimePluginConfig.ts";
+import type { EaCRuntimeHandler } from "../pipelines/EaCRuntimeHandler.ts";
 import { EaCRuntimeHandlerPipeline } from "../pipelines/EaCRuntimeHandlerPipeline.ts";
+import type { EaCRuntimeHandlerRouteGroup } from "../pipelines/EaCRuntimeHandlerRouteGroup.ts";
+import type { EaCRuntimePlugin } from "../plugins/EaCRuntimePlugin.ts";
 
 /**
  * Route handler type for MinimalTestPlugin

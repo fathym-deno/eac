@@ -1,5 +1,5 @@
+import type { EverythingAsCode } from "../eac/EverythingAsCode.ts";
 import {
-  EverythingAsCode,
   FluentBuilder,
   fluentBuilder,
   FluentBuilderMethodsHandlers,

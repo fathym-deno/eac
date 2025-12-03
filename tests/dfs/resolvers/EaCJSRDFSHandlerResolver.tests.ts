@@ -1,5 +1,5 @@
 import { assert, assertEquals } from "../../test.deps.ts";
-import { IoCContainer } from "jsr:@fathym/ioc@0.0.14";
+import { IoCContainer } from "jsr:@fathym/ioc@0.0.25";
 import { EaCJSRDFSHandlerResolver } from "../../../src/dfs/resolvers/EaCJSRDFSHandlerResolver.ts";
 import type { EaCJSRDistributedFileSystemDetails } from "../../../src/dfs/_/EaCJSRDistributedFileSystemDetails.ts";
 

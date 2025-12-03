@@ -11,6 +11,8 @@ Deno.test("TestRuntime Tests", async (t) => {
 
     const runtime = new TestRuntime({
       plugins: [plugin],
+      portRangeStart: 4000,
+      portRangeEnd: 4099,
     });
 
     await runtime.start();
@@ -74,6 +76,8 @@ Deno.test("TestRuntime Tests", async (t) => {
 
     const runtime = new TestRuntime({
       plugins: [plugin],
+      portRangeStart: 4100,
+      portRangeEnd: 4199,
     });
 
     await runtime.start();
@@ -98,6 +102,8 @@ Deno.test("TestRuntime Tests", async (t) => {
 
     const runtime = new TestRuntime({
       plugins: [plugin],
+      portRangeStart: 4200,
+      portRangeEnd: 4299,
     });
 
     await runtime.start();
@@ -128,6 +134,8 @@ Deno.test("TestRuntime Tests", async (t) => {
 
     const runtime = new TestRuntime({
       plugins: [plugin],
+      portRangeStart: 4300,
+      portRangeEnd: 4399,
     });
 
     await runtime.start();
@@ -179,6 +187,8 @@ Deno.test("TestRuntime Tests", async (t) => {
 
       const runtime = new TestRuntime({
         plugins: [revisionCapturingPlugin, routePlugin],
+        portRangeStart: 4400,
+        portRangeEnd: 4499,
       });
 
       await runtime.start();

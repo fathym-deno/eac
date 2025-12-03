@@ -1,4 +1,6 @@
-import { EaCRuntime, EaCRuntimeConfig, IS_BUILDING } from "./.deps.ts";
+import type { EaCRuntime } from "../_/EaCRuntime.ts";
+import type { EaCRuntimeConfig } from "../config/EaCRuntimeConfig.ts";
+import { IS_BUILDING } from "../config/constants.ts";
 
 export async function startServer(
   config: EaCRuntimeConfig,

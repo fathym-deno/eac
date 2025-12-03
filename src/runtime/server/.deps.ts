@@ -1,3 +1,2 @@
-export type { EaCRuntime } from "../_/.exports.ts";
-
-export { type EaCRuntimeConfig, IS_BUILDING } from "../config/.exports.ts";
+// Server dependencies - EXTERNAL ONLY
+// Local types should be imported directly in consuming files
