@@ -8,6 +8,7 @@ export type { EaCRuntimePluginConfig } from "../config/EaCRuntimePluginConfig.ts
 export type { EaCRuntimePlugin } from "../plugins/EaCRuntimePlugin.ts";
 export type { EaCRuntimeHandler } from "../pipelines/EaCRuntimeHandler.ts";
 export type { EaCRuntimeHandlerRouteGroup } from "../pipelines/EaCRuntimeHandlerRouteGroup.ts";
+export type { EaCRuntime } from "../_/EaCRuntime.ts";
 
 // Runtime utilities
 export { GenericEaCRuntime } from "../_/GenericEaCRuntime.ts";

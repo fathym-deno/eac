@@ -1,4 +1,5 @@
 import {
+  type EaCRuntime,
   EaCRuntimeConfig,
   EverythingAsCode,
   findAvailablePort,
@@ -69,7 +70,15 @@ export class TestRuntime<TEaC extends EverythingAsCode = EverythingAsCode> {
         },
       },
       Plugins: this.options.plugins,
-    } as EaCRuntimeConfig<TEaC>;
+      // Provide Runtime factory function that plugins like FathymEaCApplicationsPlugin expect
+      Runtime: (): EaCRuntime<TEaC> => {
+        if (!this.runtime) {
+          // Return a minimal object with Revision during setup phase
+          return { Revision: "test" } as unknown as EaCRuntime<TEaC>;
+        }
+        return this.runtime;
+      },
+    } as unknown as EaCRuntimeConfig<TEaC>;
 
     // Create and configure runtime (using GenericEaCRuntime with fast revision mode)
     this.runtime = new GenericEaCRuntime<TEaC>(config);

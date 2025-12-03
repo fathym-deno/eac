@@ -139,4 +139,59 @@ Deno.test("TestRuntime Tests", async (t) => {
 
     await runtime.stop();
   });
+
+  await t.step(
+    "should provide config.Runtime function for plugins",
+    async () => {
+      // Test that plugins can access config.Runtime(config).Revision during Setup
+      // This is required by FathymEaCApplicationsPlugin
+      let capturedRevision: string | undefined;
+
+      const revisionCapturingPlugin = {
+        // deno-lint-ignore no-explicit-any
+        async Setup(config: any) {
+          // Verify config.Runtime exists and is callable
+          assertExists(config.Runtime, "config.Runtime should exist");
+          assertEquals(
+            typeof config.Runtime,
+            "function",
+            "config.Runtime should be a function",
+          );
+
+          // Call it like FathymEaCApplicationsPlugin does
+          const runtimeObj = config.Runtime(config);
+          assertExists(runtimeObj, "Runtime function should return an object");
+          assertExists(
+            runtimeObj.Revision,
+            "Runtime object should have Revision property",
+          );
+
+          capturedRevision = runtimeObj.Revision;
+
+          return {
+            Name: "RevisionCapturingPlugin",
+          };
+        },
+      };
+
+      const routePlugin = createMinimalTestPlugin()
+        .addTextRoute("/", "Home");
+
+      const runtime = new TestRuntime({
+        plugins: [revisionCapturingPlugin, routePlugin],
+      });
+
+      await runtime.start();
+
+      // Verify the revision was captured
+      assertExists(capturedRevision, "Revision should have been captured");
+      assertEquals(
+        capturedRevision,
+        "test",
+        "Revision should be 'test' in test mode",
+      );
+
+      await runtime.stop();
+    },
+  );
 });
