@@ -1,1 +1,1 @@
-export * from './EaCJSRDFSHandlerResolver.tests.ts';
+export * from "./EaCJSRDFSHandlerResolver.tests.ts";
