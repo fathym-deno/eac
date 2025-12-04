@@ -48,7 +48,7 @@ export class MinimalTestPlugin implements EaCRuntimePlugin {
   /**
    * Add a custom route handler
    */
-  addRoute(path: string, handler: TestRouteHandler): this {
+  public AddRoute(path: string, handler: TestRouteHandler): this {
     this.logger.debug(`[minimal-test-plugin] adding route path=${path}`);
     this.routes.set(path, handler);
     return this;
@@ -57,7 +57,7 @@ export class MinimalTestPlugin implements EaCRuntimePlugin {
   /**
    * Add a route that returns JSON
    */
-  addJsonRoute(path: string, data: unknown): this {
+  public AddJsonRoute(path: string, data: unknown): this {
     this.routes.set(path, () =>
       new Response(JSON.stringify(data), {
         headers: { "Content-Type": "application/json" },
@@ -68,7 +68,7 @@ export class MinimalTestPlugin implements EaCRuntimePlugin {
   /**
    * Add a route that returns HTML
    */
-  addHtmlRoute(path: string, html: string): this {
+  public AddHtmlRoute(path: string, html: string): this {
     this.routes.set(path, () =>
       new Response(html, {
         headers: { "Content-Type": "text/html; charset=utf-8" },
@@ -79,7 +79,7 @@ export class MinimalTestPlugin implements EaCRuntimePlugin {
   /**
    * Add a route that returns plain text
    */
-  addTextRoute(path: string, text: string): this {
+  public AddTextRoute(path: string, text: string): this {
     this.routes.set(path, () =>
       new Response(text, {
         headers: { "Content-Type": "text/plain; charset=utf-8" },
@@ -90,7 +90,7 @@ export class MinimalTestPlugin implements EaCRuntimePlugin {
   /**
    * Add a route that redirects to another path
    */
-  addRedirectRoute(path: string, location: string, status = 302): this {
+  public AddRedirectRoute(path: string, location: string, status = 302): this {
     this.routes.set(path, () =>
       new Response(null, {
         status,
@@ -102,7 +102,7 @@ export class MinimalTestPlugin implements EaCRuntimePlugin {
   /**
    * EaCRuntimePlugin.Setup - Provide minimal config with empty EaC
    */
-  async Setup(
+  public async Setup(
     _config: EaCRuntimeConfig,
   ): Promise<EaCRuntimePluginConfig> {
     this.logger.debug(`[minimal-test-plugin] setup routes=${this.routes.size}`);
@@ -115,7 +115,7 @@ export class MinimalTestPlugin implements EaCRuntimePlugin {
   /**
    * EaCRuntimePlugin.AfterEaCResolved - Return route groups for our test routes
    */
-  async AfterEaCResolved(
+  public async AfterEaCResolved(
     _eac: EverythingAsCode,
     _ioc: IoCContainer,
     _config: EaCRuntimeConfig,

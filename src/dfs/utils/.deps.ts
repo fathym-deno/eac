@@ -10,6 +10,6 @@ export {
   DFSFileHandler,
   type DFSFileInfo,
   type IDFSFileHandler,
-} from "jsr:@fathym/dfs@0.0.57-integration";
+} from "jsr:@fathym/dfs@0.0.58-integration";
 
 export { IoCContainer } from "jsr:@fathym/ioc@0.0.25";

@@ -1,4 +1,4 @@
-import { assertEquals, assertExists, assertRejects } from "../../test.deps.ts";
+import { assertEquals, assertExists } from "../../test.deps.ts";
 import {
   createMinimalTestPlugin,
   TestRuntime,
@@ -7,28 +7,28 @@ import {
 Deno.test("TestRuntime Tests", async (t) => {
   await t.step("should start and stop cleanly", async () => {
     const plugin = createMinimalTestPlugin()
-      .addTextRoute("/", "Hello World");
+      .AddTextRoute("/", "Hello World");
 
     const runtime = new TestRuntime({
-      plugins: [plugin],
-      portRangeStart: 4000,
-      portRangeEnd: 4099,
+      Plugins: [plugin],
+      PortRangeStart: 4000,
+      PortRangeEnd: 4099,
     });
 
-    await runtime.start();
+    await runtime.Start();
 
-    assertExists(runtime.port, "Port should be set after start");
-    assertExists(runtime.baseUrl, "Base URL should be set after start");
-    assertEquals(runtime.baseUrl, `http://localhost:${runtime.port}`);
+    assertExists(runtime.Port, "Port should be set after start");
+    assertExists(runtime.BaseURL, "Base URL should be set after start");
+    assertEquals(runtime.BaseURL, `http://localhost:${runtime.Port}`);
 
-    await runtime.stop();
+    await runtime.Stop();
   });
 
   await t.step("should throw when accessing port before start", () => {
     const runtime = new TestRuntime();
 
     try {
-      const _port = runtime.port;
+      const _port = runtime.Port;
       throw new Error("Expected error not thrown");
     } catch (e) {
       assertEquals(
@@ -42,7 +42,7 @@ Deno.test("TestRuntime Tests", async (t) => {
     const runtime = new TestRuntime();
 
     try {
-      const _url = runtime.baseUrl;
+      const _url = runtime.BaseURL;
       throw new Error("Expected error not thrown");
     } catch (e) {
       assertEquals(
@@ -55,97 +55,97 @@ Deno.test("TestRuntime Tests", async (t) => {
   await t.step("should use custom port when specified", async () => {
     const customPort = 9876;
     const plugin = createMinimalTestPlugin()
-      .addTextRoute("/", "Hello");
+      .AddTextRoute("/", "Hello");
 
     const runtime = new TestRuntime({
-      plugins: [plugin],
-      port: customPort,
+      Plugins: [plugin],
+      Port: customPort,
     });
 
-    await runtime.start();
+    await runtime.Start();
 
-    assertEquals(runtime.port, customPort);
-    assertEquals(runtime.baseUrl, `http://localhost:${customPort}`);
+    assertEquals(runtime.Port, customPort);
+    assertEquals(runtime.BaseURL, `http://localhost:${customPort}`);
 
-    await runtime.stop();
+    await runtime.Stop();
   });
 
   await t.step("should create a TestClient bound to the runtime", async () => {
     const plugin = createMinimalTestPlugin()
-      .addTextRoute("/", "Client Test");
+      .AddTextRoute("/", "Client Test");
 
     const runtime = new TestRuntime({
-      plugins: [plugin],
-      portRangeStart: 4100,
-      portRangeEnd: 4199,
+      Plugins: [plugin],
+      PortRangeStart: 4100,
+      PortRangeEnd: 4199,
     });
 
-    await runtime.start();
+    await runtime.Start();
 
-    const client = runtime.createClient();
+    const client = runtime.CreateClient();
     assertExists(client, "Client should be created");
 
-    const response = await client.get("/");
+    const response = await client.Get("/");
     assertEquals(response.status, 200);
 
     const text = await response.text();
     assertEquals(text, "Client Test");
 
-    await runtime.stop();
+    await runtime.Stop();
   });
 
   await t.step("should handle HTTP requests", async () => {
     const plugin = createMinimalTestPlugin()
-      .addTextRoute("/hello", "Hello World")
-      .addJsonRoute("/api/data", { message: "JSON response" })
-      .addHtmlRoute("/page", "<h1>Page</h1>");
+      .AddTextRoute("/hello", "Hello World")
+      .AddJsonRoute("/api/data", { message: "JSON response" })
+      .AddHtmlRoute("/page", "<h1>Page</h1>");
 
     const runtime = new TestRuntime({
-      plugins: [plugin],
-      portRangeStart: 4200,
-      portRangeEnd: 4299,
+      Plugins: [plugin],
+      PortRangeStart: 4200,
+      PortRangeEnd: 4299,
     });
 
-    await runtime.start();
-    const client = runtime.createClient();
+    await runtime.Start();
+    const client = runtime.CreateClient();
 
     // Test text route
-    const textResponse = await client.get("/hello");
+    const textResponse = await client.Get("/hello");
     assertEquals(textResponse.status, 200);
     assertEquals(await textResponse.text(), "Hello World");
 
     // Test JSON route
-    const jsonResponse = await client.get("/api/data");
+    const jsonResponse = await client.Get("/api/data");
     assertEquals(jsonResponse.status, 200);
     assertEquals(await jsonResponse.json(), { message: "JSON response" });
 
     // Test HTML route
-    const htmlResponse = await client.get("/page");
+    const htmlResponse = await client.Get("/page");
     assertEquals(htmlResponse.status, 200);
     assertEquals(await htmlResponse.text(), "<h1>Page</h1>");
 
-    await runtime.stop();
+    await runtime.Stop();
   });
 
   await t.step("should return 404 for unknown routes", async () => {
     // MinimalTestPlugin automatically adds a 404 catch-all route
     const plugin = createMinimalTestPlugin()
-      .addTextRoute("/", "Home");
+      .AddTextRoute("/", "Home");
 
     const runtime = new TestRuntime({
-      plugins: [plugin],
-      portRangeStart: 4300,
-      portRangeEnd: 4399,
+      Plugins: [plugin],
+      PortRangeStart: 4300,
+      PortRangeEnd: 4399,
     });
 
-    await runtime.start();
-    const client = runtime.createClient();
+    await runtime.Start();
+    const client = runtime.CreateClient();
 
-    const response = await client.get("/nonexistent");
+    const response = await client.Get("/nonexistent");
     assertEquals(response.status, 404);
     await response.body?.cancel();
 
-    await runtime.stop();
+    await runtime.Stop();
   });
 
   await t.step(
@@ -183,15 +183,15 @@ Deno.test("TestRuntime Tests", async (t) => {
       };
 
       const routePlugin = createMinimalTestPlugin()
-        .addTextRoute("/", "Home");
+        .AddTextRoute("/", "Home");
 
       const runtime = new TestRuntime({
-        plugins: [revisionCapturingPlugin, routePlugin],
-        portRangeStart: 4400,
-        portRangeEnd: 4499,
+        Plugins: [revisionCapturingPlugin, routePlugin],
+        PortRangeStart: 4400,
+        PortRangeEnd: 4499,
       });
 
-      await runtime.start();
+      await runtime.Start();
 
       // Verify the revision was captured
       assertExists(capturedRevision, "Revision should have been captured");
@@ -201,7 +201,7 @@ Deno.test("TestRuntime Tests", async (t) => {
         "Revision should be 'test' in test mode",
       );
 
-      await runtime.stop();
+      await runtime.Stop();
     },
   );
 });

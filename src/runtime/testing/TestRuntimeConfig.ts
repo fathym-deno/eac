@@ -8,17 +8,17 @@ export interface TestRuntimeOptions<
   TEaC extends EverythingAsCode = EverythingAsCode,
 > {
   /** EaC configuration for the runtime */
-  eac?: TEaC;
+  EAC?: TEaC;
 
   /** Plugins to register with the runtime */
-  plugins?: EaCRuntimePlugin<TEaC>[];
+  Plugins?: EaCRuntimePlugin<TEaC>[];
 
   /** Specific port to use (defaults to random available port) */
-  port?: number;
+  Port?: number;
 
   /** Port range start for finding available port (default: 3000) */
-  portRangeStart?: number;
+  PortRangeStart?: number;
 
   /** Port range end for finding available port (default: 9999) */
-  portRangeEnd?: number;
+  PortRangeEnd?: number;
 }

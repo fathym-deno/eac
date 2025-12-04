@@ -5,10 +5,10 @@ import { getPackageLoggerSync, type TelemetryLogger } from "./.deps.ts";
  */
 export interface TestClientOptions {
   /** Default headers to include with all requests */
-  headers?: Record<string, string>;
+  Headers?: Record<string, string>;
 
   /** Request timeout in milliseconds */
-  timeout?: number;
+  Timeout?: number;
 }
 
 /**
@@ -44,14 +44,14 @@ export class TestClient {
   /**
    * Make a GET request
    */
-  async get(path: string, options?: RequestInit): Promise<Response> {
+  public async Get(path: string, options?: RequestInit): Promise<Response> {
     return this.fetch(path, { method: "GET", ...options });
   }
 
   /**
    * Make a POST request with optional JSON body
    */
-  async post(
+  public async Post(
     path: string,
     body?: unknown,
     options?: RequestInit,
@@ -70,7 +70,7 @@ export class TestClient {
   /**
    * Make a PUT request with optional JSON body
    */
-  async put(
+  public async Put(
     path: string,
     body?: unknown,
     options?: RequestInit,
@@ -89,31 +89,31 @@ export class TestClient {
   /**
    * Make a DELETE request
    */
-  async delete(path: string, options?: RequestInit): Promise<Response> {
+  public async Delete(path: string, options?: RequestInit): Promise<Response> {
     return this.fetch(path, { method: "DELETE", ...options });
   }
 
   /**
    * GET request and return HTML as string
    */
-  async getHtml(path: string): Promise<string> {
-    const response = await this.get(path);
+  public async GetHtml(path: string): Promise<string> {
+    const response = await this.Get(path);
     return response.text();
   }
 
   /**
    * GET request and parse JSON response
    */
-  async getJson<T = unknown>(path: string): Promise<T> {
-    const response = await this.get(path);
+  public async GetJson<T = unknown>(path: string): Promise<T> {
+    const response = await this.Get(path);
     return response.json();
   }
 
   /**
    * POST request and parse JSON response
    */
-  async postJson<T = unknown>(path: string, body?: unknown): Promise<T> {
-    const response = await this.post(path, body);
+  public async PostJson<T = unknown>(path: string, body?: unknown): Promise<T> {
+    const response = await this.Post(path, body);
     return response.json();
   }
 
@@ -121,10 +121,10 @@ export class TestClient {
    * GET request and return both Response and HTML
    * Useful when you need to check status and parse HTML
    */
-  async getWithHtml(
+  public async GetWithHtml(
     path: string,
   ): Promise<{ response: Response; html: string }> {
-    const response = await this.get(path);
+    const response = await this.Get(path);
     const html = await response.clone().text();
     return { response, html };
   }
@@ -132,10 +132,10 @@ export class TestClient {
   /**
    * GET request and return both Response and JSON
    */
-  async getWithJson<T = unknown>(
+  public async GetWithJson<T = unknown>(
     path: string,
   ): Promise<{ response: Response; data: T }> {
-    const response = await this.get(path);
+    const response = await this.Get(path);
     const data = await response.clone().json();
     return { response, data };
   }
@@ -145,7 +145,7 @@ export class TestClient {
    */
   protected async fetch(path: string, options: RequestInit): Promise<Response> {
     const controller = new AbortController();
-    const timeout = this.options.timeout;
+    const timeout = this.options.Timeout;
 
     const timeoutId = timeout
       ? setTimeout(() => controller.abort(), timeout)
@@ -158,7 +158,7 @@ export class TestClient {
       const response = await fetch(url, {
         ...options,
         headers: {
-          ...this.options.headers,
+          ...this.options.Headers,
           ...options.headers,
         },
         signal: controller.signal,

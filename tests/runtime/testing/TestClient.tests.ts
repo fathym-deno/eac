@@ -8,58 +8,58 @@ import {
 Deno.test("TestClient Tests", async (t) => {
   // Setup: create a runtime with various routes for testing
   const plugin = createMinimalTestPlugin()
-    .addTextRoute("/", "Home")
-    .addJsonRoute("/api/data", { id: 1, name: "Test" })
-    .addHtmlRoute(
+    .AddTextRoute("/", "Home")
+    .AddJsonRoute("/api/data", { id: 1, name: "Test" })
+    .AddHtmlRoute(
       "/page",
       "<!doctype html><html><body><h1>Hello</h1></body></html>",
     )
-    .addRedirectRoute("/redirect", "/page")
-    .addRoute("/echo", (req) => {
+    .AddRedirectRoute("/redirect", "/page")
+    .AddRoute("/echo", (req) => {
       return new Response(`${req.method} ${new URL(req.url).pathname}`);
     });
 
-  const runtime = new TestRuntime({ plugins: [plugin] });
+  const runtime = new TestRuntime({ Plugins: [plugin] });
 
   await t.step("setup", async () => {
-    await runtime.start();
+    await runtime.Start();
   });
 
   await t.step("get() should make GET requests", async () => {
-    const client = runtime.createClient();
-    const response = await client.get("/");
+    const client = runtime.CreateClient();
+    const response = await client.Get("/");
 
     assertEquals(response.status, 200);
     assertEquals(await response.text(), "Home");
   });
 
   await t.step("post() should make POST requests", async () => {
-    const client = runtime.createClient();
-    const response = await client.post("/echo");
+    const client = runtime.CreateClient();
+    const response = await client.Post("/echo");
 
     assertEquals(response.status, 200);
     assertEquals(await response.text(), "POST /echo");
   });
 
   await t.step("put() should make PUT requests", async () => {
-    const client = runtime.createClient();
-    const response = await client.put("/echo");
+    const client = runtime.CreateClient();
+    const response = await client.Put("/echo");
 
     assertEquals(response.status, 200);
     assertEquals(await response.text(), "PUT /echo");
   });
 
   await t.step("delete() should make DELETE requests", async () => {
-    const client = runtime.createClient();
-    const response = await client.delete("/echo");
+    const client = runtime.CreateClient();
+    const response = await client.Delete("/echo");
 
     assertEquals(response.status, 200);
     assertEquals(await response.text(), "DELETE /echo");
   });
 
   await t.step("getJson() should parse JSON response", async () => {
-    const client = runtime.createClient();
-    const data = await client.getJson<{ id: number; name: string }>(
+    const client = runtime.CreateClient();
+    const data = await client.GetJson<{ id: number; name: string }>(
       "/api/data",
     );
 
@@ -68,23 +68,23 @@ Deno.test("TestClient Tests", async (t) => {
   });
 
   await t.step("getHtml() should return HTML string", async () => {
-    const client = runtime.createClient();
-    const html = await client.getHtml("/page");
+    const client = runtime.CreateClient();
+    const html = await client.GetHtml("/page");
 
     assertEquals(html.includes("<h1>Hello</h1>"), true);
   });
 
   await t.step("getWithHtml() should return response and HTML", async () => {
-    const client = runtime.createClient();
-    const { response, html } = await client.getWithHtml("/page");
+    const client = runtime.CreateClient();
+    const { response, html } = await client.GetWithHtml("/page");
 
     assertEquals(response.status, 200);
     assertEquals(html.includes("<h1>Hello</h1>"), true);
   });
 
   await t.step("getWithJson() should return response and data", async () => {
-    const client = runtime.createClient();
-    const { response, data } = await client.getWithJson<{ id: number }>(
+    const client = runtime.CreateClient();
+    const { response, data } = await client.GetWithJson<{ id: number }>(
       "/api/data",
     );
 
@@ -93,8 +93,8 @@ Deno.test("TestClient Tests", async (t) => {
   });
 
   await t.step("should handle redirects", async () => {
-    const client = runtime.createClient();
-    const response = await client.get("/redirect", { redirect: "manual" });
+    const client = runtime.CreateClient();
+    const response = await client.Get("/redirect", { redirect: "manual" });
 
     assertEquals(response.status, 302);
     assertEquals(response.headers.get("Location"), "/page");
@@ -102,16 +102,16 @@ Deno.test("TestClient Tests", async (t) => {
   });
 
   await t.step("should support custom headers", async () => {
-    const client = new TestClient(runtime.baseUrl, {
-      headers: { "X-Custom-Header": "test-value" },
+    const client = new TestClient(runtime.BaseURL, {
+      Headers: { "X-Custom-Header": "test-value" },
     });
 
-    const response = await client.get("/");
+    const response = await client.Get("/");
     assertEquals(response.status, 200);
     await response.body?.cancel();
   });
 
   await t.step("teardown", async () => {
-    await runtime.stop();
+    await runtime.Stop();
   });
 });

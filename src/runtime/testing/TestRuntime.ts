@@ -48,7 +48,7 @@ export class TestRuntime<TEaC extends EverythingAsCode = EverythingAsCode> {
   /**
    * Start the runtime and HTTP server
    */
-  async start(): Promise<void> {
+  public async Start(): Promise<void> {
     this.logger.debug(`[test-runtime] starting`);
 
     // Enable fast revision mode for tests (skip slow directory hashing)
@@ -56,9 +56,9 @@ export class TestRuntime<TEaC extends EverythingAsCode = EverythingAsCode> {
     Deno.env.set("FAST_REVISION", "test");
 
     // Find available port
-    const portStart = this.options.portRangeStart ?? 3000;
-    const portEnd = this.options.portRangeEnd ?? 9999;
-    this._port = this.options.port ??
+    const portStart = this.options.PortRangeStart ?? 3000;
+    const portEnd = this.options.PortRangeEnd ?? 9999;
+    this._port = this.options.Port ??
       (await findAvailablePort(portStart, portEnd))!;
 
     if (!this._port) {
@@ -75,9 +75,9 @@ export class TestRuntime<TEaC extends EverythingAsCode = EverythingAsCode> {
 
     // Build minimal runtime config with real LoggingProvider
     const config: EaCRuntimeConfig<TEaC> = {
-      EaC: this.options.eac,
+      EaC: this.options.EAC,
       LoggingProvider: this.loggingProvider,
-      Plugins: this.options.plugins,
+      Plugins: this.options.Plugins,
       // Provide Runtime factory function that plugins like FathymEaCApplicationsPlugin expect
       Runtime: (): EaCRuntime<TEaC> => {
         if (!this.runtime) {
@@ -90,7 +90,7 @@ export class TestRuntime<TEaC extends EverythingAsCode = EverythingAsCode> {
 
     this.logger.debug(
       `[test-runtime] creating runtime plugins=${
-        this.options.plugins?.length ?? 0
+        this.options.Plugins?.length ?? 0
       }`,
     );
 
@@ -114,7 +114,7 @@ export class TestRuntime<TEaC extends EverythingAsCode = EverythingAsCode> {
   /**
    * Stop the runtime and close the HTTP server
    */
-  async stop(): Promise<void> {
+  public async Stop(): Promise<void> {
     this.logger.debug(`[test-runtime] stopping`);
 
     if (this.server) {
@@ -141,7 +141,7 @@ export class TestRuntime<TEaC extends EverythingAsCode = EverythingAsCode> {
   /**
    * Get the port the server is running on
    */
-  get port(): number {
+  public get Port(): number {
     if (!this._port) {
       throw new Error("TestRuntime not started. Call start() first.");
     }
@@ -151,7 +151,7 @@ export class TestRuntime<TEaC extends EverythingAsCode = EverythingAsCode> {
   /**
    * Get the base URL of the server
    */
-  get baseUrl(): string {
+  public get BaseURL(): string {
     if (!this._baseUrl) {
       throw new Error("TestRuntime not started. Call start() first.");
     }
@@ -161,21 +161,21 @@ export class TestRuntime<TEaC extends EverythingAsCode = EverythingAsCode> {
   /**
    * Create a TestClient bound to this runtime's base URL
    */
-  createClient(): TestClient {
-    return new TestClient(this.baseUrl);
+  public CreateClient(): TestClient {
+    return new TestClient(this.BaseURL);
   }
 
   /**
    * Get the underlying EaC configuration (after plugins have been applied)
    */
-  getEaC(): TEaC | undefined {
+  public GetEaC(): TEaC | undefined {
     return this.runtime?.EaC;
   }
 
   /**
    * Get the IoC container
    */
-  getIoC(): IoCContainer | undefined {
+  public GetIoC(): IoCContainer | undefined {
     return this.runtime?.IoC;
   }
 }

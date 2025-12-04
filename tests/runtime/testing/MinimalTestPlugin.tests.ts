@@ -14,15 +14,15 @@ Deno.test("MinimalTestPlugin Tests", async (t) => {
     },
   );
 
-  await t.step("addTextRoute() should register text route", async () => {
+  await t.step("AddTextRoute() should register text route", async () => {
     const plugin = createMinimalTestPlugin()
-      .addTextRoute("/hello", "Hello World");
+      .AddTextRoute("/hello", "Hello World");
 
-    const runtime = new TestRuntime({ plugins: [plugin] });
-    await runtime.start();
+    const runtime = new TestRuntime({ Plugins: [plugin] });
+    await runtime.Start();
 
-    const client = runtime.createClient();
-    const response = await client.get("/hello");
+    const client = runtime.CreateClient();
+    const response = await client.Get("/hello");
 
     assertEquals(response.status, 200);
     assertEquals(
@@ -31,37 +31,37 @@ Deno.test("MinimalTestPlugin Tests", async (t) => {
     );
     assertEquals(await response.text(), "Hello World");
 
-    await runtime.stop();
+    await runtime.Stop();
   });
 
   await t.step("addJsonRoute() should register JSON route", async () => {
     const testData = { message: "Hello", count: 42 };
     const plugin = createMinimalTestPlugin()
-      .addJsonRoute("/api/test", testData);
+      .AddJsonRoute("/api/test", testData);
 
-    const runtime = new TestRuntime({ plugins: [plugin] });
-    await runtime.start();
+    const runtime = new TestRuntime({ Plugins: [plugin] });
+    await runtime.Start();
 
-    const client = runtime.createClient();
-    const response = await client.get("/api/test");
+    const client = runtime.CreateClient();
+    const response = await client.Get("/api/test");
 
     assertEquals(response.status, 200);
     assertEquals(response.headers.get("Content-Type"), "application/json");
     assertEquals(await response.json(), testData);
 
-    await runtime.stop();
+    await runtime.Stop();
   });
 
   await t.step("addHtmlRoute() should register HTML route", async () => {
     const html = "<html><body><h1>Test</h1></body></html>";
     const plugin = createMinimalTestPlugin()
-      .addHtmlRoute("/page", html);
+      .AddHtmlRoute("/page", html);
 
-    const runtime = new TestRuntime({ plugins: [plugin] });
-    await runtime.start();
+    const runtime = new TestRuntime({ Plugins: [plugin] });
+    await runtime.Start();
 
-    const client = runtime.createClient();
-    const response = await client.get("/page");
+    const client = runtime.CreateClient();
+    const response = await client.Get("/page");
 
     assertEquals(response.status, 200);
     assertEquals(
@@ -70,26 +70,26 @@ Deno.test("MinimalTestPlugin Tests", async (t) => {
     );
     assertEquals(await response.text(), html);
 
-    await runtime.stop();
+    await runtime.Stop();
   });
 
   await t.step(
     "addRedirectRoute() should register redirect route",
     async () => {
       const plugin = createMinimalTestPlugin()
-        .addRedirectRoute("/old", "/new");
+        .AddRedirectRoute("/old", "/new");
 
-      const runtime = new TestRuntime({ plugins: [plugin] });
-      await runtime.start();
+      const runtime = new TestRuntime({ Plugins: [plugin] });
+      await runtime.Start();
 
-      const client = runtime.createClient();
-      const response = await client.get("/old", { redirect: "manual" });
+      const client = runtime.CreateClient();
+      const response = await client.Get("/old", { redirect: "manual" });
 
       assertEquals(response.status, 302);
       assertEquals(response.headers.get("Location"), "/new");
       await response.body?.cancel();
 
-      await runtime.stop();
+      await runtime.Stop();
     },
   );
 
@@ -97,88 +97,88 @@ Deno.test("MinimalTestPlugin Tests", async (t) => {
     "addRedirectRoute() should support custom status codes",
     async () => {
       const plugin = createMinimalTestPlugin()
-        .addRedirectRoute("/permanent", "/new", 301);
+        .AddRedirectRoute("/permanent", "/new", 301);
 
-      const runtime = new TestRuntime({ plugins: [plugin] });
-      await runtime.start();
+      const runtime = new TestRuntime({ Plugins: [plugin] });
+      await runtime.Start();
 
-      const client = runtime.createClient();
-      const response = await client.get("/permanent", { redirect: "manual" });
+      const client = runtime.CreateClient();
+      const response = await client.Get("/permanent", { redirect: "manual" });
 
       assertEquals(response.status, 301);
       assertEquals(response.headers.get("Location"), "/new");
       await response.body?.cancel();
 
-      await runtime.stop();
+      await runtime.Stop();
     },
   );
 
   await t.step("addRoute() should register custom handler", async () => {
     const plugin = createMinimalTestPlugin()
-      .addRoute("/custom", (req) => {
+      .AddRoute("/custom", (req) => {
         const url = new URL(req.url);
         return new Response(`Method: ${req.method}, Path: ${url.pathname}`);
       });
 
-    const runtime = new TestRuntime({ plugins: [plugin] });
-    await runtime.start();
+    const runtime = new TestRuntime({ Plugins: [plugin] });
+    await runtime.Start();
 
-    const client = runtime.createClient();
-    const response = await client.get("/custom");
+    const client = runtime.CreateClient();
+    const response = await client.Get("/custom");
 
     assertEquals(response.status, 200);
     assertEquals(await response.text(), "Method: GET, Path: /custom");
 
-    await runtime.stop();
+    await runtime.Stop();
   });
 
   await t.step("should support method chaining", async () => {
     const plugin = createMinimalTestPlugin()
-      .addTextRoute("/text", "Text")
-      .addJsonRoute("/json", { ok: true })
-      .addHtmlRoute("/html", "<p>HTML</p>")
-      .addRedirectRoute("/redirect", "/text");
+      .AddTextRoute("/text", "Text")
+      .AddJsonRoute("/json", { ok: true })
+      .AddHtmlRoute("/html", "<p>HTML</p>")
+      .AddRedirectRoute("/redirect", "/text");
 
-    const runtime = new TestRuntime({ plugins: [plugin] });
-    await runtime.start();
+    const runtime = new TestRuntime({ Plugins: [plugin] });
+    await runtime.Start();
 
-    const client = runtime.createClient();
+    const client = runtime.CreateClient();
 
-    const textResp = await client.get("/text");
+    const textResp = await client.Get("/text");
     assertEquals(textResp.status, 200);
     await textResp.body?.cancel();
 
-    const jsonResp = await client.get("/json");
+    const jsonResp = await client.Get("/json");
     assertEquals(jsonResp.status, 200);
     await jsonResp.body?.cancel();
 
-    const htmlResp = await client.get("/html");
+    const htmlResp = await client.Get("/html");
     assertEquals(htmlResp.status, 200);
     await htmlResp.body?.cancel();
 
-    const redirectResp = await client.get("/redirect", { redirect: "manual" });
+    const redirectResp = await client.Get("/redirect", { redirect: "manual" });
     assertEquals(redirectResp.status, 302);
     await redirectResp.body?.cancel();
 
-    await runtime.stop();
+    await runtime.Stop();
   });
 
   await t.step("should handle errors in custom handlers", async () => {
     const plugin = createMinimalTestPlugin()
-      .addRoute("/error", () => {
+      .AddRoute("/error", () => {
         throw new Error("Test error");
       });
 
-    const runtime = new TestRuntime({ plugins: [plugin] });
-    await runtime.start();
+    const runtime = new TestRuntime({ Plugins: [plugin] });
+    await runtime.Start();
 
-    const client = runtime.createClient();
-    const response = await client.get("/error");
+    const client = runtime.CreateClient();
+    const response = await client.Get("/error");
 
     assertEquals(response.status, 500);
     const text = await response.text();
     assertEquals(text.includes("Error"), true);
 
-    await runtime.stop();
+    await runtime.Stop();
   });
 });
