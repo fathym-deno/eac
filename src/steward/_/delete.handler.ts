@@ -246,28 +246,29 @@ export async function handleEaCDeleteRequest(
                 deleteReq.EaC.EnterpriseLookup!,
               ]);
 
+            op = op
+              .set(
+                [
+                  "EaC",
+                  "Archive",
+                  "Users",
+                  deleteReq.EaC.EnterpriseLookup!,
+                  eacUserRecord.Username,
+                ],
+                eacUserRecord,
+              );
+
             if (eacUserRecord.Owner) {
-              op = op
-                .set(
-                  [
-                    "EaC",
-                    "Archive",
-                    "Users",
-                    deleteReq.EaC.EnterpriseLookup!,
-                    eacUserRecord.Username,
-                  ],
-                  eacUserRecord,
-                )
-                .set(
-                  [
-                    "User",
-                    eacUserRecord.Username,
-                    "Archive",
-                    "EaC",
-                    deleteReq.EaC.EnterpriseLookup!,
-                  ],
-                  eacUserRecord,
-                );
+              op = op.set(
+                [
+                  "User",
+                  eacUserRecord.Username,
+                  "Archive",
+                  "EaC",
+                  deleteReq.EaC.EnterpriseLookup!,
+                ],
+                eacUserRecord,
+              );
             }
           }
         } else {

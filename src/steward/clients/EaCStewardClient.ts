@@ -87,6 +87,22 @@ export class EaCStewardClient extends EaCBaseClient {
       return await this.json(response);
     },
 
+    Restore: async (): Promise<{
+      EnterpriseLookup: string;
+      Message: string;
+      RestoredUsers: string[];
+    }> => {
+      const response = await fetch(
+        this.loadClientUrl("enterprise/restore"),
+        {
+          method: "POST",
+          headers: this.loadHeaders(),
+        },
+      );
+
+      return await this.json(response);
+    },
+
     Get: async <T extends EverythingAsCode>(): Promise<T> => {
       const response = await fetch(this.loadClientUrl(`enterprise`), {
         headers: this.loadHeaders(),
@@ -129,9 +145,14 @@ export class EaCStewardClient extends EaCBaseClient {
       return await this.json<TEaC[]>(response, []);
     },
 
-    ListForUser: async (username: string): Promise<EaCUserRecord[]> => {
+    ListForUser: async (
+      username: string,
+      includeArchived = false,
+    ): Promise<EaCUserRecord[]> => {
       const response = await fetch(
-        this.loadClientUrl(`list?username=${username}`),
+        this.loadClientUrl(
+          `list?username=${username}&includeArchived=${includeArchived}`,
+        ),
         {
           headers: this.loadHeaders(),
         },
