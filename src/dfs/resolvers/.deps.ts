@@ -9,6 +9,7 @@ export {
   type DFSFileInfo,
   type IDFSFileHandler,
 } from "jsr:@fathym/dfs@0.0.76-integration";
+export { type ESBuild } from "jsr:@fathym/dfs@0.0.76-integration/build";
 export {
   CompositeDFSFileHandler,
   LocalDFSFileHandler,
