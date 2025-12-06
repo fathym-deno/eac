@@ -13,6 +13,7 @@ export { type ESBuild } from "jsr:@fathym/dfs@0.0.76-integration/build";
 export {
   CompositeDFSFileHandler,
   LocalDFSFileHandler,
+  MemoryDFSFileHandler,
 } from "jsr:@fathym/dfs@0.0.76-integration/handlers";
 export {
   ESMFetchDFSFileHandler,

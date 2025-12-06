@@ -5,7 +5,10 @@ import {
 } from "./EaCDistributedFileSystemDetails.ts";
 
 export type EaCVirtualCompositeDistributedFileSystemDetails = {
+  /** Ordered list of DFS lookups that act as fallbacks once virtual files are exhausted. */
   BaseDFSLookups: string[];
+  /** Optional DFS lookup for the virtual layer. If not provided, an inline MemoryDFS is used. */
+  VirtualDFSLookup?: string;
 } & EaCDistributedFileSystemDetails<"VirtualComposite">;
 
 export const EaCVirtualCompositeDistributedFileSystemDetailsSchema: z.ZodObject<
@@ -18,6 +21,7 @@ export const EaCVirtualCompositeDistributedFileSystemDetailsSchema: z.ZodObject<
     WorkerPath: z.ZodOptional<z.ZodString>;
     Type: z.ZodLiteral<"VirtualComposite">;
     BaseDFSLookups: z.ZodArray<z.ZodString>;
+    VirtualDFSLookup: z.ZodOptional<z.ZodString>;
   },
   z.core.$strip
 > = EaCDistributedFileSystemDetailsSchema.extend({
@@ -29,6 +33,12 @@ export const EaCVirtualCompositeDistributedFileSystemDetailsSchema: z.ZodObject<
     .min(1)
     .describe(
       "Ordered list of DFS lookups that act as fallbacks once virtual files are exhausted.",
+    ),
+  VirtualDFSLookup: z
+    .string()
+    .optional()
+    .describe(
+      "Optional DFS lookup for the virtual layer. If not provided, an inline MemoryDFS is used.",
     ),
 }).describe(
   "Schema for EaCVirtualCompositeDistributedFileSystemDetails, describing an overlay-first DFS that falls back through multiple base DFS handlers.",
