@@ -1,5 +1,6 @@
 import {
   CompositeDFSFileHandler,
+  type ESBuild,
   getPackageLogger,
   type IDFSFileHandler,
   IoCContainer,
@@ -65,6 +66,11 @@ export const EaCVirtualCompositeDFSHandlerResolver: DFSHandlerResolver = {
       );
     }
 
+    // Get ESBuild from IoC container (optional - may not be registered)
+    const esbuild = await ioc.Resolve<ESBuild>(
+      ioc.Symbol("ESBuild"),
+    ).catch(() => undefined);
+
     // Resolve or create the virtual layer handler
     let virtualHandler: IDFSFileHandler;
 
@@ -100,6 +106,7 @@ export const EaCVirtualCompositeDFSHandlerResolver: DFSHandlerResolver = {
         DefaultFile: virtual.DefaultFile,
         Extensions: virtual.Extensions,
         UseCascading: virtual.UseCascading,
+        ESBuild: esbuild,
       });
     }
 
@@ -133,7 +140,9 @@ export const EaCVirtualCompositeDFSHandlerResolver: DFSHandlerResolver = {
     logger.debug(
       `[dfs-virtual-composite] creating handler lookup=${dfsLookup} virtualLookup=${
         virtual.VirtualDFSLookup ?? "inline-memory"
-      } baseCount=${baseLookups.length}`,
+      } baseCount=${baseLookups.length} esbuild=${
+        esbuild ? "available" : "not available"
+      }`,
     );
 
     return new CompositeDFSFileHandler(
@@ -141,6 +150,7 @@ export const EaCVirtualCompositeDFSHandlerResolver: DFSHandlerResolver = {
         DefaultFile: virtual.DefaultFile,
         Extensions: virtual.Extensions,
         UseCascading: virtual.UseCascading,
+        ESBuild: esbuild,
       },
       allHandlers,
     );

@@ -4,6 +4,7 @@ import {
 } from "../_/EaCCompositeDistributedFileSystemDetails.ts";
 import {
   CompositeDFSFileHandler,
+  type ESBuild,
   getPackageLogger,
   type IDFSFileHandler,
   IoCContainer,
@@ -93,8 +94,15 @@ export const EaCCompositeDFSHandlerResolver: DFSHandlerResolver = {
       childHandlers.push(handler);
     }
 
+    // Get ESBuild from IoC container (optional - may not be registered)
+    const esbuild = await ioc.Resolve<ESBuild>(
+      ioc.Symbol("ESBuild"),
+    ).catch(() => undefined);
+
     logger.debug(
-      `[dfs-composite] creating handler lookup=${dfsLookup} childCount=${childHandlers.length}`,
+      `[dfs-composite] creating handler lookup=${dfsLookup} childCount=${childHandlers.length} esbuild=${
+        esbuild ? "available" : "not available"
+      }`,
     );
 
     return new CompositeDFSFileHandler(
@@ -102,6 +110,7 @@ export const EaCCompositeDFSHandlerResolver: DFSHandlerResolver = {
         DefaultFile: composite.DefaultFile,
         Extensions: composite.Extensions,
         UseCascading: composite.UseCascading,
+        ESBuild: esbuild,
       },
       childHandlers,
     );

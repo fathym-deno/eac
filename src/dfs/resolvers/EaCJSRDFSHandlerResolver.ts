@@ -2,7 +2,11 @@ import {
   EaCJSRDistributedFileSystemDetails,
   isEaCJSRDistributedFileSystemDetails,
 } from "../_/EaCJSRDistributedFileSystemDetails.ts";
-import { type IDFSFileHandler, JSRFetchDFSFileHandler } from "./.deps.ts";
+import {
+  type ESBuild,
+  type IDFSFileHandler,
+  JSRFetchDFSFileHandler,
+} from "./.deps.ts";
 import { DFSHandlerResolver } from "./DFSHandlerResolver.ts";
 
 /**
@@ -10,7 +14,7 @@ import { DFSHandlerResolver } from "./DFSHandlerResolver.ts";
  * Returns base JSRFetchDFSFileHandler from @fathym/dfs.
  */
 export const EaCJSRDFSHandlerResolver: DFSHandlerResolver = {
-  async Resolve(_ioc, _dfsLookup, dfs): Promise<IDFSFileHandler | undefined> {
+  async Resolve(ioc, _dfsLookup, dfs): Promise<IDFSFileHandler | undefined> {
     if (!isEaCJSRDistributedFileSystemDetails(dfs)) {
       throw new Deno.errors.NotSupported(
         "The provided dfs is not supported for the EaCJSRDFSHandlerResolver.",
@@ -33,6 +37,11 @@ export const EaCJSRDFSHandlerResolver: DFSHandlerResolver = {
       version = meta.latest;
     }
 
+    // Get ESBuild from IoC container (optional - may not be registered)
+    const esbuild = await ioc.Resolve<ESBuild>(
+      ioc.Symbol("ESBuild"),
+    ).catch(() => undefined);
+
     return new JSRFetchDFSFileHandler({
       Package: jsrDFS.Package,
       Version: version,
@@ -40,6 +49,7 @@ export const EaCJSRDFSHandlerResolver: DFSHandlerResolver = {
       Extensions: jsrDFS.Extensions,
       UseCascading: jsrDFS.UseCascading,
       FileRoot: jsrDFS.FileRoot,
+      ESBuild: esbuild,
     });
   },
 };

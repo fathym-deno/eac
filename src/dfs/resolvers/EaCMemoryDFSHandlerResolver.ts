@@ -1,5 +1,6 @@
 import { isEaCMemoryDistributedFileSystemDetails } from "../_/EaCMemoryDistributedFileSystemDetails.ts";
 import {
+  type ESBuild,
   getPackageLogger,
   type IDFSFileHandler,
   MemoryDFSFileHandler,
@@ -12,7 +13,7 @@ import { DFSHandlerResolver } from "./DFSHandlerResolver.ts";
  */
 export const EaCMemoryDFSHandlerResolver: DFSHandlerResolver = {
   async Resolve(
-    _ioc,
+    ioc,
     dfsLookup,
     dfs,
   ): Promise<IDFSFileHandler | undefined> {
@@ -29,10 +30,15 @@ export const EaCMemoryDFSHandlerResolver: DFSHandlerResolver = {
       );
     }
 
+    // Get ESBuild from IoC container (optional - may not be registered)
+    const esbuild = await ioc.Resolve<ESBuild>(
+      ioc.Symbol("ESBuild"),
+    ).catch(() => undefined);
+
     logger.debug(
       `[dfs-memory] creating handler lookup=${dfsLookup} extensions=${
         dfs.Extensions?.join(",")
-      }`,
+      } esbuild=${esbuild ? "available" : "not available"}`,
     );
 
     return new MemoryDFSFileHandler({
@@ -40,6 +46,7 @@ export const EaCMemoryDFSHandlerResolver: DFSHandlerResolver = {
       DefaultFile: dfs.DefaultFile,
       Extensions: dfs.Extensions,
       UseCascading: dfs.UseCascading,
+      ESBuild: esbuild,
     });
   },
 };
