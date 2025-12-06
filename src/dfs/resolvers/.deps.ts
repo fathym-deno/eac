@@ -8,17 +8,17 @@ export { IoCContainer } from "jsr:@fathym/ioc@0.0.25";
 export {
   type DFSFileInfo,
   type IDFSFileHandler,
-} from "jsr:@fathym/dfs@0.0.76-integration";
-export { type ESBuild } from "jsr:@fathym/dfs@0.0.76-integration/build";
+} from "jsr:@fathym/dfs@0.0.77-integration";
+export { type ESBuild } from "jsr:@fathym/dfs@0.0.77-integration/build";
 export {
   CompositeDFSFileHandler,
   LocalDFSFileHandler,
   MemoryDFSFileHandler,
-} from "jsr:@fathym/dfs@0.0.76-integration/handlers";
+} from "jsr:@fathym/dfs@0.0.77-integration/handlers";
 export {
   ESMFetchDFSFileHandler,
   FetchDFSFileHandler,
   JSRFetchDFSFileHandler,
   NPMFetchDFSFileHandler,
   RemoteFetchDFSFileHandler,
-} from "jsr:@fathym/dfs@0.0.76-integration/handlers/fetch";
+} from "jsr:@fathym/dfs@0.0.77-integration/handlers/fetch";
